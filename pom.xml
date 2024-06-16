@@ -9,10 +9,10 @@
     <name>tpdabn</name>
     <description>bombas de papa</description>
     <modules>
+        <module>config</module>
         <module>customers</module>
         <module>orders</module>
         <module>products</module>
-        <module>config</module>
         <module>eureka</module>
     </modules>
 </project>
