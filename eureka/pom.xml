@@ -2,21 +2,17 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
+	<packaging>jar</packaging>
 	<parent>
 		<groupId>com.jbazann</groupId>
 		<artifactId>spring-boot-template-parent</artifactId>
 		<version>0.0.1-SNAPSHOT</version>
 		<relativePath>/../maven-commons/spring/pom.xml</relativePath>
 	</parent>
-	<groupId>com.jbazann</groupId>
 	<artifactId>eureka</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>eureka</name>
 	<description>buscador de bombas de papa</description>
-	<properties>
-		<java.version>21</java.version>
-		<spring-cloud.version>2023.0.2</spring-cloud.version>
-	</properties>
 	<dependencies>
 		<dependency>
 			<groupId>org.springframework.cloud</groupId>
@@ -47,28 +43,4 @@
 			</dependency>
 		</dependencies>
 	</dependencyManagement>
-
-	<build>
-		<plugins>
-			<plugin>
-				<groupId>org.springframework.boot</groupId>
-				<artifactId>spring-boot-maven-plugin</artifactId>
-				<configuration>
-					<image>
-						<name>jbazann/eureka:latest</name>
-					</image>
-				</configuration>
-				<executions>
-					<execution>
-						<id>build eureka image</id>
-						<phase>pre-integration-test</phase>
-						<goals>
-							<goal>build-image</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
-		</plugins>
-	</build>
-
 </project>
