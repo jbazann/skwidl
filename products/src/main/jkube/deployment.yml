@@ -1,0 +1,15 @@
+apiVersion: apps/v1
+kind: Deployment
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      serviceName: orders
+  template:
+    metadata:
+      labels:
+        serviceName: orders
+    spec:
+      containers:
+        - name: service
+          image: jbazann/orders:latest

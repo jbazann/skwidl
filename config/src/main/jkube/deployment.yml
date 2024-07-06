@@ -1,0 +1,15 @@
+apiVersion: apps/v1
+kind: Deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      serviceName: config
+  template:
+    metadata:
+      labels:
+        serviceName: config
+    spec:
+      containers:
+        - name: service
+          image: jbazann/config:latest

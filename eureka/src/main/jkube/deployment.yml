@@ -1,0 +1,15 @@
+apiVersion: apps/v1
+kind: Deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      serviceName: eureka
+  template:
+    metadata:
+      labels:
+        serviceName: eureka
+    spec:
+      containers:
+        - name: service
+          image: jbazann/eureka:latest

@@ -1,0 +1,9 @@
+apiVersion: v1
+kind: Service
+spec:
+  selector:
+    serviceName: products
+  ports:
+    - port: 12012
+      name: service
+      appProtocol: http # TODO https

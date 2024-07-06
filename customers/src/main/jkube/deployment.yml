@@ -1,0 +1,15 @@
+apiVersion: apps/v1
+kind: Deployment
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      serviceName: customers
+  template:
+    metadata:
+      labels:
+        serviceName: customers
+    spec:
+      containers:
+        - name: service
+          image: jbazann/customers:latest
