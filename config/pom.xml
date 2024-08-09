@@ -13,6 +13,10 @@
 	<version>0.0.1-SNAPSHOT</version>
 	<name>config</name>
 	<description>A super secret ultra private hidden safe configuration server.</description>
+	<properties>
+		<jbazann.gitRepository>${jbazann.volname}/sources/</jbazann.gitRepository>
+	</properties>
+
 	<dependencies>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
