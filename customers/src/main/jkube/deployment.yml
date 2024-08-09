@@ -1,15 +1,38 @@
 apiVersion: apps/v1
 kind: Deployment
+metadata:
+  name: customers
 spec:
-  replicas: 3
+  replicas: 2
   selector:
     matchLabels:
-      serviceName: customers
+      app: customers
   template:
     metadata:
       labels:
-        serviceName: customers
+        app: customers
     spec:
       containers:
-        - name: service
+        - name: app
           image: jbazann/customers:latest
+          ports:
+            - name: app
+              containerPort: 12012
+            - name: probe
+              containerPort: 12112
+          livenessProbe:
+            httpGet:
+              path: /actuator/health
+              port: 12112
+              scheme: HTTP
+            initialDelaySeconds: 180
+            timeoutSeconds: 15
+          readinessProbe:
+            httpGet:
+              path: /actuator/health
+              port: 12112
+              scheme: HTTP
+            initialDelaySeconds: 60
+            timeoutSeconds: 15
+          securityContext:
+            privileged: false
