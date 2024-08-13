@@ -120,6 +120,14 @@
                 </plugins>
             </build>
         </profile>
+
+        <!-- Run mvn with '-P metrics' to include Prometheus and Grafana -->
+        <profile>
+            <id>metrics</id>
+            <modules>
+                <module>metrics</module>
+            </modules>
+        </profile>
     </profiles>
     <dependencyManagement>
         <dependencies>

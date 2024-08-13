@@ -1,0 +1,32 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: grafana
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: grafana
+  template:
+    metadata:
+      labels:
+        app: grafana
+    spec:
+      containers:
+        - name: app
+          image: grafana/grafana-oss:11.1.3
+          ports:
+            - name: app
+              containerPort: 12012
+          securityContext:
+            privileged: false
+          volumeMounts:
+            - mountPath: /etc/grafana/provisioning/datasources/
+              name: datasource-cfg
+      volumes:
+        - name: datasource-cfg
+          configMap:
+            name: datasource-cfg
+            items:
+              - key: prometheus-datasource.yml
+                path: prometheus-datasource.yml

@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: prometheus
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: prometheus
+  template:
+    metadata:
+      labels:
+        app: prometheus
+    spec:
+      containers:
+        - name: app
+          image: prom/prometheus:v2.53.2
+          ports:
+            - name: prometheus
+              containerPort: 12012
+          securityContext:
+            privileged: false
+          volumeMounts:
+            - mountPath: /etc/prometheus/
+              name: prometheus-cfg
+          args:
+            - --web.listen-address=:12012
+            - --config.file=/etc/prometheus/prometheus.yml
+            - --storage.tsdb.path=/prometheus
+            - --web.console.libraries=/usr/share/prometheus/console_libraries
+            - --web.console.templates=/usr/share/prometheus/consoles
+      volumes:
+        - name: prometheus-cfg
+          configMap:
+            name: prometheus-cfg
+            items:
+              - key: prometheus.yml
+                path: prometheus.yml
