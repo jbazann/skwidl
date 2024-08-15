@@ -1,0 +1,21 @@
+spring:
+  application:
+    name: orders
+  profiles:
+    active: @jbazann.spring-profiles@
+
+server:
+  port: @jbazann.orders.port@
+
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: @jbazann.eureka.defaultZone@
+
+management:
+  server:
+    port: @jbazann.orders.management-port@
+  endpoints:
+    web:
+      exposure:
+        include: httpexchanges,health

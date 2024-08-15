@@ -1,0 +1,28 @@
+spring:
+  application:
+    name: eureka
+  profiles:
+    active: @jbazann.spring-profiles@
+
+server:
+  port: @jbazann.eureka.port@
+
+eureka:
+  instance:
+    hostname: @jbazann.eureka.host@
+    metadata-map:
+      region: @jbazann.eureka.region1@
+  client:
+    registerWithEureka: true
+    fetchRegistry: false
+    region: @jbazann.eureka.region1@
+    serviceUrl:
+      defaultZone: @jbazann.eureka.defaultZone@
+
+management:
+  server:
+    port: @jbazann.eureka.management-port@
+  endpoints:
+    web:
+      exposure:
+        include: httpexchanges,health

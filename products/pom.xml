@@ -13,6 +13,19 @@
 	<version>0.0.1-SNAPSHOT</version>
 	<name>products</name>
 	<description>bombas de papa</description>
+    <profiles>
+        <profile>
+            <id>kube</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.eclipse.jkube</groupId>
+                        <artifactId>kubernetes-maven-plugin</artifactId>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 	<dependencies>
 <!--		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -81,10 +94,6 @@
 			<artifactId>rabbitmq</artifactId>
 			<scope>test</scope>
 		</dependency>
-		<dependency>
-			<groupId>org.springframework.cloud</groupId>
-			<artifactId>spring-cloud-starter-config</artifactId>
-		</dependency>
 		<!-- https://mvnrepository.com/artifact/org.springframework.retry/spring-retry -->
 		<dependency>
 			<groupId>org.springframework.retry</groupId>
@@ -102,10 +111,6 @@
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
-			</plugin>
-			<plugin>
-				<groupId>org.eclipse.jkube</groupId>
-				<artifactId>kubernetes-maven-plugin</artifactId>
 			</plugin>
 			<plugin>
 				<groupId>org.hibernate.orm.tooling</groupId>
