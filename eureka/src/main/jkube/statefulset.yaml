@@ -1,20 +1,28 @@
 apiVersion: apps/v1
-kind: Deployment
+kind: StatefulSet
 metadata:
   name: eureka
+  labels:
+    app: eureka
 spec:
-  replicas: 1
+  serviceName: eureka
+  replicas: 2
   selector:
     matchLabels:
       app: eureka
   template:
     metadata:
+      name: eureka
       labels:
         app: eureka
     spec:
       containers:
         - name: app
           image: jbazann/eureka:latest
+          imagePullPolicy: IfNotPresent
+          env:
+            - name: JBAZANN_PEERS
+              value: http://eureka-0.eureka:12012/eureka/,http://eureka-1.eureka:12012/eureka/
           ports:
             - name: app
               containerPort: 12012
@@ -36,3 +44,5 @@ spec:
             timeoutSeconds: 15
           securityContext:
             privileged: false
+      restartPolicy: Always
+      

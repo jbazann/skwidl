@@ -21,9 +21,10 @@
         <!-- Custom properties (sometimes overridden by <profiles> below) -->
         <!-- Spring active profiles -->
         <jbazann.spring-profiles>default</jbazann.spring-profiles>
-        <!-- Kubernetes port binding -->
+        <!-- Kubernetes port binding (-Pkube) -->
         <jbazann.kube.port>12012</jbazann.kube.port>
         <jbazann.kube.management-port>12112</jbazann.kube.management-port>
+
         <!-- Localhost port binding -->
         <jbazann.customers.port>12012</jbazann.customers.port>
         <jbazann.customers.management-port>12013</jbazann.customers.management-port>
@@ -33,11 +34,16 @@
         <jbazann.products.management-port>12213</jbazann.products.management-port>
         <jbazann.eureka.port>12312</jbazann.eureka.port>
         <jbazann.eureka.management-port>12313</jbazann.eureka.management-port>
-        <!-- Eureka server location -->
+
+        <!-- Eureka server -->
         <jbazann.eureka.host>localhost</jbazann.eureka.host>
-        <jbazann.eureka.defaultZone>http://${jbazann.eureka-host}:${jbazann.eureka-port}/eureka/</jbazann.eureka.defaultZone>
+        <jbazann.eureka.server.host>localhost</jbazann.eureka.server.host>
+        <jbazann.eureka.defaultZone>http://${jbazann.eureka.host}:${jbazann.eureka.port}/eureka/</jbazann.eureka.defaultZone>
+        <jbazann.eureka.server.defaultZone>http://${jbazann.eureka.host}:${jbazann.eureka.port}/eureka/</jbazann.eureka.server.defaultZone>
         <jbazann.eureka.region1>santa-fe-1</jbazann.eureka.region1>
-        <!-- Internal image details -->
+        <jbazann.eureka.server.registerWithPeer>false</jbazann.eureka.server.registerWithPeer>
+
+        <!-- Docker image properties (see kubernetes-maven-plugin below) -->
         <jbazann.jarname>${project.artifactId}-${project.version}.jar</jbazann.jarname>
         <jbazann.dirname>jbazann</jbazann.dirname>
         <jbazann.volname>${jbazann.dirname}/mounted</jbazann.volname>
@@ -60,19 +66,20 @@
         <profile>
             <id>kube</id>
             <properties>
-                <jbazann.spring-profiles>${jbazann.spring-profiles},kube</jbazann.spring-profiles>
+                <jbazann.spring-profiles>default,kube</jbazann.spring-profiles>
                 <jbazann.customers.port>${jbazann.kube.port}</jbazann.customers.port>
                 <jbazann.customers.management-port>${jbazann.kube.management-port}</jbazann.customers.management-port>
                 <jbazann.orders.port>${jbazann.kube.port}</jbazann.orders.port>
                 <jbazann.orders.management-port>${jbazann.kube.management-port}</jbazann.orders.management-port>
                 <jbazann.products.port>${jbazann.kube.port}</jbazann.products.port>
                 <jbazann.products.management-port>${jbazann.kube.management-port}</jbazann.products.management-port>
+                <jbazann.eureka.host>eureka</jbazann.eureka.host>
                 <jbazann.eureka.port>${jbazann.kube.port}</jbazann.eureka.port>
                 <jbazann.eureka.management-port>${jbazann.kube.management-port}</jbazann.eureka.management-port>
+                <jbazann.eureka.server.host>${HOSTNAME}.${jbazann.eureka.host}</jbazann.eureka.server.host>
+                <jbazann.eureka.server.defaultZone>${JBAZANN_PEERS}</jbazann.eureka.server.defaultZone>
+                <jbazann.eureka.server.registerWithPeer>true</jbazann.eureka.server.registerWithPeer>
             </properties>
-            <build>
-                <plugins></plugins>
-            </build>
         </profile>
 
         <!-- Run mvn with '-P skipImage' to skip everything before and including Docker image build -->
@@ -199,6 +206,12 @@
                 <filtering>true</filtering>
             </resource>
         </resources>
+        <plugins>
+            <plugin>
+                <groupId>org.graalvm.buildtools</groupId>
+                <artifactId>native-maven-plugin</artifactId>
+            </plugin>
+        </plugins>
         <pluginManagement>
             <plugins>
                 <!-- JKube images and deploy configuration -->
@@ -295,7 +308,7 @@
                 </plugin>
 
                 <!-- Delete original artifact to fix issues with k8s:build -->
-                <!--<plugin>
+                <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-clean-plugin</artifactId>
                     <executions>
@@ -318,7 +331,7 @@
                             </configuration>
                         </execution>
                     </executions>
-                </plugin>-->
+                </plugin>
             </plugins>
         </pluginManagement>
     </build>

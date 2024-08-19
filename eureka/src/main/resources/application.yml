@@ -9,15 +9,15 @@ server:
 
 eureka:
   instance:
-    hostname: @jbazann.eureka.host@
+    hostname: @jbazann.eureka.server.host@
     metadata-map:
       region: @jbazann.eureka.region1@
   client:
-    registerWithEureka: true
-    fetchRegistry: false
+    registerWithEureka: @jbazann.eureka.server.registerWithPeer@
+    fetchRegistry: true
     region: @jbazann.eureka.region1@
     serviceUrl:
-      defaultZone: @jbazann.eureka.defaultZone@
+      defaultZone: @jbazann.eureka.server.defaultZone@
 
 management:
   server:
