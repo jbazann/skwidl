@@ -76,7 +76,9 @@
                 <jbazann.eureka.host>eureka</jbazann.eureka.host>
                 <jbazann.eureka.port>${jbazann.kube.port}</jbazann.eureka.port>
                 <jbazann.eureka.management-port>${jbazann.kube.management-port}</jbazann.eureka.management-port>
+                <!--suppress UnresolvedMavenProperty -->
                 <jbazann.eureka.server.host>${HOSTNAME}.${jbazann.eureka.host}</jbazann.eureka.server.host>
+                <!--suppress UnresolvedMavenProperty -->
                 <jbazann.eureka.server.defaultZone>${JBAZANN_PEERS}</jbazann.eureka.server.defaultZone>
                 <jbazann.eureka.server.registerWithPeer>true</jbazann.eureka.server.registerWithPeer>
             </properties>
