@@ -3,6 +3,9 @@ spring:
     name: eureka
   profiles:
     active: @jbazann.spring-profiles@
+#  cloud:
+#    refresh:
+#      enabled: false
 
 server:
   port: @jbazann.eureka.port@

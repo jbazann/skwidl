@@ -210,10 +210,17 @@
             </resource>
         </resources>
         <plugins>
-            <plugin>
+<!--            <plugin>
                 <groupId>org.graalvm.buildtools</groupId>
                 <artifactId>native-maven-plugin</artifactId>
-            </plugin>
+                <configuration>
+                    <buildArgs combine.children="append">
+                        <buildArg>
+                            &#45;&#45;initialize-at-build-time=ch.qos.logback.core.status.StatusBase,ch.qos.logback.classic.Level,org.apache.commons.logging.impl.Jdk14Logger,ch.qos.logback.core.util.StatusPrinter,ch.qos.logback.core.status.InfoStatus,ch.qos.logback.core.util.Loader,org.slf4j.LoggerFactory,org.apache.commons.logging.LogFactory,ch.qos.logback.classic.Logger,ch.qos.logback.core.util.StatusPrinter2
+                        </buildArg>
+                    </buildArgs>
+                </configuration>
+            </plugin>-->
         </plugins>
         <pluginManagement>
             <plugins>
