@@ -18,30 +18,10 @@
         <java.version>21</java.version>
         <spring-cloud.version>2023.0.2</spring-cloud.version>
 
-        <!-- Custom properties (sometimes overridden by <profiles> below) -->
-        <!-- Spring active profiles -->
-        <jbazann.spring-profiles>default</jbazann.spring-profiles>
-        <!-- Kubernetes port binding (-Pkube) -->
-        <jbazann.kube.port>12012</jbazann.kube.port>
+        <!-- Custom properties -->
+        <!-- Kubernetes port names (see src/main/jkube/service.yml) -->
+        <jbazann.kube.main-port>12012</jbazann.kube.main-port>
         <jbazann.kube.management-port>12112</jbazann.kube.management-port>
-
-        <!-- Localhost port binding -->
-        <jbazann.customers.port>12012</jbazann.customers.port>
-        <jbazann.customers.management-port>12013</jbazann.customers.management-port>
-        <jbazann.orders.port>12112</jbazann.orders.port>
-        <jbazann.orders.management-port>12113</jbazann.orders.management-port>
-        <jbazann.products.port>12212</jbazann.products.port>
-        <jbazann.products.management-port>12213</jbazann.products.management-port>
-        <jbazann.eureka.port>12312</jbazann.eureka.port>
-        <jbazann.eureka.management-port>12313</jbazann.eureka.management-port>
-
-        <!-- Eureka server -->
-        <jbazann.eureka.host>localhost</jbazann.eureka.host>
-        <jbazann.eureka.server.host>localhost</jbazann.eureka.server.host>
-        <jbazann.eureka.defaultZone>http://${jbazann.eureka.host}:${jbazann.eureka.port}/eureka/</jbazann.eureka.defaultZone>
-        <jbazann.eureka.server.defaultZone>http://${jbazann.eureka.host}:${jbazann.eureka.port}/eureka/</jbazann.eureka.server.defaultZone>
-        <jbazann.eureka.region1>santa-fe-1</jbazann.eureka.region1>
-        <jbazann.eureka.server.registerWithPeer>false</jbazann.eureka.server.registerWithPeer>
 
         <!-- Docker image properties (see kubernetes-maven-plugin below) -->
         <jbazann.jarname>${project.artifactId}-${project.version}.jar</jbazann.jarname>
@@ -61,29 +41,6 @@
         </dependency>
     </dependencies>
     <profiles>
-
-        <!-- Run mvn with '-P kube' to build for kubernetes cluster deployment -->
-        <profile>
-            <id>kube</id>
-            <properties>
-                <jbazann.spring-profiles>default,kube</jbazann.spring-profiles>
-                <jbazann.customers.port>${jbazann.kube.port}</jbazann.customers.port>
-                <jbazann.customers.management-port>${jbazann.kube.management-port}</jbazann.customers.management-port>
-                <jbazann.orders.port>${jbazann.kube.port}</jbazann.orders.port>
-                <jbazann.orders.management-port>${jbazann.kube.management-port}</jbazann.orders.management-port>
-                <jbazann.products.port>${jbazann.kube.port}</jbazann.products.port>
-                <jbazann.products.management-port>${jbazann.kube.management-port}</jbazann.products.management-port>
-                <jbazann.eureka.host>eureka</jbazann.eureka.host>
-                <jbazann.eureka.port>${jbazann.kube.port}</jbazann.eureka.port>
-                <jbazann.eureka.management-port>${jbazann.kube.management-port}</jbazann.eureka.management-port>
-                <!--suppress UnresolvedMavenProperty -->
-                <!-- TODO bad env var name HOSTNAME-->
-                <jbazann.eureka.server.host>${HOSTNAME}.${jbazann.eureka.host}</jbazann.eureka.server.host>
-                <!--suppress UnresolvedMavenProperty -->
-                <jbazann.eureka.server.defaultZone>${JBAZANN_PEERS}</jbazann.eureka.server.defaultZone>
-                <jbazann.eureka.server.registerWithPeer>true</jbazann.eureka.server.registerWithPeer>
-            </properties>
-        </profile>
 
         <!-- Run mvn with '-P skipImage' to skip everything before and including Docker image build -->
         <profile>
@@ -175,6 +132,7 @@
                 <module>metrics</module>
             </modules>
         </profile>
+
     </profiles>
     <dependencyManagement>
         <dependencies>
@@ -249,7 +207,7 @@
                                                 <targetDir>/${jbazann.dirname}</targetDir>
                                             </assembly>
                                             <ports>
-                                                <port>${jbazann.kube.port}</port>
+                                                <port>${jbazann.kube.main-port}</port>
                                                 <port>${jbazann.kube.management-port}</port>
                                             </ports>
                                             <volumes>
@@ -276,7 +234,7 @@
                                         <spring-boot>
                                             <jolokiaPort>0</jolokiaPort>
                                             <prometheusPort>${jbazann.kube.management-port}</prometheusPort>
-                                            <webPort>${jbazann.kube.port}</webPort>
+                                            <webPort>${jbazann.kube.main-port}</webPort>
                                         </spring-boot>
                                     </config>
                                 </generator>
