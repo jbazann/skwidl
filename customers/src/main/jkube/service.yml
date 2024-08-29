@@ -10,7 +10,6 @@ spec:
     - name: app
       port: 12012
       targetPort: 12012
-      appProtocol: https
     - name: probe
       port: 12112
       targetPort: 12112
