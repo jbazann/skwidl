@@ -8,6 +8,19 @@
         <version>3.3.0</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
+    <url/>
+    <licenses>
+        <license/>
+    </licenses>
+    <developers>
+        <developer/>
+    </developers>
+    <scm>
+        <connection/>
+        <developerConnection/>
+        <tag/>
+        <url/>
+    </scm>
     <packaging>pom</packaging>
     <groupId>com.jbazann</groupId>
     <artifactId>tpdan-sb</artifactId>
