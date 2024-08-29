@@ -1,30 +1,26 @@
 spring:
   application:
     name: eureka
-  profiles:
-    active: @jbazann.spring-profiles@
 #  cloud:
 #    refresh:
 #      enabled: false
 
 server:
-  port: @jbazann.eureka.port@
+  port: @jbazann.kube.main-port@
 
 eureka:
   instance:
-    hostname: @jbazann.eureka.server.host@
+    hostname: ${HOSTNAME}.eureka
     metadata-map:
-      region: @jbazann.eureka.region1@
+      region: santa-fe-1
   client:
-    registerWithEureka: @jbazann.eureka.server.registerWithPeer@
-    fetchRegistry: true
-    region: @jbazann.eureka.region1@
+    region: santa-fe-1
     serviceUrl:
-      defaultZone: @jbazann.eureka.server.defaultZone@
+      defaultZone: http://eureka-0.eureka:@jbazann.kube.main-port@/eureka/,http://eureka-1.eureka:@jbazann.kube.main-port@/eureka/
 
 management:
   server:
-    port: @jbazann.eureka.management-port@
+    port: @jbazann.kube.management-port@
   endpoints:
     web:
       exposure:

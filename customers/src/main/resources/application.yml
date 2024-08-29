@@ -1,20 +1,19 @@
 spring:
   application:
     name: customers
-  profiles:
-    active: @jbazann.spring-profiles@
 
 server:
-  port: @jbazann.customers.port@
+  port: @jbazann.kube.main-port@
 
 eureka:
   client:
     serviceUrl:
-      defaultZone: @jbazann.eureka.defaultZone@
+      defaultZone: http://eureka:@jbazann.kube.main-port@/eureka/
+    fetch-registry: false
 
 management:
   server:
-    port: @jbazann.customers.management-port@
+    port: @jbazann.kube.management-port@
   endpoints:
     web:
       exposure:
