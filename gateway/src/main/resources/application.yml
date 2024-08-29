@@ -1,0 +1,42 @@
+spring:
+  application:
+    name: gateway
+  cloud:
+    gateway:
+      discovery:
+        locator:
+          enabled: true
+          lower-case-service-id: true
+          predicates: # adjusted defaults to fix removal of repeated serviceId occurrences (e.g.: /eureka/eureka/apps maps to /apps)
+          # see original values at https://docs.spring.io/spring-cloud-gateway/reference/spring-cloud-gateway/the-discoveryclient-route-definition-locator.html
+            - name: Path
+              args:
+                pattern: "'/'+serviceId+'/app/**'"
+          filters:
+#            - name: CircuitBreaker TODO add this
+#              args:
+#                name: serviceId
+            - name: RewritePath
+              args:
+                regexp: "'/' + serviceId + '/app/(?<remaining>.*)'"
+                replacement: "'/${remaining}'"
+ 
+server:
+  port: @jbazann.kube.main-port@
+
+eureka:
+  client:
+    region: santa-fe-1
+    serviceUrl:
+      defaultZone: http://eureka:@jbazann.kube.main-port@/eureka/
+
+management:
+  server:
+    port: @jbazann.kube.management-port@
+  endpoints:
+    web:
+      exposure:
+        include: httpexchanges,health,gateway
+  endpoint:
+    gateway:
+      enabled: true

@@ -46,6 +46,7 @@
         <module>customers</module>
         <module>orders</module>
         <module>products</module>
+        <module>gateway</module>
     </modules>
     <dependencies>
         <dependency>

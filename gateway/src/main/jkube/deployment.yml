@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: gateway
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: gateway
+  template:
+    metadata:
+      labels:
+        app: gateway
+    spec:
+      containers:
+        - name: app
+          image: jbazann/gateway:latest
+          ports:
+            - name: app
+              containerPort: 12012
+            - name: probe
+              containerPort: 12112
+          livenessProbe:
+            httpGet:
+              path: /actuator/health
+              port: 12112
+              scheme: HTTP
+            initialDelaySeconds: 180
+            timeoutSeconds: 15
+          readinessProbe:
+            httpGet:
+              path: /actuator/health
+              port: 12112
+              scheme: HTTP
+            initialDelaySeconds: 60
+            timeoutSeconds: 15
+          securityContext:
+            privileged: false
