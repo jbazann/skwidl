@@ -20,9 +20,6 @@ spec:
         - name: app
           image: jbazann/eureka:latest
           imagePullPolicy: IfNotPresent
-          env:
-            - name: JBAZANN_PEERS
-              value: http://eureka-0.eureka:12012/eureka/,http://eureka-1.eureka:12012/eureka/
           ports:
             - name: app
               containerPort: 12012
