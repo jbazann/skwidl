@@ -47,7 +47,6 @@
         <module>orders</module>
         <module>products</module>
         <module>gateway</module>
-        <module>graylog</module>
     </modules>
     <dependencies>
         <dependency>
@@ -145,6 +144,14 @@
             <id>metrics</id>
             <modules>
                 <module>metrics</module>
+            </modules>
+        </profile>
+
+        <!-- Run mvn with '-P graylog' to include Graylog in the build -->
+        <profile>
+            <id>graylog</id>
+            <modules>
+                <module>graylog</module>
             </modules>
         </profile>
 
