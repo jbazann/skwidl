@@ -1,0 +1,41 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: opensearch
+  labels:
+    app: opensearch
+  namespace: graylog
+spec:
+  serviceName: opensearch
+  replicas: 1
+  selector:
+    matchLabels:
+      app: opensearch
+  template:
+    metadata:
+      name: opensearch
+      labels:
+        app: opensearch
+    spec:
+      containers:
+        - name: app
+          image: opensearchproject/opensearch:2.15.0
+          imagePullPolicy: IfNotPresent
+          env:
+            - name: OPENSEARCH_INITIAL_ADMIN_PASSWORD
+              value: J_Bazann12
+            - name: OPENSEARCH_JAVA_OPTS
+              value: -Xms512m -Xmx512m
+          volumeMounts:
+            - name: opensearch-cfg
+              mountPath: /usr/share/opensearch/config/opensearch.yml
+              subPath: opensearch.yml
+          ports:
+            - containerPort: 12012
+              protocol: TCP
+      restartPolicy: Always
+      volumes:
+        - name: opensearch-cfg
+          configMap:
+            name: opensearch-cfg
+      

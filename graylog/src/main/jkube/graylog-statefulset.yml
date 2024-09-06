@@ -1,0 +1,32 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: graylog
+  namespace: graylog
+spec:
+  serviceName: graylog
+  replicas: 1
+  selector:
+    matchLabels:
+      app: graylog
+  template:
+    metadata:
+      labels:
+        app: graylog
+    spec:
+      containers:
+        - name: app
+          image: graylog/graylog:6.0.5-1
+          ports:
+            - name: app
+              containerPort: 12012
+          env:
+            - name: POD_NAME # graylog picks this up to set pod-0 as master node
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+          envFrom:
+            - configMapRef:
+                name: graylog-env
+          securityContext:
+            privileged: false
