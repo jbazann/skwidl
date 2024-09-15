@@ -1,0 +1,41 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nodejs
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: nodejs
+  template:
+    metadata:
+      labels:
+        app: nodejs
+    spec:
+      containers:
+        - name: app
+          image: jbazann/frontend:latest
+          imagePullPolicy: IfNotPresent
+          env:
+            - name: PORT
+              value: '12012'
+          ports:
+            - name: app
+              containerPort: 12012
+              protocol: TCP
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 12012
+              scheme: HTTP
+            initialDelaySeconds: 180
+            timeoutSeconds: 15
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 12012
+              scheme: HTTP
+            initialDelaySeconds: 60
+            timeoutSeconds: 15
+      restartPolicy: Always
+      

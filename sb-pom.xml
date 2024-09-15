@@ -32,7 +32,7 @@
         <spring-cloud.version>2023.0.2</spring-cloud.version>
 
         <!-- Custom properties -->
-        <!-- Kubernetes port names (see src/main/jkube/service.yml) -->
+        <!-- Kubernetes port mappings (see src/main/jkube/service.yml) -->
         <jbazann.kube.main-port>12012</jbazann.kube.main-port>
         <jbazann.kube.management-port>12112</jbazann.kube.management-port>
 
@@ -47,6 +47,7 @@
         <module>orders</module>
         <module>products</module>
         <module>gateway</module>
+        <module>frontend</module>
     </modules>
     <dependencies>
         <dependency>

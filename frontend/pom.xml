@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+    <packaging>pom</packaging>
+    <groupId>com.jbazann</groupId>
+    <artifactId>frontend</artifactId>
+    <version>0.0.1-SNAPSHOT</version>
+	<name>frontend</name>
+	<description>bombas de papa frontales</description>
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>com.github.eirslett</groupId>
+				<artifactId>frontend-maven-plugin</artifactId>
+				<version>1.15.0</version>
+				<executions>
+					<!-- Install Node.js and npm -->
+					<execution>
+						<id>install node and npm</id>
+						<goals>
+							<goal>install-node-and-npm</goal>
+						</goals>
+						<configuration>
+							<nodeVersion>v22.8.0</nodeVersion>  <!-- Specify Node.js version -->
+							<npmVersion>9.0.0</npmVersion>     <!-- Specify npm version -->
+						</configuration>
+					</execution>
+
+					<!-- Install npm dependencies -->
+					<execution>
+						<id>npm install</id>
+						<goals>
+							<goal>npm</goal>
+						</goals>
+						<configuration>
+							<arguments>ci --production</arguments>
+						</configuration>
+					</execution>
+
+					<!-- Build the Next.js app -->
+					<execution>
+						<id>npm run build</id>
+						<goals>
+							<goal>npm</goal>
+						</goals>
+						<configuration>
+							<arguments>run build</arguments>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.eclipse.jkube</groupId>
+				<artifactId>kubernetes-maven-plugin</artifactId>
+				<version>1.16.2</version>
+				<executions>
+					<execution>
+						<id>k8s-images</id>
+						<phase>install</phase>
+						<goals>
+							<goal>build</goal>
+						</goals>
+						<configuration>
+							<images>
+								<image>
+									<!-- this is the default image name, see https://eclipse.dev/jkube/docs/kubernetes-maven-plugin/#image-name -->
+									<name>%g/%a:%l</name>
+									<build>
+										<from>node:22.8.0-alpine</from>
+										<assembly>
+											<targetDir>/jbazann</targetDir>
+											<layers>
+												<layer>
+													<id>app</id>
+													<fileSets>
+														<fileSet>
+															<directory>.next/</directory>
+														</fileSet>
+													</fileSets>
+												</layer>
+											</layers>
+										</assembly>
+										<ports>
+											<port>12012</port>
+											<!--port>${jbazann.kube.management-port}</port-->
+										</ports>
+										<entryPoint>
+											<shell>node /jbazann/.next/standalone/server.js</shell>
+										</entryPoint>
+									</build>
+								</image>
+							</images>
+						</configuration>
+					</execution>
+					<execution>
+						<id>k8s-deploy</id>
+						<phase>deploy</phase>
+						<goals>
+							<goal>resource</goal>
+							<goal>apply</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+
+			<!-- Skip install default behavior -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-install-plugin</artifactId>
+				<version>3.1.2</version>
+				<configuration>
+					<skip>true</skip>
+				</configuration>
+			</plugin>
+
+			<!-- Skip deploy default behavior -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-deploy-plugin</artifactId>
+				<version>3.1.2</version>
+				<configuration>
+					<skip>true</skip>
+				</configuration>
+			</plugin>
+
+		</plugins>
+	</build>
+</project>
