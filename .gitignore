@@ -1,13 +1,33 @@
-orders/HELP.md
-customers/HELP.md
-products/HELP.md
-target/
+/**/target/
 !.mvn/wrapper/maven-wrapper.jar
-!**/src/main/**/target/
-!**/src/test/**/target/
 
-### Config server ###
-config/repository/
+### Nodejs ###
+node_modules/
+/**/node/
+.pnp
+.pnp.js
+.yarn/install-state.gz
+# next.js
+.next/
+out/
+# testing
+coverage/
+# misc
+.DS_Store
+*.pem
+# production
+/**/build/
+# debug
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+# local env files
+.env*.local
+# vercel
+.vercel
+# typescript
+*.tsbuildinfo
+next-env.d.ts
 
 ### STS ###
 .apt_generated
