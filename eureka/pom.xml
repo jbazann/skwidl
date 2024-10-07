@@ -5,9 +5,9 @@
 	<packaging>jar</packaging>
 	<parent>
 		<groupId>com.jbazann</groupId>
-		<artifactId>tpdan-sb</artifactId>
+		<artifactId>tpdan</artifactId>
 		<version>0.0.1-SNAPSHOT</version>
-		<relativePath>/../sb-pom.xml</relativePath>
+		<relativePath>/../pom.xml</relativePath>
 	</parent>
 	<artifactId>eureka</artifactId>
 	<version>0.0.1-SNAPSHOT</version>

@@ -23,25 +23,37 @@
     </scm>
     <packaging>pom</packaging>
     <groupId>com.jbazann</groupId>
-    <artifactId>tpdan-sb</artifactId>
+    <artifactId>tpdan</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>tpdan-sb</name>
+    <name>tpdan</name>
     <description>bombas de papa</description>
     <properties>
         <java.version>21</java.version>
         <spring-cloud.version>2023.0.2</spring-cloud.version>
 
         <!-- Custom properties -->
+        <!-- AMQP Credentials -->
+        <jbazann.amqp.username>${env.JBAZANN_AMQP_USR}</jbazann.amqp.username>
+        <jbazann.amqp.password>${env.JBAZANN_AMQP_PWD}</jbazann.amqp.password>
+        <!-- RabbitMQ message routing -->
+        <jbazann.rabbit.exchanges.customers>TPDAN_CUSTOMERS</jbazann.rabbit.exchanges.customers>
+        <jbazann.rabbit.exchanges.orders>TPDAN_ORDERS</jbazann.rabbit.exchanges.orders>
+        <jbazann.rabbit.exchanges.users>TPDAN_USERS</jbazann.rabbit.exchanges.users>
+        <!-- SAGA queue: only for events that may trigger saga-pattern operations -->
+        <jbazann.rabbit.queues.saga>SAGA</jbazann.rabbit.queues.saga>
+        <!-- OPERATION queue: only for saga-pattern operation results (success/failure) -->
+        <jbazann.rabbit.queues.operation>OPERATION</jbazann.rabbit.queues.operation>
+
         <!-- Kubernetes port mappings (see src/main/jkube/service.yml) -->
         <jbazann.kube.main-port>12012</jbazann.kube.main-port>
         <jbazann.kube.management-port>12112</jbazann.kube.management-port>
-
         <!-- Docker image properties (see kubernetes-maven-plugin below) -->
         <jbazann.jarname>${project.artifactId}-${project.version}.jar</jbazann.jarname>
         <jbazann.dirname>jbazann</jbazann.dirname>
         <jbazann.volname>${jbazann.dirname}/mounted</jbazann.volname>
     </properties>
     <modules>
+        <module>messaging</module>
         <module>eureka</module>
         <module>customers</module>
         <module>orders</module>
@@ -160,6 +172,11 @@
     <dependencyManagement>
         <dependencies>
             <dependency>
+                <groupId>org.hibernate.validator</groupId>
+                <artifactId>hibernate-validator</artifactId>
+                <version>8.0.1.Final</version>
+            </dependency>
+            <dependency>
                 <groupId>org.springframework.cloud</groupId>
                 <artifactId>spring-cloud-dependencies</artifactId>
                 <version>${spring-cloud.version}</version>
@@ -185,7 +202,7 @@
             <resource>
                 <directory>${project.basedir}/src/main/resources/</directory>
                 <includes>
-                    <include>application.yml</include>
+                    <include>**.yml</include>
                 </includes>
                 <filtering>true</filtering>
             </resource>

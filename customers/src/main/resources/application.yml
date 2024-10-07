@@ -10,6 +10,10 @@ spring:
     ssl:
       verify-hostname: false
       enabled: true
+  datasource:
+    url: jdbc:mysql://mysql:12012/public
+    username: customers
+    password: customers
 
 server:
   port: @jbazann.kube.main-port@
