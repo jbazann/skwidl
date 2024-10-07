@@ -1,6 +1,15 @@
 spring:
   application:
     name: customers
+  rabbitmq:
+    host: amqp-0
+    port: 5671
+    username: @jbazann.amqp.username@
+    password: @jbazann.amqp.password@
+    virtual-host: @jbazann.amqp.username@
+    ssl:
+      verify-hostname: false
+      enabled: true
 
 server:
   port: @jbazann.kube.main-port@
@@ -18,3 +27,13 @@ management:
     web:
       exposure:
         include: httpexchanges,health
+
+jbazann:
+  rabbit:
+    exchanges:
+      customers: @jbazann.rabbit.exchanges.customers@
+      orders: @jbazann.rabbit.exchanges.orders@
+      users: @jbazann.rabbit.exchanges.users@
+    queues:
+      saga: @jbazann.rabbit.queues.saga@
+      operation: @jbazann.rabbit.queues.operation@

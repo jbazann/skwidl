@@ -1,6 +1,15 @@
 spring:
   application:
     name: orders
+  rabbitmq:
+    host: amqp-0
+    port: 5671
+    username: @jbazann.amqp.username@
+    password: @jbazann.amqp.password@
+    virtual-host: @jbazann.amqp.username@
+    ssl:
+      verify-hostname: false
+      enabled: true
 
 server:
   port: @jbazann.kube.main-port@
