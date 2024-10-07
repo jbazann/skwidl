@@ -18,7 +18,7 @@ spec:
         app: opensearch
     spec:
       containers:
-        - name: app
+        - name: db
           image: opensearchproject/opensearch:2.15.0
           imagePullPolicy: IfNotPresent
           env:

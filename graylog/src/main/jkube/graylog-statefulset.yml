@@ -15,7 +15,7 @@ spec:
         app: graylog
     spec:
       containers:
-        - name: app
+        - name: logs
           image: graylog/graylog:6.0.5-1
           ports:
             - name: app
