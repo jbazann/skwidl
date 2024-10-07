@@ -1,0 +1,43 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: mysql
+  labels:
+    app: mysql
+spec:
+  serviceName: mysql
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mysql
+  template:
+    metadata:
+      name: mysql
+      labels:
+        app: mysql
+    spec:
+      containers:
+        - name: db
+          image: mysql:9.0.1-oracle
+          imagePullPolicy: IfNotPresent
+          env:
+            - name: MYSQL_ROOT_PASSWORD
+              value: jbazann
+            - name: MYSQL_DATABASE
+              value: public
+            - name: MYSQL_USER
+              value: customers
+            - name : MYSQL_PASSWORD
+              value: customers
+          ports:
+            - containerPort: 12012
+              protocol: TCP
+          volumeMounts:
+            - name: mysql-cfg
+              mountPath: /etc/mysql/my.cnf
+              subPath: my.cnf
+      volumes:
+        - name: mysql-cfg
+          configMap:
+            name: mysql-cfg
+      restartPolicy: Always

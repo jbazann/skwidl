@@ -1,0 +1,122 @@
+package com.jbazann.customers.customer;
+
+import java.math.BigDecimal;
+import java.util.List;
+
+import com.jbazann.customers.customer.dto.CustomerDTO;
+import jakarta.persistence.*;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotNull;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.experimental.Accessors;
+import org.springframework.beans.factory.annotation.Value;
+
+import java.util.UUID;
+
+@NoArgsConstructor
+@AllArgsConstructor
+@Getter
+@Setter
+@Accessors(chain = true, fluent = true)
+@Entity
+@Table(name = "customer", schema = "customer")
+public class Customer {
+
+    @Id
+    @NotNull
+    private UUID id;
+    @NotNull
+    private String name;
+    @NotNull @Email
+    private String email;
+    @NotNull
+    private String cuit;
+    @NotNull @Min(0) @Value("${jbazann.customers.maxDebt}")
+    private BigDecimal maxDebt;
+    @NotNull @Min(0) @Value("${jbazann.customers.maxActiveSites}")
+    private Integer maxActiveSites;
+    @ElementCollection
+    @NotNull
+    private List<@NotNull UUID> allowedUsers;
+    @ElementCollection
+    @NotNull
+    private List<@NotNull UUID> activeSites;
+    @NotNull @Min(0)
+    private Integer pendingSites;
+
+    public CustomerDTO toDto() {
+        return new CustomerDTO(id, name, email, cuit, maxDebt, maxActiveSites, allowedUsers, activeSites, pendingSites);
+    }
+
+    /**
+     * Increment the {@link Customer#pendingSites} counter by 1.
+     * @return this;
+     */
+    public Customer countPendingSite() {
+        pendingSites += 1;
+        return this;
+    }
+
+    /**
+     * If possible, decrement the {@link Customer#pendingSites} counter by 1.
+     * Do nothing otherwise.
+     * @return this;
+     */
+    public Customer removePendingSite() {
+        if (pendingSites > 0) {
+            pendingSites -= 1;
+        }
+        return this;
+    }
+
+    /**
+     * Adds a user ID to the {@link Customer#allowedUsers} list if it's not already present.
+     * Does nothing otherwise.
+     * @param userId a user ID that is presumed to be valid.
+     * @return this.
+     */
+    public Customer addAllowedUser(@NotNull UUID userId) {
+        if(!allowedUsers.contains(userId)) {
+            allowedUsers.add(userId);
+        }
+        return this;
+    }
+
+    /**
+     * Removes the first occurrence of a user ID from the {@link Customer#allowedUsers} list.
+     * @param userId a user ID that may or may not be on the list.
+     * @return this.
+     */
+    public Customer removeAllowedUser(@NotNull UUID userId) {
+        allowedUsers.remove(userId);
+        return this;
+    }
+
+    /**
+     * Adds a site ID to the {@link Customer#activeSites} list if it's not already present.
+     * Does nothing otherwise.
+     * @param siteId a site ID that is presumed to be valid.
+     * @return this.
+     */
+    public Customer addActiveSite(@NotNull UUID siteId) {
+        if(!activeSites.contains(siteId)) {
+            activeSites.add(siteId);
+        }
+        return this;
+    }
+
+    /**
+     * Removes the first occurrence of a site ID from the {@link Customer#activeSites} list.
+     * @param siteId a site ID that may or may not be on the list.
+     * @return this.
+     */
+    public Customer removeActiveSite(@NotNull UUID siteId) {
+        activeSites.remove(siteId);
+        return this;
+    }
+
+}

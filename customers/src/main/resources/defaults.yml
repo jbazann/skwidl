@@ -1,0 +1,6 @@
+jbazann:
+  customers:
+    maxDebt: 120_000
+    maxActiveSites: 5
+    name: Juan Cliente
+    email: juan@cliente.soy
