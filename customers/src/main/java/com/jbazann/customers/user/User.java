@@ -22,6 +22,7 @@ import java.util.UUID;
 public class User {
 
     @Id
+    @GeneratedValue
     @NotNull
     private UUID id;
     @NotNull

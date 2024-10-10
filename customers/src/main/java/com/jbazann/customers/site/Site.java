@@ -24,6 +24,7 @@ import java.util.UUID;
 public class Site {
 
     @Id
+    @GeneratedValue
     @NotNull
     private UUID id;
     @NotNull @NotEmpty
@@ -32,6 +33,7 @@ public class Site {
     private String coordinates;
     @NotNull @Min(0)
     private BigDecimal budget;
+    @Enumerated(EnumType.STRING)
     @NotNull
     private SiteStatus status;
     @NotNull
