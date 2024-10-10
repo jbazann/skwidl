@@ -99,11 +99,24 @@
 	</dependencies>
 
 	<build>
+		<resources>
+			<resource>
+				<filtering>true</filtering>
+				<targetPath>META-INF/</targetPath>
+				<directory>${project.basedir}/src/main/resources/mysql/</directory>
+				<includes>
+					<include>persistence.xml</include>
+				</includes>
+			</resource>
+			<resource>
+				<directory>${project.basedir}/src/main/resources/</directory>
+				<includes>
+					<include>**.yml</include>
+				</includes>
+				<filtering>true</filtering>
+			</resource>
+		</resources>
 		<plugins>
-			<plugin>
-				<groupId>org.eclipse.jkube</groupId>
-				<artifactId>kubernetes-maven-plugin</artifactId>
-			</plugin>
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
@@ -126,6 +139,110 @@
 					</execution>
 				</executions>
 			</plugin>
+
+			<plugin>
+				<!-- https://github.com/archiecobbs/hibernate-jpa-schemagen -->
+				<groupId>org.dellroad</groupId>
+				<artifactId>hibernate-jpa-schemagen</artifactId>
+				<version>6.4.0</version>
+				<executions>
+					<execution>
+						<id>generate-ddl-customer</id>
+						<phase>process-classes</phase>
+						<configuration>
+							<jpaUnit>customer</jpaUnit>
+							<outputFile>${project.basedir}/src/main/resources/mysql/customer/ddl.sql</outputFile>
+							<verifyFile>${project.basedir}/src/main/resources/mysql/customer/ddl.sql</verifyFile>
+						</configuration>
+						<goals>
+							<goal>export-jpa-schema</goal>
+						</goals>
+					</execution>
+					<execution>
+						<id>generate-ddl-site</id>
+						<phase>process-classes</phase>
+						<configuration>
+							<jpaUnit>site</jpaUnit>
+							<outputFile>${project.basedir}/src/main/resources/mysql/site/ddl.sql</outputFile>
+							<verifyFile>${project.basedir}/src/main/resources/mysql/site/ddl.sql</verifyFile>
+						</configuration>
+						<goals>
+							<goal>export-jpa-schema</goal>
+						</goals>
+					</execution>
+					<execution>
+						<id>generate-ddl-user</id>
+						<phase>process-classes</phase>
+						<configuration>
+							<jpaUnit>user</jpaUnit>
+							<outputFile>${project.basedir}/src/main/resources/mysql/user/ddl.sql</outputFile>
+							<verifyFile>${project.basedir}/src/main/resources/mysql/user/ddl.sql</verifyFile>
+						</configuration>
+						<goals>
+							<goal>export-jpa-schema</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+
+			<plugin>
+				<groupId>org.eclipse.jkube</groupId>
+				<artifactId>kubernetes-maven-plugin</artifactId>
+				<version>1.16.2</version>
+				<executions>
+					<execution>
+						<id>k8s-images-db</id>
+						<phase>install</phase>
+						<goals>
+							<goal>build</goal>
+						</goals>
+						<configuration>
+							<images>
+								<image>
+									<name>%g/customersdb:%l</name>
+									<build>
+										<from>mysql:9.0.1-oracle</from>
+										<assembly>
+											<excludeFinalOutputArtifact>true</excludeFinalOutputArtifact>
+											<targetDir>/docker-entrypoint-initdb.d</targetDir>
+											<layers>
+												<layer>
+													<id>mysql</id>
+													<baseDirectory>${project.build.directory}</baseDirectory>
+													<files>
+														<file>
+															<source>${project.basedir}/src/main/resources/mysql/master.sql</source>
+															<outputDirectory>${project.build.directory}/docker/jbazann/customersdb/latest/build/mysql/docker-entrypoint-initdb.d/</outputDirectory>
+															<destName>0.sql</destName>
+														</file>
+														<file>
+															<source>${project.basedir}/src/main/resources/mysql/customer/ddl.sql</source>
+															<outputDirectory>${project.build.directory}/docker/jbazann/customersdb/latest/build/mysql/docker-entrypoint-initdb.d/ddl/</outputDirectory>
+															<destName>customer.sql</destName>
+														</file>
+														<file>
+															<source>${project.basedir}/src/main/resources/mysql/site/ddl.sql</source>
+															<outputDirectory>${project.build.directory}/docker/jbazann/customersdb/latest/build/mysql/docker-entrypoint-initdb.d/ddl/</outputDirectory>
+															<destName>site.sql</destName>
+														</file>
+														<file>
+															<source>${project.basedir}/src/main/resources/mysql/user/ddl.sql</source>
+															<outputDirectory>${project.build.directory}/docker/jbazann/customersdb/latest/build/mysql/docker-entrypoint-initdb.d/ddl/</outputDirectory>
+															<destName>user.sql</destName>
+														</file>
+													</files>
+												</layer>
+											</layers>
+										</assembly>
+									</build>
+								</image>
+							</images>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+
 		</plugins>
-	</build>
+
+</build>
 </project>
