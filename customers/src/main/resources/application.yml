@@ -11,9 +11,24 @@ spring:
       verify-hostname: false
       enabled: true
   datasource:
-    url: jdbc:mysql://mysql:12012/public
-    username: customers
-    password: customers
+    customer:
+      jdbc-url: jdbc:mysql://mysql:12012/customer
+      username: customers
+      password: customers
+      jpa:
+        hibernate:
+          dialect: org.hibernate.dialect.MySQLDialect
+    site:
+      jdbc-url: jdbc:mysql://mysql:12012/site
+      username: customers
+      password: customers
+      jpa:
+        hibernate:
+          dialect: org.hibernate.dialect.MySQLDialect
+    user:
+      jdbc-url: jdbc:mysql://mysql:12012/user
+      username: customers
+      password: customers
 
 server:
   port: @jbazann.kube.main-port@

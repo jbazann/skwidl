@@ -18,7 +18,7 @@ spec:
     spec:
       containers:
         - name: db
-          image: mysql:9.0.1-oracle
+          image: jbazann/customersdb:latest
           imagePullPolicy: IfNotPresent
           env:
             - name: MYSQL_ROOT_PASSWORD
@@ -40,4 +40,6 @@ spec:
         - name: mysql-cfg
           configMap:
             name: mysql-cfg
+        - name: init-ddl
+
       restartPolicy: Always
