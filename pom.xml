@@ -51,6 +51,9 @@
         <jbazann.jarname>${project.artifactId}-${project.version}.jar</jbazann.jarname>
         <jbazann.dirname>jbazann</jbazann.dirname>
         <jbazann.volname>${jbazann.dirname}/mounted</jbazann.volname>
+
+        <!-- To be used in programmatic sync requests, see ISO-8601 Duration -->
+        <jbazann.timeout.standard>PT5S</jbazann.timeout.standard>
     </properties>
     <modules>
         <module>messaging</module>
@@ -278,6 +281,33 @@
                                         </spring-boot>
                                     </config>
                                 </generator>
+                            </configuration>
+                        </execution>
+                    </executions>
+                </plugin>
+
+                <!-- Import routes.yml into each module -->
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-resources-plugin</artifactId>
+                    <version>3.2.0</version>
+                    <executions>
+                        <execution>
+                            <id>copy-routes-file</id>
+                            <phase>generate-resources</phase>
+                            <goals>
+                                <goal>copy-resources</goal>
+                            </goals>
+                            <configuration>
+                                <outputDirectory>${project.build.outputDirectory}</outputDirectory>
+                                <resources>
+                                    <resource>
+                                        <directory>${project.basedir}/../</directory>
+                                        <includes>
+                                            <include>routes.yml</include>
+                                        </includes>
+                                    </resource>
+                                </resources>
                             </configuration>
                         </execution>
                     </executions>

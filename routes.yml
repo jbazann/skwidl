@@ -1,0 +1,11 @@
+jbazann:
+  gateway:
+    products:
+      base: http://gateway:@jbazann.kube.main-port@/products/
+      validate: validate/
+      reserve: reserve/
+    customers:
+      base: http://gateway:@jbazann.kube.main-port@/customers/
+      budget: customer/{id}/budget/
+      bill: customer/{id}/billFor/{amount}
+      credit: customer/{id}/creditFor/{amount}

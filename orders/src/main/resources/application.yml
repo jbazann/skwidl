@@ -1,6 +1,13 @@
 spring:
   application:
     name: orders
+  config:
+    import: routes.yml # ignore warnings and see main project plugins
+  data:
+    mongodb:
+      username: orders
+      password: orders
+      uri: mongodb://mongodb:12012/orders
   rabbitmq:
     host: amqp-0
     port: 5671
@@ -10,6 +17,7 @@ spring:
     ssl:
       verify-hostname: false
       enabled: true
+
 
 server:
   port: @jbazann.kube.main-port@
@@ -27,3 +35,13 @@ management:
     web:
       exposure:
         include: httpexchanges,health
+
+jbazann:
+  timeout:
+    standard: @jbazann.timeout.standard@
+  rabbit:
+    exchanges:
+      orders: @jbazann.rabbit.exchanges.orders@
+    queues:
+      saga: @jbazann.rabbit.queues.saga@
+      operation: @jbazann.rabbit.queues.operation@

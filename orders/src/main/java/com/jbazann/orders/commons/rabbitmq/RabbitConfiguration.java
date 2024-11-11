@@ -1,4 +1,4 @@
-package com.jbazann.customers.commons.rabbitmq;
+package com.jbazann.orders.commons.rabbitmq;
 
 import org.springframework.amqp.support.converter.Jackson2JsonMessageConverter;
 import org.springframework.amqp.support.converter.MessageConverter;
