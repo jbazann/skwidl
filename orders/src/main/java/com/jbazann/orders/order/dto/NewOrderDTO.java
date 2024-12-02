@@ -1,8 +1,6 @@
 package com.jbazann.orders.order.dto;
 
-import com.jbazann.orders.order.entities.Detail;
 import com.jbazann.orders.order.entities.Order;
-import com.jbazann.orders.order.entities.StatusHistory;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
