@@ -4,10 +4,7 @@ import com.jbazann.orders.order.dto.DetailDTO;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import lombok.experimental.Accessors;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
@@ -16,12 +13,14 @@ import org.springframework.data.mongodb.core.mapping.MongoId;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.util.Objects;
 import java.util.UUID;
 
 @NoArgsConstructor
 @AllArgsConstructor
 @Setter
 @Getter
+@EqualsAndHashCode
 @Accessors(chain = true, fluent = true)
 @Document
 public class Detail {
@@ -55,4 +54,5 @@ public class Detail {
     public DetailDTO toDto() {
         return new DetailDTO(id, product, amount, discount, unitCost, totalCost);
     }
+
 }

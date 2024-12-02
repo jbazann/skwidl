@@ -6,10 +6,7 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import lombok.experimental.Accessors;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -27,6 +24,7 @@ import java.util.UUID;
 @AllArgsConstructor
 @Setter
 @Getter
+@EqualsAndHashCode
 @Accessors(chain = true, fluent = true)
 @Document(collection="order")
 public class Order {
