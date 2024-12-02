@@ -2,7 +2,7 @@ spring:
   application:
     name: orders
   config:
-    import: routes.yml # ignore warnings and see main project plugins
+    import: routes.yml # ignore warnings and see main project (tpdan) plugins
   data:
     mongodb:
       username: orders
