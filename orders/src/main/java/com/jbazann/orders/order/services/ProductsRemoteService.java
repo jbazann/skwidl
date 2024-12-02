@@ -5,7 +5,6 @@ import com.jbazann.orders.order.dto.ProductAmountDTO;
 import jakarta.validation.constraints.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.PropertySource;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
@@ -19,7 +18,7 @@ import java.util.stream.Collectors;
 
 @Service
 @Validated
-public class ProductsRemoteService {
+public class ProductsRemoteService implements ProductsRemoteServiceInterface {
 
     // Map<> keys expected by the external service
     // to be used when other classes must construct maps for batch operations

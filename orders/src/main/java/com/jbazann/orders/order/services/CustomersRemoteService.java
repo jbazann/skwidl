@@ -16,7 +16,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 @Service
-public class CustomersRemoteService {
+public class CustomersRemoteService implements CustomersRemoteServiceInterface {
 
     private final WebClient.Builder webClientBuilder;
 
@@ -42,7 +42,7 @@ public class CustomersRemoteService {
                 .retrieve().bodyToMono(BigDecimal.class).toFuture();
     }
 
-    public Boolean billFor(UUID id, BigDecimal amount) {
+    public Boolean billFor(@NotNull UUID id,@NotNull BigDecimal amount) {
         return webClientBuilder.baseUrl(CUSTOMERS_BASE).build().post()
                 .uri(CUSTOMERS_BILL,id,amount)
                 .retrieve().bodyToMono(Boolean.class).block(TIMEOUT);

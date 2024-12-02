@@ -28,14 +28,14 @@ import static com.jbazann.orders.order.services.ProductsRemoteService.*;
 @Validated
 public class OrderService {
 
-    private final ProductsRemoteService productsRemoteService;
-    private final CustomersRemoteService customersRemoteService;
+    private final ProductsRemoteServiceInterface productsRemoteService;
+    private final CustomersRemoteServiceInterface customersRemoteService;
     private final OrderNumberService orderNumberService;
     private final OrderRepository orderRepository;
     private final RabbitPublisher publisher;
 
     @Autowired
-    public OrderService(ProductsRemoteService productsRemoteService, CustomersRemoteService customersRemoteService, OrderNumberService orderNumberService, OrderRepository orderRepository, RabbitPublisher publisher) {
+    public OrderService(ProductsRemoteServiceInterface productsRemoteService, CustomersRemoteServiceInterface customersRemoteService, OrderNumberService orderNumberService, OrderRepository orderRepository, RabbitPublisher publisher) {
         this.productsRemoteService = productsRemoteService;
         this.customersRemoteService = customersRemoteService;
         this.orderNumberService = orderNumberService;
