@@ -174,6 +174,14 @@
     </profiles>
     <dependencyManagement>
         <dependencies>
+            <!-- Manually upgrade to 6.2.x to get the new @TestBean annotation -->
+            <dependency>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-framework-bom</artifactId>
+                <version>6.2.0</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
             <dependency>
                 <groupId>org.hibernate.validator</groupId>
                 <artifactId>hibernate-validator</artifactId>
