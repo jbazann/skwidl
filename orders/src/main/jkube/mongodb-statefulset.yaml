@@ -20,34 +20,17 @@ spec:
         - name: db
           image: mongodb/mongodb-community-server:7.0.9-ubuntu2204
           imagePullPolicy: IfNotPresent
-          args:
-            - mongod
-            - --config
-            - /etc/mongod.conf
-          env:
-            - name: MONGODB_USERNAME
-              value: orders
-            - name: MONGODB_PASSWORD
-              value: orders
-            - name: MONGODB_DATABASE
-              value: orders
           ports:
             - name: app
               containerPort: 12012
           volumeMounts:
-            - name: mongodb-cfg
-              mountPath: /etc/mongod.conf
-              subPath: mongod.conf
-            - name: mongodb-init
-              mountPath: /docker-entrypoint-initdb.d
+            - mountPath: /etc/mongod.conf
+              name: mongodb-cfg
       restartPolicy: Always
       volumes:
         - name: mongodb-cfg
           configMap:
             name: mongodb-cfg
-        - name: mongodb-init
-          configMap:
-            name: mongodb-cfg
             items:
-              - key: mongo-init.js
-                path: mongo-init.js
+              - key: mongod.conf
+                path: mongod.conf
