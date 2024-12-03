@@ -1,5 +1,6 @@
 package com.jbazann.orders.order.dto;
 
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.jbazann.orders.order.entities.StatusHistory;
 import lombok.*;
 import lombok.experimental.Accessors;
@@ -12,6 +13,7 @@ import java.util.UUID;
 @Getter
 @Setter
 @EqualsAndHashCode
+@JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
 @Accessors(chain = true, fluent = true)
 public class StatusHistoryDTO {
 

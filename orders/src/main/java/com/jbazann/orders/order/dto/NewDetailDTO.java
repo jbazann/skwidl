@@ -1,5 +1,6 @@
 package com.jbazann.orders.order.dto;
 
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.jbazann.orders.order.entities.Detail;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -14,6 +15,7 @@ import java.util.UUID;
 @AllArgsConstructor
 @Getter
 @Setter
+@JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
 @Accessors(chain = true, fluent = true)
 public class NewDetailDTO {
 
