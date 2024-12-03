@@ -3,12 +3,12 @@ package com.jbazann.orders.mocks;
 import com.jbazann.orders.order.exceptions.CustomerNotFoundException;
 import com.jbazann.orders.order.services.CustomersRemoteServiceInterface;
 import com.jbazann.orders.testdata.StandardDataset;
+import org.junit.jupiter.api.Assertions;
 import org.mockito.Mockito;
 import org.mockito.stubbing.Answer;
 
 import java.math.BigDecimal;
 import java.util.Arrays;
-import java.util.Objects;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
@@ -29,8 +29,8 @@ public class CustomersRemoteServiceMock implements CustomersRemoteServiceInterfa
         when(mock.billFor(any(UUID.class),any(BigDecimal.class)))
                 .thenReturn(false);
         Arrays.stream(StandardDataset.values())
+                .filter(StandardDataset::hasCustomer)
                 .map(StandardDataset::getCustomer)
-                .filter(Objects::nonNull)
                 .forEach(customer -> when(mock.billFor(eq(customer.id()),any(BigDecimal.class)))
                         .thenAnswer((Answer<Boolean>) (invocationOnMock) ->
                                 customer.bill(invocationOnMock.getArgument(1))
@@ -45,16 +45,15 @@ public class CustomersRemoteServiceMock implements CustomersRemoteServiceInterfa
                         // All unknown Customers are valid but have no budget.
                         CompletableFuture.completedFuture(BigDecimal.ZERO)
                 );
-
         Arrays.stream(StandardDataset.values())
+                .filter(StandardDataset::hasCustomer)
                 .map(StandardDataset::getCustomer)
-                .filter(Objects::nonNull)
                 .forEach(customer -> when(mock.validateCustomerAndFetchBudget(eq(customer.id())))
                         .thenAnswer((Answer<CompletableFuture<BigDecimal>>) (invocationOnMock) ->
                                 CompletableFuture.completedFuture(customer.budget())
                         )
                 );
-
+        Assertions.assertTrue(StandardDataset.INVALID_CUSTOMER.hasCustomer());
         when(mock.validateCustomerAndFetchBudget(eq(StandardDataset.INVALID_CUSTOMER.customerId())))
                 .thenThrow(new CustomerNotFoundException("Testing Exception."));
 

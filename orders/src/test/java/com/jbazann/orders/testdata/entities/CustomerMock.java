@@ -19,7 +19,6 @@ import java.util.UUID;
 @Setter
 @Accessors(chain = true, fluent = true)
 @AllArgsConstructor
-@NoArgsConstructor
 public class CustomerMock {
 
     private UUID id;
@@ -30,9 +29,22 @@ public class CustomerMock {
         return new CustomerMock(id, budget, budgetResetValue);
     }
 
+    /**
+     * For null safety where specific values aren't needed. This
+     * should reduce the refactoring load when adding new fields.
+     * Randomly regenerated fields should be replaced with values from a seeded
+     * sequence for test consistency.
+     * @return an instance with no null fields.
+     */
+    public static CustomerMock nonNull() {
+        return new CustomerMock(UUID.randomUUID(), BigDecimal.ZERO, BigDecimal.ZERO);
+    }
+
     public boolean bill(BigDecimal amount) {
-        if (amount.compareTo(BigDecimal.ZERO) < 0) return false;
-        if (budget.compareTo(amount) < 0) return false;
+        if (budget == null ||
+                budget.compareTo(BigDecimal.ZERO) < 0 ||
+                amount.compareTo(BigDecimal.ZERO) < 0 ||
+                budget.compareTo(amount) < 0) return false;
         budget = budget.subtract(amount);
         return true;
     }
