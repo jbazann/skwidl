@@ -20,7 +20,7 @@ public class StandardDatasetDataBuilder {
 
     public StandardDatasetDataBuilder setCustomerBudget(BigDecimal budget) {
         if (target.customer() == null) {
-            target.customer(new CustomerMock()
+            target.customer(CustomerMock.nonNull()
                     .id(target.order().customer()));
         }
         target.customer()

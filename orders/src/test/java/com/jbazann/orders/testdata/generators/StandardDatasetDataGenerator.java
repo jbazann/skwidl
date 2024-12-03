@@ -31,8 +31,12 @@ public abstract class StandardDatasetDataGenerator {
     }
 
     public static StandardDatasetData orderListFromSameCustomer() {
+        final List<Order> orders = orderGenerator.standardOrderListFromSameCustomer();
         return new StandardDatasetData()
-                .orders(orderGenerator.standardOrderListFromSameCustomer());
+                .orders(orders)
+                .order(orders.getFirst())
+                .customer(CustomerMock.nonNull()
+                        .id(orders.getFirst().customer()));
     }
 
     public static StandardDatasetData newOrderEmptyDetailList() {
@@ -65,13 +69,10 @@ public abstract class StandardDatasetDataGenerator {
 
     public static StandardDatasetData newOrderFree() {
         final Order order = orderGenerator.generateFreeOrder();
-        final BigDecimal budget = new BigDecimal(0);
         return new StandardDatasetData()
                 .order(order)
-                .customer(new CustomerMock()
-                        .id(order.customer())
-                        .budget(budget)
-                        .budgetResetValue(budget));
+                .customer(CustomerMock.nonNull()
+                        .id(order.customer()));
     }
 
     public static StandardDatasetData newOrderValid() {
@@ -79,7 +80,7 @@ public abstract class StandardDatasetDataGenerator {
         final BigDecimal budget = DetailGenerator.getTotalCost(order.detail());
         return new StandardDatasetData()
                 .order(order)
-                .customer(new CustomerMock()
+                .customer(CustomerMock.nonNull()
                         .id(order.customer())
                         .budget(budget)
                         .budgetResetValue(budget));

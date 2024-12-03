@@ -26,8 +26,7 @@ public enum StandardDataset {
     PERSISTED_LIST_FROM_CUSTOMER(orderListFromSameCustomer()),
     NOT_FOUND(genericOrder()),
     BUDGET_500(startFrom(genericOrder())
-            .setCustomerBudget(new BigDecimal(500))
-            .build()
+            .setCustomerBudget(new BigDecimal(500)).build()
     ),
 
     ;
@@ -79,15 +78,9 @@ public enum StandardDataset {
         resetBudgets();
     }
 
-    public CustomerMock getCustomer() {
-        if(data.customer() == null) return null;
-        return data.customer().copy();
-    }
-
     public NewOrderDTO asNewOrderDTO() {
-        final Order o = getOrder();
-        return o == null ? null :
-                new NewOrderDTO()
+        final Order o = data.order();
+        return new NewOrderDTO()
                 .user(o.user())
                 .customer(o.customer())
                 .site(o.site())
@@ -105,27 +98,32 @@ public enum StandardDataset {
     }
 
     public OrderDTO asOrderDTO() {
-        Order o = getOrder();
-        return o == null ? null : o.toDto();
+        return data.order().toDto();
+    }
+
+    public CustomerMock getCustomer() {
+        return data.customer().copy();
+    }
+
+    public boolean hasCustomer() {
+        return data.customer() != null;
+    }
+
+    public boolean hasOrderList() {
+        return data.orders() != null;
+    }
+
+    public boolean hasOrder() {
+        return data.order() != null;
     }
 
     public UUID customerId() {
-        if( data.customer() != null ) return data.customer().id();
-        if( data.order() != null ) return data.order().customer();
-        if( data.orders() != null ) return data.orders().getFirst().customer();
-        return null;
+        return data.customer().id();
     }
 
     public UUID orderId() {
-        final Order o = getOrder();
-        return o == null ? null : o.id();
+        return data.order().id();
     }
 
-    private Order getOrder() {
-        Order o = data.order();
-        if( o == null && data.orders() != null && !data.orders().isEmpty() )
-            o = data.orders().getFirst();
-        return o;
-    }
 
 }
