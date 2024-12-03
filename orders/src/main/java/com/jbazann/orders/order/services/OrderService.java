@@ -90,9 +90,11 @@ public class OrderService {
 
     public Order newOrder(@NotNull NewOrderDTO orderDto) {
         Order order = orderDto.toEntity()
+                .id(UUID.randomUUID())// TODO safe ids
                 .orderNumber(orderNumberService.next())
                 .ordered(LocalDateTime.now())
                 .totalCost(BigDecimal.valueOf(-1));
+        order.detail().forEach(d -> d.id(UUID.randomUUID()));// TODO safe ids
 
         // Request validation and unit cost for all the products in the order.
         final List<Map<String, Object>> batchToValidate = new LinkedList<>();
@@ -193,30 +195,35 @@ public class OrderService {
 
     private Order reject(@NotNull Order order, @NotNull String detail) {
         return orderRepository.save(order.setStatus(new StatusHistory()
+                .id(UUID.randomUUID()) // TODO safe ids
                 .status(StatusHistory.Status.REJECTED)
                 .detail(detail.isEmpty() ? "Rejected." : detail)));
     }
 
     private Order accept(@NotNull Order order, @NotNull String detail) {
         return orderRepository.save(order.setStatus(new StatusHistory()
+                .id(UUID.randomUUID())// TODO safe ids
                 .status(StatusHistory.Status.ACCEPTED)
                 .detail(detail.isEmpty() ? "Accepted." : detail)));
     }
 
     private Order prepare(@NotNull Order order, @NotNull String detail) {
         return orderRepository.save(order.setStatus(new StatusHistory()
+                .id(UUID.randomUUID())// TODO safe ids
                 .status(StatusHistory.Status.IN_PREPARATION)
                 .detail(detail.isEmpty() ? "Products reserved." : detail)));
     }
 
     private Order cancel(@NotNull Order order, @NotNull String detail) {
         return orderRepository.save(order.setStatus(new StatusHistory()
+                .id(UUID.randomUUID())// TODO safe ids
                 .status(StatusHistory.Status.CANCELED)
                 .detail(detail.isEmpty() ? "Order cancelled" : detail)));
     }
 
     private Order deliver(@NotNull Order order, @NotNull String detail) {
         return orderRepository.save(order.setStatus(new StatusHistory()
+                .id(UUID.randomUUID())// TODO safe ids
                 .status(StatusHistory.Status.DELIVERED)
                 .detail(detail.isEmpty() ? "Products delivered." : detail)));
     }
