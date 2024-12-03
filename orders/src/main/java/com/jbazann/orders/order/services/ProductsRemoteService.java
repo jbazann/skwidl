@@ -92,7 +92,7 @@ public class ProductsRemoteService implements ProductsRemoteServiceInterface {
     }
 
 
-    public Boolean reserveProducts(Map<UUID, ProductAmountDTO> products) {
+    public Boolean reserveProducts(@NotNull Map<UUID, ProductAmountDTO> products) {
         return webClientBuilder.baseUrl(PRODUCTS_BASE).build()
                 .post().uri(PRODUCTS_RESERVE_STOCK)
                 .bodyValue(products.values().stream().collect(Collectors.toMap(ProductAmountDTO::id, ProductAmountDTO::amount)))
