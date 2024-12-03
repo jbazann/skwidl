@@ -31,7 +31,6 @@ public class Order {
 
     @MongoId(FieldType.STRING)
     @NotNull
-    @NotNull
     private UUID id;
     @NotNull
     private LocalDateTime ordered;
