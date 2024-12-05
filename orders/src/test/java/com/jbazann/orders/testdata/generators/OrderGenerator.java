@@ -1,10 +1,10 @@
 package com.jbazann.orders.testdata.generators;
 
+import com.jbazann.orders.commons.utils.TimeProvider;
 import com.jbazann.orders.order.entities.Detail;
 import com.jbazann.orders.order.entities.Order;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -41,7 +41,7 @@ public class OrderGenerator {
                 .orElseGet(() -> new BigDecimal(0));
         final Order order = new Order()
                 .id(uuid.next())
-                .ordered(LocalDateTime.now().minusMinutes(random.nextInt((24 * 60) * 90)))// 90 Days.
+                .ordered(TimeProvider.localDateTimeNow().minusMinutes(random.nextInt((24 * 60) * 90)))// 90 Days.
                 .orderNumber(ORDER_NUMBER)
                 .site(uuid.next())
                 .customer(uuid.next())
@@ -58,7 +58,7 @@ public class OrderGenerator {
         final BigDecimal TOTAL_COST = new BigDecimal(0); // Ideally freeDetailList guarantees this.
         final Order order = new Order()
                 .id(uuid.next())
-                .ordered(LocalDateTime.now().minusMinutes(random.nextInt((24 * 60) * 90)))// 90 Days.
+                .ordered(TimeProvider.localDateTimeNow().minusMinutes(random.nextInt((24 * 60) * 90)))// 90 Days.
                 .orderNumber(ORDER_NUMBER)
                 .site(uuid.next())
                 .customer(uuid.next())

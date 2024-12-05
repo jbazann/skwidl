@@ -5,6 +5,7 @@ import com.jbazann.orders.commons.events.CancelPreparedOrderEvent;
 import com.jbazann.orders.commons.events.DeliverOrderEvent;
 import com.jbazann.orders.commons.events.DomainEvent;
 import com.jbazann.orders.commons.rabbitmq.RabbitPublisher;
+import com.jbazann.orders.commons.utils.TimeProvider;
 import com.jbazann.orders.order.OrderRepository;
 import com.jbazann.orders.order.dto.*;
 import com.jbazann.orders.order.entities.Detail;
@@ -17,7 +18,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
@@ -96,7 +96,7 @@ public class OrderService {
         Order order = orderDto.toEntity()
                 .id(UUID.randomUUID())// TODO safe ids
                 .orderNumber(orderNumberService.next())
-                .ordered(LocalDateTime.now())
+                .ordered(TimeProvider.localDateTimeNow())
                 .totalCost(BigDecimal.valueOf(-1));
         order.detail().forEach(d -> d.id(UUID.randomUUID()));// TODO safe ids
 
