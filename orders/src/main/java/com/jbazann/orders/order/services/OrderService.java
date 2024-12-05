@@ -43,6 +43,10 @@ public class OrderService {
         this.publisher = publisher;
     }
 
+    public boolean orderExists(@NotNull UUID id) {
+        return orderRepository.existsById(id.toString());
+    }
+
     public void deliverOrder(@NotNull UUID id,
                               @NotNull StatusUpdateDTO update) {
         if( !update.status().equals(StatusHistory.Status.DELIVERED) )

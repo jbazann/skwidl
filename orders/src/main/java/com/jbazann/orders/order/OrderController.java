@@ -5,6 +5,9 @@ import com.jbazann.orders.order.dto.OrderDTO;
 import com.jbazann.orders.order.dto.StatusUpdateDTO;
 import com.jbazann.orders.order.entities.Order;
 import com.jbazann.orders.order.entities.StatusHistory;
+import com.jbazann.orders.order.exceptions.BadRequestException;
+import com.jbazann.orders.order.exceptions.CustomerNotFoundException;
+import com.jbazann.orders.order.exceptions.OrderNotFoundException;
 import com.jbazann.orders.order.services.OrderService;
 import jakarta.validation.constraints.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,12 +46,43 @@ public class OrderController {
     @ResponseStatus(HttpStatus.ACCEPTED)
     public void updateOrder(@PathVariable UUID id,
                                 @NotNull @RequestBody StatusUpdateDTO update) {
+        if (!orderService.orderExists(id)) throw new OrderNotFoundException("No Order found with id: " + id +'.');
         switch(update.status()) {
             case DELIVERED -> orderService.deliverOrder(id, update);
             case CANCELED -> orderService.cancelOrder(id, update);
-            default -> throw new IllegalArgumentException("Status must be one of: " +
+            default -> throw new BadRequestException("Status must be one of: " +
                         StatusHistory.Status.DELIVERED + ", " + StatusHistory.Status.CANCELED + '.');
         };
+    }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    public String exception(Exception exception) { // TODO proper exception handling
+        return exception.getMessage();
+    }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public String badRequestException(BadRequestException exception) {
+        return exception.getMessage();
+    }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public String customerNotFoundException(CustomerNotFoundException exception) {
+        return exception.getMessage();
+    }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public String illegalArgumentException(IllegalArgumentException exception) {
+        return exception.getMessage();
+    }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public String orderNotFoundException(OrderNotFoundException exception) {
+        return exception.getMessage();
     }
 
 }
