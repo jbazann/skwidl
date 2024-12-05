@@ -7,6 +7,7 @@ import com.jbazann.orders.order.entities.Order;
 import com.jbazann.orders.order.entities.StatusHistory;
 import com.jbazann.orders.order.exceptions.BadRequestException;
 import com.jbazann.orders.order.exceptions.CustomerNotFoundException;
+import com.jbazann.orders.order.exceptions.MalformedArgumentException;
 import com.jbazann.orders.order.exceptions.OrderNotFoundException;
 import com.jbazann.orders.order.services.OrderService;
 import jakarta.validation.constraints.NotNull;
@@ -54,6 +55,12 @@ public class OrderController {
             default -> throw new BadRequestException("Status must be one of: " +
                         StatusHistory.Status.DELIVERED + ", " + StatusHistory.Status.CANCELED + '.');
         };
+    }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public String malformedArgumentException(MalformedArgumentException exception) {
+        return exception.getMessage();
     }
 
     @ExceptionHandler

@@ -11,6 +11,7 @@ import com.jbazann.orders.order.dto.*;
 import com.jbazann.orders.order.entities.Detail;
 import com.jbazann.orders.order.entities.Order;
 import com.jbazann.orders.order.entities.StatusHistory;
+import com.jbazann.orders.order.exceptions.MalformedArgumentException;
 import jakarta.validation.constraints.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Example;
@@ -93,6 +94,8 @@ public class OrderService {
     }
 
     public Order newOrder(@NotNull NewOrderDTO orderDto) {
+        final StringBuilder message = validate(orderDto);
+        if(!message.isEmpty()) throw new MalformedArgumentException(message.toString());
         Order order = orderDto.toEntity()
                 .id(UUID.randomUUID())// TODO safe ids
                 .orderNumber(orderNumberService.next())
@@ -239,4 +242,25 @@ public class OrderService {
     public List<Order> getCustomerOrders(UUID customer) {
         return orderRepository.findAll(Example.of(new Order().customer(customer)));
     }
+
+    public StringBuilder validate(@NotNull NewOrderDTO o) {
+        final StringBuilder order = new StringBuilder();
+        final StringBuilder detail = new StringBuilder();
+        final StringBuilder message = new StringBuilder();
+        if( o.customer() == null ) order.append("'customer', ");
+        if( o.user() == null ) order.append("'user', ");
+        if( o.site() == null ) order.append("'site', ");
+        if( o.detail() == null ) order.append("'detail', ");
+        if (o.detail() != null && !o.detail().isEmpty()) {
+            if(o.detail().stream().anyMatch(d -> d.amount() == null)) detail.append("'amount', ");
+            if(o.detail().stream().anyMatch(d -> d.product() == null)) detail.append("'product', ");
+        }
+        if(!order.isEmpty()) message.append("The field(s) ").append(order).append("cannot be null.");
+        if(o.detail() != null && o.detail().isEmpty()) message.append("The field 'detail' cannot be empty.");
+        if(!detail.isEmpty()) message.append("The detail field(s) ").append(detail).append("cannot be null.");
+        if(o.detail() != null && o.detail().stream().anyMatch(d -> d.amount() < 0 ))
+            message.append("The detail field 'amount' must be a positive integer.");
+        return message;
+    }
+
 }
