@@ -1,6 +1,7 @@
 package com.jbazann.orders.commons.events;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
 
 import java.time.LocalDateTime;
@@ -8,6 +9,7 @@ import java.util.UUID;
 
 @Data
 @Accessors(fluent = true)
+@EqualsAndHashCode
 public abstract class DomainEvent {
  /*
  Intentionally not extending ApplicationEvent because lombok complains about constructors,
