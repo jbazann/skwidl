@@ -4,4 +4,4 @@ metadata:
   name: amqp-0
 spec:
   type: ExternalName
-  externalName: jackal.rmq.cloudamqp.com
+  externalName: jaragua.lmq.cloudamqp.com
