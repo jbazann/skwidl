@@ -36,13 +36,13 @@
         <jbazann.amqp.username>${env.JBAZANN_AMQP_USR}</jbazann.amqp.username>
         <jbazann.amqp.password>${env.JBAZANN_AMQP_PWD}</jbazann.amqp.password>
         <!-- RabbitMQ message routing -->
-        <jbazann.rabbit.exchanges.customers>TPDAN_CUSTOMERS</jbazann.rabbit.exchanges.customers>
-        <jbazann.rabbit.exchanges.orders>TPDAN_ORDERS</jbazann.rabbit.exchanges.orders>
-        <jbazann.rabbit.exchanges.users>TPDAN_USERS</jbazann.rabbit.exchanges.users>
-        <!-- SAGA queue: only for events that may trigger saga-pattern operations -->
-        <jbazann.rabbit.queues.saga>SAGA</jbazann.rabbit.queues.saga>
-        <!-- OPERATION queue: only for saga-pattern operation results (success/failure) -->
-        <jbazann.rabbit.queues.operation>OPERATION</jbazann.rabbit.queues.operation>
+        <jbazann.rabbit.exchanges.event>TPDAN_EVENT</jbazann.rabbit.exchanges.event>
+        <jbazann.rabbit.queues.orders.event>TPDAN_ORDERS_EVENT</jbazann.rabbit.queues.orders.event>
+        <jbazann.rabbit.routing.orders.event>"*.event.#"</jbazann.rabbit.routing.orders.event>
+        <jbazann.rabbit.queues.customers.event>TPDAN_CUSTOMERS_EVENT</jbazann.rabbit.queues.customers.event>
+        <jbazann.rabbit.routing.customers.event>"*.event.#"</jbazann.rabbit.routing.customers.event>
+        <jbazann.rabbit.queues.products.event>TPDAN_PRODUCTS_EVENT</jbazann.rabbit.queues.products.event>
+        <jbazann.rabbit.routing.products.event>"*.event.#"</jbazann.rabbit.routing.products.event>
 
         <!-- Kubernetes port mappings (see src/main/jkube/service.yml) -->
         <jbazann.kube.main-port>12012</jbazann.kube.main-port>
