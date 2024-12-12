@@ -42,7 +42,8 @@ jbazann:
     standard: @jbazann.timeout.standard@
   rabbit:
     exchanges:
-      orders: @jbazann.rabbit.exchanges.orders@
+      event: @jbazann.rabbit.exchanges.event@
     queues:
-      saga: @jbazann.rabbit.queues.saga@
-      operation: @jbazann.rabbit.queues.operation@
+      event: @jbazann.rabbit.queues.orders.event@
+    routing: # [escape].operation.queue.[source].[target]
+      event: @jbazann.rabbit.routing.orders.event@
