@@ -1,10 +1,10 @@
 package com.jbazann.orders.order.services;
 
-import com.jbazann.orders.commons.events.CancelAcceptedOrderEvent;
-import com.jbazann.orders.commons.events.CancelPreparedOrderEvent;
-import com.jbazann.orders.commons.events.DeliverOrderEvent;
-import com.jbazann.orders.commons.events.DomainEvent;
-import com.jbazann.orders.commons.rabbitmq.RabbitPublisher;
+import com.jbazann.orders.commons.async.events.CancelAcceptedOrderEvent;
+import com.jbazann.orders.commons.async.events.CancelPreparedOrderEvent;
+import com.jbazann.orders.commons.async.events.DeliverOrderEvent;
+import com.jbazann.orders.commons.async.events.DomainEvent;
+import com.jbazann.orders.commons.async.rabbitmq.RabbitPublisher;
 import com.jbazann.orders.commons.utils.TimeProvider;
 import com.jbazann.orders.order.OrderRepository;
 import com.jbazann.orders.order.dto.*;
@@ -27,7 +27,7 @@ import static com.jbazann.orders.order.services.ProductsRemoteService.*;
 
 @Service
 @Validated
-public class OrderService {
+public class SyncOrderService {
 
     private final ProductsRemoteServiceInterface productsRemoteService;
     private final CustomersRemoteServiceInterface customersRemoteService;
@@ -36,7 +36,7 @@ public class OrderService {
     private final RabbitPublisher publisher;
 
     @Autowired
-    public OrderService(ProductsRemoteServiceInterface productsRemoteService, CustomersRemoteServiceInterface customersRemoteService, OrderNumberService orderNumberService, OrderRepository orderRepository, RabbitPublisher publisher) {
+    public SyncOrderService(ProductsRemoteServiceInterface productsRemoteService, CustomersRemoteServiceInterface customersRemoteService, OrderNumberService orderNumberService, OrderRepository orderRepository, RabbitPublisher publisher) {
         this.productsRemoteService = productsRemoteService;
         this.customersRemoteService = customersRemoteService;
         this.orderNumberService = orderNumberService;
@@ -59,8 +59,10 @@ public class OrderService {
                 DomainEvent event = new DeliverOrderEvent()
                         .orderId(order.id())
                         .customerId(order.customer())
-                        .returnedFunds(order.totalCost());
-                publisher.publish(event,publisher.SAGA,publisher.ORDERS);
+                        .returnedFunds(order.totalCost())
+                        .type(DomainEvent.Type.REQUEST)
+                        .setRouting();
+                publisher.publish(event);
             }
             default -> throw new IllegalStateException("Cannot deliver Order in status: " + order.getStatus());
         };
@@ -79,15 +81,19 @@ public class OrderService {
                         .customerId(order.customer())
                         .returnedFunds(order.totalCost())
                         .returnedStock(order.detail().stream()
-                                .collect(Collectors.toMap(Detail::product, Detail::amount)));
-                publisher.publish(event,publisher.SAGA,publisher.ORDERS);
+                                .collect(Collectors.toMap(Detail::product, Detail::amount)))
+                        .type(DomainEvent.Type.REQUEST)
+                        .setRouting();
+                publisher.publish(event);
             }
             case ACCEPTED -> {
                 DomainEvent event = new CancelAcceptedOrderEvent()
                         .orderId(order.id())
                         .customerId(order.customer())
-                        .returnedFunds(order.totalCost());
-                publisher.publish(event,publisher.SAGA,publisher.ORDERS);
+                        .returnedFunds(order.totalCost())
+                        .type(DomainEvent.Type.REQUEST)
+                        .setRouting();
+                publisher.publish(event);
             }
             default -> throw new IllegalStateException("Cannot deliver Order in status: " + order.getStatus());
         };
@@ -219,13 +225,6 @@ public class OrderService {
                 .id(UUID.randomUUID())// TODO safe ids
                 .status(StatusHistory.Status.IN_PREPARATION)
                 .detail(detail.isEmpty() ? "Products reserved." : detail)));
-    }
-
-    private Order cancel(@NotNull Order order, @NotNull String detail) {
-        return orderRepository.save(order.setStatus(new StatusHistory()
-                .id(UUID.randomUUID())// TODO safe ids
-                .status(StatusHistory.Status.CANCELED)
-                .detail(detail.isEmpty() ? "Order cancelled" : detail)));
     }
 
     private Order deliver(@NotNull Order order, @NotNull String detail) {
