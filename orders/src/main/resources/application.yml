@@ -8,6 +8,7 @@ spring:
       username: orders
       password: orders
       uri: mongodb://mongodb:12012/orders
+      uuid-representation: standard
   rabbitmq:
     host: amqp-0
     port: 5671
