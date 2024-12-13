@@ -1,12 +1,12 @@
 package com.jbazann.orders.order.services;
 
-import com.jbazann.orders.commons.async.events.CancelAcceptedOrderEvent;
-import com.jbazann.orders.commons.async.events.CancelPreparedOrderEvent;
-import com.jbazann.orders.commons.async.events.DeliverOrderEvent;
-import com.jbazann.orders.commons.async.events.DomainEvent;
-import com.jbazann.orders.commons.async.orchestration.DomainEventProcessorService;
-import com.jbazann.orders.commons.events.*;
-import com.jbazann.orders.commons.async.rabbitmq.RabbitPublisher;
+import com.jbazann.commons.async.events.CancelAcceptedOrderEvent;
+import com.jbazann.commons.async.events.CancelPreparedOrderEvent;
+import com.jbazann.commons.async.events.DeliverOrderEvent;
+import com.jbazann.commons.async.events.DomainEvent;
+import com.jbazann.commons.async.orchestration.DomainEventProcessorService;
+import com.jbazann.commons.async.events.*;
+import com.jbazann.commons.async.rabbitmq.RabbitPublisher;
 import com.jbazann.orders.order.OrderRepository;
 import com.jbazann.orders.order.entities.Order;
 import com.jbazann.orders.order.entities.StatusHistory;
@@ -17,7 +17,7 @@ import org.springframework.stereotype.Service;
 import java.util.Optional;
 import java.util.UUID;
 
-import static com.jbazann.orders.commons.async.events.DomainEvent.Type.*;
+import static com.jbazann.commons.async.events.DomainEvent.Type.*;
 
 // TODO better creational pattern for events
 @Service
@@ -49,7 +49,7 @@ public class AsyncOrderService {
                 return;
             }
             if (event.type() == REQUEST) {
-                final DomainEvent response = CancelAcceptedOrderEvent.from(event)
+                final DomainEvent response = CancelAcceptedOrderEvent.copyOf(event)
                         .context("Order not found.")
                         .type(REJECT)
                         .setRouting();
@@ -66,7 +66,7 @@ public class AsyncOrderService {
 
         final StatusHistory.Status STATUS = OPT.get().statusHistory().getLast().status();
         if (STATUS == StatusHistory.Status.CANCELED && event.type() == REQUEST) {
-            final DomainEvent response = CancelAcceptedOrderEvent.from(event)
+            final DomainEvent response = CancelAcceptedOrderEvent.copyOf(event)
                     .context("Order was already canceled.")
                     .type(REJECT)
                     .setRouting();
@@ -75,7 +75,7 @@ public class AsyncOrderService {
         }
 
         if(STATUS != StatusHistory.Status.ACCEPTED && event.type() == REQUEST) {
-            final DomainEvent response = CancelAcceptedOrderEvent.from(event)
+            final DomainEvent response = CancelAcceptedOrderEvent.copyOf(event)
                     .context("Order status was expected to be 'accepted', but is instead " + STATUS + '.')
                     .type(DomainEvent.Type.REJECT)
                     .setRouting();
@@ -88,7 +88,7 @@ public class AsyncOrderService {
          */ // TODO bad comments
 
         if(event.type() == REQUEST) {
-            final DomainEvent response = CancelAcceptedOrderEvent.from(event)
+            final DomainEvent response = CancelAcceptedOrderEvent.copyOf(event)
                     .context("The operation is possible.")
                     .transactionQuorum(event.transactionQuorum().setReady(ORDERS))
                     .type(ACCEPT)
@@ -98,7 +98,7 @@ public class AsyncOrderService {
         }
 
         if (event.type() == ACCEPT && !event.transactionQuorum().isReady(ORDERS)) {
-            standardEventProcessor.fixOutdatedQuorum(CancelAcceptedOrderEvent.from(event));
+            standardEventProcessor.fixOutdatedQuorum(CancelAcceptedOrderEvent.copyOf(event));
             return;
         }
 
@@ -113,7 +113,7 @@ public class AsyncOrderService {
                  * covered and that we live in a happy reality.
                  * TODO this has no implications for this service, but it may be very bad for the others, review.
                  */
-                final DomainEvent response = CancelAcceptedOrderEvent.from(event)
+                final DomainEvent response = CancelAcceptedOrderEvent.copyOf(event)
                         .context("A commit was processed, but the operation had already been performed. " +
                                 "Found order status detail: "+ OPT.get().getStatus().detail())
                         .type(DISCARD)// TODO
@@ -122,7 +122,7 @@ public class AsyncOrderService {
                 return;
             }
 
-            final DomainEvent response = CancelAcceptedOrderEvent.from(event)
+            final DomainEvent response = CancelAcceptedOrderEvent.copyOf(event)
                     .context("Order gracefully canceled.")
                     .type(ACK)
                     .setRouting();
