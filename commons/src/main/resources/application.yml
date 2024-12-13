@@ -1,0 +1,3 @@
+spring:
+  application:
+    name: commons # TODO is this even correct to have here
