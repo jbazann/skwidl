@@ -8,8 +8,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.messaging.support.GenericMessage;
 import org.springframework.stereotype.Service;
 
-
-@Service
 public class RabbitPublisher {
 
     @Value("${jbazann.rabbit.exchanges.event}")
@@ -19,7 +17,6 @@ public class RabbitPublisher {
 
     private final RabbitMessagingTemplate rabbitMessagingTemplate;
 
-    @Autowired
     public RabbitPublisher(final RabbitMessagingTemplate rabbitMessagingTemplate) {
         this.rabbitMessagingTemplate = rabbitMessagingTemplate;
     }

@@ -1,6 +1,7 @@
 package com.jbazann.orders.commons.async.rabbitmq;
 
 import org.springframework.amqp.rabbit.annotation.EnableRabbit;
+import org.springframework.amqp.rabbit.core.RabbitMessagingTemplate;
 import org.springframework.amqp.support.converter.Jackson2JsonMessageConverter;
 import org.springframework.amqp.support.converter.MessageConverter;
 import org.springframework.context.annotation.Bean;
@@ -21,6 +22,11 @@ public class RabbitConfiguration {
     @Primary
     public MessageConverter messageConverter() {
         return new Jackson2JsonMessageConverter();
+    }
+
+    @Bean
+    public RabbitPublisher rabbitPublisher(final RabbitMessagingTemplate rabbitMessagingTemplate) {
+        return new RabbitPublisher(rabbitMessagingTemplate);
     }
 
 }
