@@ -9,17 +9,20 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
-public class OrchestrationConfiguration {
+public class OrchestrationCoordinatorConfiguration {
 
     @Bean
     @ConditionalOnMissingBean
     public ApplicationMember missingIdentity() {
-        throw new IllegalStateException("An ApplicationMember Bean was not provided.");
+        throw new IllegalStateException("An ApplicationMember @Bean was not provided.");
     }
 
     @Bean
     public DomainEventTracer standardDomainEventTracer(ApplicationMember identity) {
         return new DomainEventTracer(identity);
+    @Bean
+    public DomainEventTracer standardDomainEventTracer(ApplicationMember identity, RabbitPublisher publisher) {
+        return new DomainEventTracer(identity, publisher);
     }
 
     @Bean
@@ -28,8 +31,7 @@ public class OrchestrationConfiguration {
     }
 
     @Bean
-    public DomainEventProcessorService standardDomainEventProcessor(RabbitPublisher publisher,
-                                                                    ApplicationMember identity,
+    public DomainEventProcessorService standardDomainEventProcessor(ApplicationMember identity,
                                                                     TransactionPhaseExecutor executor,
                                                                     TransactionResponseProvider responseProvider,
                                                                     DomainEventTracer tracer) {

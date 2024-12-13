@@ -18,15 +18,13 @@ public class CancelPreparedOrderEvent extends DomainEvent {
     private BigDecimal returnedFunds;
     private Map<UUID, Integer> returnedStock;
 
-    public static CancelPreparedOrderEvent from(CancelPreparedOrderEvent event) {
-        return (CancelPreparedOrderEvent) new CancelPreparedOrderEvent()
-                .orderId(event.orderId)
-                .customerId(event.customerId)
-                .returnedFunds(event.returnedFunds)
-                .returnedStock(event.returnedStock)
-                .type(event.type())
-                .context(event.context())
-                .setRouting();
+    @Override
+    protected DomainEvent copy() {
+        return new CancelPreparedOrderEvent()
+                .orderId(orderId)
+                .customerId(customerId)
+                .returnedFunds(returnedFunds)
+                .returnedStock(returnedStock);
     }
 
 }

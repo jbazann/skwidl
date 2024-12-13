@@ -19,11 +19,11 @@ import java.util.List;
 @EqualsAndHashCode
 public final class TransactionQuorum {
 
-    private List<ApplicationMember> quorum;
+    private List<ApplicationMember> members;
     private ApplicationMember coordinator;
 
     public boolean isMember(ApplicationMember member) {
-        return quorum.contains(member);
+        return members.contains(member);
     }
 
     public boolean isCoordinator(ApplicationMember member) {

@@ -16,14 +16,12 @@ public class CancelAcceptedOrderEvent extends DomainEvent {
     private UUID customerId;
     private BigDecimal returnedFunds;
 
-    public static CancelAcceptedOrderEvent from(CancelAcceptedOrderEvent event) {
-        return (CancelAcceptedOrderEvent) new CancelAcceptedOrderEvent()
-                .orderId(event.orderId)
-                .customerId(event.customerId)
-                .returnedFunds(event.returnedFunds)
-                .type(event.type())
-                .context(event.context())
-                .setRouting();
+    @Override
+    protected DomainEvent copy() {
+        return new CancelAcceptedOrderEvent()
+                .orderId(orderId)
+                .customerId(customerId)
+                .returnedFunds(returnedFunds);
     }
-
+    
 }

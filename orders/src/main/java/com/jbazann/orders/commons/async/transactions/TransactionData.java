@@ -1,13 +1,12 @@
 package com.jbazann.orders.commons.async.transactions;
 
-import com.jbazann.orders.commons.identity.ApplicationMember;
+import com.jbazann.orders.commons.async.events.DomainEvent;
 import com.jbazann.orders.commons.utils.TimeProvider;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
 
 import java.time.LocalDateTime;
-import java.util.List;
 import java.util.UUID;
 
 @Data
@@ -18,14 +17,19 @@ public abstract class TransactionData {
     private UUID id;
     private LocalDateTime expires;
     private TransactionStatus status;
-    private TransactionQuorum transactionQuorum;
 
-    public boolean expired() {
+    public TransactionData initFrom(final TransactionData data, DomainEvent event) {
+        return data.id(event.transaction().id())
+                .expires(event.transaction().expires())
+                .status(TransactionStatus.NOT_PERSISTED);
+    }
+
+    public boolean isExpired() {
         return TimeProvider.localDateTimeNow().isAfter(expires);
     }
 
     public enum TransactionStatus {
-        UNKNOWN,
+        NOT_PERSISTED,
         STARTED,
         ACCEPTED,
         REJECTED,

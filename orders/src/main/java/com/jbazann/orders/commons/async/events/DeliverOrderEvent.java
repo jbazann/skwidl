@@ -16,14 +16,11 @@ public class DeliverOrderEvent extends DomainEvent {
     private UUID customerId;
     private BigDecimal returnedFunds;
 
-    public static DeliverOrderEvent from(DeliverOrderEvent event) {
-        return (DeliverOrderEvent) new DeliverOrderEvent()
-                .orderId(event.orderId)
-                .customerId(event.customerId)
-                .returnedFunds(event.returnedFunds)
-                .type(event.type())
-                .context(event.context())
-                .setRouting();
+    @Override
+    protected DomainEvent copy() {
+        return new DeliverOrderEvent()
+                .orderId(orderId)
+                .customerId(customerId)
+                .returnedFunds(returnedFunds);
     }
-
 }

@@ -1,10 +1,10 @@
 package com.jbazann.orders.commons.async.transactions;
 
-import java.util.UUID;
+import com.jbazann.orders.commons.async.events.DomainEvent;
 
 public interface TransactionCoordinatorDataRepository {
 
-    TransactionCoordinatorData findByIdOrCreate(UUID transactionId);
+    TransactionCoordinatorData getForEvent(DomainEvent event);
     TransactionCoordinatorData persist(TransactionCoordinatorData transaction);
 
 }
