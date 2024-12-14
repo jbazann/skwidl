@@ -5,6 +5,6 @@ import java.util.UUID;
 public interface CoordinatedTransactionRepository {
 
     CoordinatedTransaction findById(UUID transactionId);
-    CoordinatedTransaction persist(CoordinatedTransaction transaction);
+    CoordinatedTransaction save(CoordinatedTransaction transaction);
 
 }

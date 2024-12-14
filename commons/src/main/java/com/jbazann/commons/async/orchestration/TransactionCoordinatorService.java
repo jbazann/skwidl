@@ -50,13 +50,13 @@ public class TransactionCoordinatorService {
         TransientCoordinatedTransaction transaction = (TransientCoordinatedTransaction)
                 repository.findById(event.transaction().id());
         if(transaction == null) transaction = (TransientCoordinatedTransaction)
-                repository.persist(TransientCoordinatedTransaction.from(event));
+                repository.save(TransientCoordinatedTransaction.from(event));
         return transaction;
     }
 
     private void expired(DomainEvent event, TransientCoordinatedTransaction transaction) {
         if(!CONCLUDED_EXPIRED.equals(transaction.status()))
-            repository.persist(transaction.status(CONCLUDED_EXPIRED));
+            repository.save(transaction.status(CONCLUDED_EXPIRED));
         tracer.reject(event, "Transactional operation timed out.");
     }
 
@@ -64,7 +64,7 @@ public class TransactionCoordinatorService {
         if (!transaction.isCommitted()) {
             tracer.commit(event, "Accepted by full quorum.");
             // Only persist after publishing to protect against double write inconsistencies.
-            return (TransientCoordinatedTransaction) repository.persist(transaction.isCommitted(true));
+            return (TransientCoordinatedTransaction) repository.save(transaction.isCommitted(true));
         }
         return transaction;
     }
@@ -72,27 +72,27 @@ public class TransactionCoordinatorService {
     private TransientCoordinatedTransaction reject(DomainEvent event, TransientCoordinatedTransaction transaction) {
         transaction.addReject(event.sentBy());
         if (transaction.isFullyRejected())
-            return (TransientCoordinatedTransaction) repository.persist(transaction.status(CONCLUDED_REJECT));
+            return (TransientCoordinatedTransaction) repository.save(transaction.status(CONCLUDED_REJECT));
         return transaction;
     }
 
     private TransientCoordinatedTransaction accept(DomainEvent event, TransientCoordinatedTransaction transaction) {
         transaction.addAccept(event.sentBy());
-        return (TransientCoordinatedTransaction) repository.persist(transaction.status(ACCEPTED));
+        return (TransientCoordinatedTransaction) repository.save(transaction.status(ACCEPTED));
     }
 
     private TransientCoordinatedTransaction rollback(DomainEvent event, TransientCoordinatedTransaction transaction) {
         transaction.addRollback(event.sentBy());
         if(transaction.isFullyRejected())
             transaction.status(CONCLUDED_REJECT);
-        return (TransientCoordinatedTransaction) repository.persist(transaction);
+        return (TransientCoordinatedTransaction) repository.save(transaction);
     }
 
     private TransientCoordinatedTransaction ackCommit(DomainEvent event, TransientCoordinatedTransaction transaction) {
         if(!transaction.isCommitted()) return transaction;// TODO maybe something should happen here.
         transaction.addCommit(event.sentBy());
         if(transaction.isFullyCommitted()) transaction.status(CONCLUDED_COMMIT);
-        return (TransientCoordinatedTransaction) repository.persist(transaction);
+        return (TransientCoordinatedTransaction) repository.save(transaction);
     }
 
     private void acknowledge(DomainEvent event, TransientCoordinatedTransaction transaction) {
