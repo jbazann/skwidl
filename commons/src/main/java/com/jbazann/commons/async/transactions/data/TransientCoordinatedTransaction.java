@@ -1,4 +1,4 @@
-package com.jbazann.commons.async.transactions;
+package com.jbazann.commons.async.transactions.data;
 
 import com.jbazann.commons.async.events.DomainEvent;
 import com.jbazann.commons.identity.ApplicationMember;
@@ -11,7 +11,7 @@ import java.util.*;
 
 @Data
 @Accessors(fluent = true)
-public class TransactionCoordinatorData {
+public class TransientCoordinatedTransaction implements CoordinatedTransaction {
 
     private UUID id;
     private Map<ApplicationMember, QuorumStatus> quorumStatus;
@@ -20,11 +20,11 @@ public class TransactionCoordinatorData {
     private boolean isCommitted;
     private LocalDateTime expires;
 
-    public static TransactionCoordinatorData from(DomainEvent event) {
+    public static TransientCoordinatedTransaction from(DomainEvent event) {
         final Map<ApplicationMember, QuorumStatus> quorumStatus = new HashMap<>();
         event.transaction().quorum().members()
                 .forEach(member -> quorumStatus.put(member, QuorumStatus.UNKNOWN));
-        return new TransactionCoordinatorData()
+        return new TransientCoordinatedTransaction()
                 .id(event.transaction().id())
                 .status(TransactionStatus.NOT_PERSISTED)
                 .quorumStatus(quorumStatus)
@@ -37,22 +37,22 @@ public class TransactionCoordinatorData {
         return TimeProvider.localDateTimeNow().isAfter(expires);
     }
 
-    public TransactionCoordinatorData addAccept(ApplicationMember member) {
+    public TransientCoordinatedTransaction addAccept(ApplicationMember member) {
         quorumStatus.put(member, QuorumStatus.ACCEPT);
         return this;
     }
 
-    public TransactionCoordinatorData addCommit(ApplicationMember member) {
+    public TransientCoordinatedTransaction addCommit(ApplicationMember member) {
         quorumStatus.put(member, QuorumStatus.COMMIT);
         return this;
     }
 
-    public TransactionCoordinatorData addReject(ApplicationMember member) {
+    public TransientCoordinatedTransaction addReject(ApplicationMember member) {
         quorumStatus.put(member, QuorumStatus.REJECT);
         return this;
     }
 
-    public TransactionCoordinatorData addRollback(ApplicationMember member) {
+    public TransientCoordinatedTransaction addRollback(ApplicationMember member) {
         rollback.add(member);
         return this;
     }

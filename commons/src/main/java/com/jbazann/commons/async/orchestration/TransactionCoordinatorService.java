@@ -2,20 +2,20 @@ package com.jbazann.commons.async.orchestration;
 
 import com.jbazann.commons.async.events.DomainEvent;
 import com.jbazann.commons.async.events.DomainEventTracer;
-import com.jbazann.commons.async.transactions.TransactionCoordinatorData;
-import com.jbazann.commons.async.transactions.TransactionCoordinatorDataRepository;
+import com.jbazann.commons.async.transactions.data.CoordinatedTransactionRepository;
+import com.jbazann.commons.async.transactions.data.TransientCoordinatedTransaction;
 import com.jbazann.commons.identity.ApplicationMember;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 
-import static com.jbazann.commons.async.transactions.TransactionCoordinatorData.TransactionStatus.*;
+import static com.jbazann.commons.async.transactions.data.TransientCoordinatedTransaction.TransactionStatus.*;
 
 public class TransactionCoordinatorService {
 
     private final ApplicationMember member;
-    private final TransactionCoordinatorDataRepository repository;
+    private final CoordinatedTransactionRepository repository;
     private final DomainEventTracer tracer;
 
-    public TransactionCoordinatorService(ApplicationMember member, TransactionCoordinatorDataRepository repository, DomainEventTracer tracer) {
+    public TransactionCoordinatorService(ApplicationMember member, CoordinatedTransactionRepository repository, DomainEventTracer tracer) {
         this.member = member;
         this.repository = repository;
         this.tracer = tracer;
@@ -25,7 +25,7 @@ public class TransactionCoordinatorService {
     public void coordinate(DomainEvent event) {
         if(!member.equals(event.transaction().quorum().coordinator())) return;
 
-        TransactionCoordinatorData transaction = repository.getForEvent(event);
+        TransientCoordinatedTransaction transaction = getForEvent(event);
         if(transaction.isExpired()) {
             expired(event, transaction);
             return;
@@ -46,48 +46,56 @@ public class TransactionCoordinatorService {
         acknowledge(event, transaction);
     }
 
-    private void expired(DomainEvent event, TransactionCoordinatorData transaction) {
+    private TransientCoordinatedTransaction getForEvent(DomainEvent event) {
+        TransientCoordinatedTransaction transaction = (TransientCoordinatedTransaction)
+                repository.findById(event.transaction().id());
+        if(transaction == null) transaction = (TransientCoordinatedTransaction)
+                repository.persist(TransientCoordinatedTransaction.from(event));
+        return transaction;
+    }
+
+    private void expired(DomainEvent event, TransientCoordinatedTransaction transaction) {
         if(!CONCLUDED_EXPIRED.equals(transaction.status()))
             repository.persist(transaction.status(CONCLUDED_EXPIRED));
         tracer.reject(event, "Transactional operation timed out.");
     }
 
-    private TransactionCoordinatorData commit(DomainEvent event, TransactionCoordinatorData transaction) {
+    private TransientCoordinatedTransaction commit(DomainEvent event, TransientCoordinatedTransaction transaction) {
         if (!transaction.isCommitted()) {
             tracer.commit(event, "Accepted by full quorum.");
             // Only persist after publishing to protect against double write inconsistencies.
-            return repository.persist(transaction.isCommitted(true));
+            return (TransientCoordinatedTransaction) repository.persist(transaction.isCommitted(true));
         }
         return transaction;
     }
 
-    private TransactionCoordinatorData reject(DomainEvent event, TransactionCoordinatorData transaction) {
+    private TransientCoordinatedTransaction reject(DomainEvent event, TransientCoordinatedTransaction transaction) {
         transaction.addReject(event.sentBy());
         if (transaction.isFullyRejected())
-            return repository.persist(transaction.status(CONCLUDED_REJECT));
+            return (TransientCoordinatedTransaction) repository.persist(transaction.status(CONCLUDED_REJECT));
         return transaction;
     }
 
-    private TransactionCoordinatorData accept(DomainEvent event, TransactionCoordinatorData transaction) {
+    private TransientCoordinatedTransaction accept(DomainEvent event, TransientCoordinatedTransaction transaction) {
         transaction.addAccept(event.sentBy());
-        return repository.persist(transaction.status(ACCEPTED));
+        return (TransientCoordinatedTransaction) repository.persist(transaction.status(ACCEPTED));
     }
 
-    private TransactionCoordinatorData rollback(DomainEvent event, TransactionCoordinatorData transaction) {
+    private TransientCoordinatedTransaction rollback(DomainEvent event, TransientCoordinatedTransaction transaction) {
         transaction.addRollback(event.sentBy());
         if(transaction.isFullyRejected())
             transaction.status(CONCLUDED_REJECT);
-        return repository.persist(transaction);
+        return (TransientCoordinatedTransaction) repository.persist(transaction);
     }
 
-    private TransactionCoordinatorData ackCommit(DomainEvent event, TransactionCoordinatorData transaction) {
+    private TransientCoordinatedTransaction ackCommit(DomainEvent event, TransientCoordinatedTransaction transaction) {
         if(!transaction.isCommitted()) return transaction;// TODO maybe something should happen here.
         transaction.addCommit(event.sentBy());
         if(transaction.isFullyCommitted()) transaction.status(CONCLUDED_COMMIT);
-        return repository.persist(transaction);
+        return (TransientCoordinatedTransaction) repository.persist(transaction);
     }
 
-    private void acknowledge(DomainEvent event, TransactionCoordinatorData transaction) {
+    private void acknowledge(DomainEvent event, TransientCoordinatedTransaction transaction) {
         tracer.acknowledge(event, "Processed by coordinator.");
     }
 

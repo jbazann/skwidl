@@ -1,5 +1,6 @@
 package com.jbazann.commons.async.transactions;
 
+import com.jbazann.commons.async.transactions.data.TransientTransaction;
 import lombok.Data;
 import lombok.experimental.Accessors;
 
@@ -8,7 +9,7 @@ import lombok.experimental.Accessors;
 public class TransactionResult {
 
     private SimpleResult simpleResult;
-    private TransactionData data;
+    private TransientTransaction data;
     private String context;
 
     public enum SimpleResult {

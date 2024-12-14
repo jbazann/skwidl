@@ -1,4 +1,4 @@
-package com.jbazann.commons.async.transactions;
+package com.jbazann.commons.async.transactions.data;
 
 import com.jbazann.commons.async.events.DomainEvent;
 import com.jbazann.commons.utils.TimeProvider;
@@ -12,14 +12,15 @@ import java.util.UUID;
 @Data
 @Accessors(chain = true, fluent = true)
 @EqualsAndHashCode
-public abstract class TransactionData {
+public class TransientTransaction implements Transaction {
 
     private UUID id;
     private LocalDateTime expires;
     private TransactionStatus status;
 
-    public TransactionData initFrom(final TransactionData data, DomainEvent event) {
-        return data.id(event.transaction().id())
+    public TransientTransaction from(DomainEvent event) {
+        return new TransientTransaction()
+                .id(event.transaction().id())
                 .expires(event.transaction().expires())
                 .status(TransactionStatus.NOT_PERSISTED);
     }
