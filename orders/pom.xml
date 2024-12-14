@@ -90,6 +90,10 @@
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-webflux</artifactId>
 		</dependency>
+		<dependency>
+			<groupId>com.jbazann</groupId>
+			<artifactId>commons</artifactId>
+		</dependency>
 	</dependencies>
 
 	<build>
