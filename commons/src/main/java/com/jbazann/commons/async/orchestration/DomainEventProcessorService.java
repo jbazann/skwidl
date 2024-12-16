@@ -17,6 +17,7 @@ public final class DomainEventProcessorService {
     private final TransactionPhaseExecutor transactionPhaseExecutor;
     private final TransactionResponseProvider transactionResponseService;
     private final DomainEventTracer tracer;
+    private final List<DomainEvent.Type> ACTION_EVENTS = List.of(REQUEST, COMMIT, ROLLBACK);
 
     public DomainEventProcessorService(TransactionPhaseExecutor transactionPhaseExecutor, ApplicationMember member, TransactionResponseProvider transactionResponseService, DomainEventTracer tracer) {
         this.member = member;
@@ -30,9 +31,7 @@ public final class DomainEventProcessorService {
         if (handleNotAMember(event)) return;
         if (handleNotRelevantEventType(event)) return;
 
-
-        final List<DomainEvent.Type> actionEvents = List.of(REQUEST, COMMIT, ROLLBACK);
-        if (actionEvents.contains(event.type())) {
+        if (ACTION_EVENTS.contains(event.type())) {
             final TransactionResult result = transactionPhaseExecutor.run(event);
             transactionResponseService.sendResponse(event, result);
             return;
