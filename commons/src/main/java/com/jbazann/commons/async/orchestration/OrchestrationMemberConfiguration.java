@@ -3,6 +3,7 @@ package com.jbazann.commons.async.orchestration;
 import com.jbazann.commons.async.events.DomainEventTracer;
 import com.jbazann.commons.async.transactions.TransactionPhaseExecutor;
 import com.jbazann.commons.async.transactions.TransactionPhaseRegistrar;
+import com.jbazann.commons.async.transactions.data.TransactionRepository;
 import com.jbazann.commons.identity.ApplicationMember;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.ApplicationContext;
@@ -28,8 +29,8 @@ public class OrchestrationMemberConfiguration {
 
     @Bean
     @ConditionalOnMissingBean
-    public TransactionPhaseExecutor standardTransactionPhaseExecutor(TransactionPhaseRegistrar registrar) {
-        return new TransactionPhaseExecutor(registrar);
+    public TransactionPhaseExecutor standardTransactionPhaseExecutor(TransactionPhaseRegistrar registrar, TransactionRepository repository) {
+        return new TransactionPhaseExecutor(registrar, repository);
     }
 
     @Bean
