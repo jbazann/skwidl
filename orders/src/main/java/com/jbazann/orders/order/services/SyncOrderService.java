@@ -3,8 +3,7 @@ package com.jbazann.orders.order.services;
 import com.jbazann.commons.async.events.CancelAcceptedOrderEvent;
 import com.jbazann.commons.async.events.CancelPreparedOrderEvent;
 import com.jbazann.commons.async.events.DeliverOrderEvent;
-import com.jbazann.commons.async.events.DomainEvent;
-import com.jbazann.commons.async.rabbitmq.RabbitPublisher;
+import com.jbazann.commons.async.events.DomainEventTracer;
 import com.jbazann.commons.utils.TimeProvider;
 import com.jbazann.orders.order.OrderRepository;
 import com.jbazann.orders.order.dto.*;
@@ -33,15 +32,15 @@ public class SyncOrderService {
     private final CustomersRemoteServiceInterface customersRemoteService;
     private final OrderNumberService orderNumberService;
     private final OrderRepository orderRepository;
-    private final RabbitPublisher publisher;
+    private final DomainEventTracer tracer;
 
     @Autowired
-    public SyncOrderService(ProductsRemoteServiceInterface productsRemoteService, CustomersRemoteServiceInterface customersRemoteService, OrderNumberService orderNumberService, OrderRepository orderRepository, RabbitPublisher publisher) {
+    public SyncOrderService(ProductsRemoteServiceInterface productsRemoteService, CustomersRemoteServiceInterface customersRemoteService, OrderNumberService orderNumberService, OrderRepository orderRepository, DomainEventTracer tracer) {
         this.productsRemoteService = productsRemoteService;
         this.customersRemoteService = customersRemoteService;
         this.orderNumberService = orderNumberService;
         this.orderRepository = orderRepository;
-        this.publisher = publisher;
+        this.tracer = tracer;
     }
 
     public boolean orderExists(@NotNull UUID id) {
@@ -55,15 +54,13 @@ public class SyncOrderService {
 
         Order order = getOrder(id);
         switch (order.getStatus().status()) {
-            case IN_PREPARATION -> {
-                DomainEvent event = new DeliverOrderEvent()
-                        .orderId(order.id())
-                        .customerId(order.customer())
-                        .returnedFunds(order.totalCost())
-                        .type(DomainEvent.Type.REQUEST)
-                        .setRouting();
-                publisher.publish(event);
-            }
+            case IN_PREPARATION -> tracer.request(
+                    new DeliverOrderEvent()
+                            .orderId(order.id())
+                            .customerId(order.customer())
+                            .returnedFunds(order.totalCost()),
+                    "Deliver order with id: " + order.id()
+            );
             default -> throw new IllegalStateException("Cannot deliver Order in status: " + order.getStatus());
         };
     }
@@ -75,26 +72,22 @@ public class SyncOrderService {
 
         Order order = getOrder(id);
         switch (order.getStatus().status()) {
-            case IN_PREPARATION -> {
-                DomainEvent event = new CancelPreparedOrderEvent()
-                        .orderId(order.id())
-                        .customerId(order.customer())
-                        .returnedFunds(order.totalCost())
-                        .returnedStock(order.detail().stream()
-                                .collect(Collectors.toMap(Detail::product, Detail::amount)))
-                        .type(DomainEvent.Type.REQUEST)
-                        .setRouting();
-                publisher.publish(event);
-            }
-            case ACCEPTED -> {
-                DomainEvent event = new CancelAcceptedOrderEvent()
-                        .orderId(order.id())
-                        .customerId(order.customer())
-                        .returnedFunds(order.totalCost())
-                        .type(DomainEvent.Type.REQUEST)
-                        .setRouting();
-                publisher.publish(event);
-            }
+            case IN_PREPARATION -> tracer.request(
+                    new CancelPreparedOrderEvent()
+                            .orderId(order.id())
+                            .customerId(order.customer())
+                            .returnedFunds(order.totalCost())
+                            .returnedStock(order.detail().stream()
+                                    .collect(Collectors.toMap(Detail::product, Detail::amount))),
+                    "Cancel order with id: " + order.id()
+            );
+            case ACCEPTED -> tracer.request(
+                    new CancelAcceptedOrderEvent()
+                            .orderId(order.id())
+                            .customerId(order.customer())
+                            .returnedFunds(order.totalCost()),
+                    "Cancel order with id: " + order.id()
+            );
             default -> throw new IllegalStateException("Cannot deliver Order in status: " + order.getStatus());
         };
     }
