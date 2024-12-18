@@ -20,7 +20,7 @@ public abstract class DomainEvent {
     private UUID id;
     private LocalDateTime timestamp;
     private ApplicationMember sentBy;
-    private Transaction transaction;
+    private TransactionDTO transaction;
     private Type type;
     private String context;
 
@@ -28,9 +28,10 @@ public abstract class DomainEvent {
         final TransactionQuorum emptyQuorum = new TransactionQuorum()
                 .members(List.of())
                 .coordinator(new ApplicationMember(""));
-        final Transaction transaction = new Transaction()
+        final TransactionDTO transaction = new TransactionDTO()
                 .id(UUID.randomUUID()) // TODO replace with safe alternative
                 .quorum(emptyQuorum)
+                .status(Transaction.TransactionStatus.UNKNOWN)
                 .expires(TimeProvider.localDateTimeNow().plusHours(1L)); // TODO configure expiring time
         return event.id(UUID.randomUUID()) // TODO replace with safe alternative
                 .transaction(transaction)
@@ -66,10 +67,11 @@ public abstract class DomainEvent {
     protected abstract DomainEvent copy();
 
     @Data
-    public static final class Transaction {
+    public static final class TransactionDTO implements Transaction {
         private UUID id;
         private TransactionQuorum quorum;
         private LocalDateTime expires;
+        private Transaction.TransactionStatus status;
     }
 
     @Getter

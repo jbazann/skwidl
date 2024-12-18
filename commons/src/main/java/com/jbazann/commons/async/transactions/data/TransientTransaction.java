@@ -22,20 +22,11 @@ public class TransientTransaction implements Transaction {
         return new TransientTransaction()
                 .id(event.transaction().id())
                 .expires(event.transaction().expires())
-                .status(TransactionStatus.NOT_PERSISTED);
+                .status(event.transaction().status());
     }
 
     public boolean isExpired() {
         return TimeProvider.localDateTimeNow().isAfter(expires);
-    }
-
-    public enum TransactionStatus {
-        NOT_PERSISTED,
-        STARTED,
-        ACCEPTED,
-        REJECTED,
-        COMMITTED,
-        ROLLED_BACK,
     }
 
 }

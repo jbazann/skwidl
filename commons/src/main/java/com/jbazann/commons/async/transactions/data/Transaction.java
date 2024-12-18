@@ -8,11 +8,19 @@ public interface Transaction {
     // Getters
     UUID id();
     LocalDateTime expires();
-    TransientTransaction.TransactionStatus status();
+    TransactionStatus status();
 
     // Setters
     UUID id(UUID id);
     LocalDateTime expires(LocalDateTime expires);
-    TransientTransaction.TransactionStatus status(TransientTransaction.TransactionStatus status);
+    TransactionStatus status(TransactionStatus status);
+
+    enum TransactionStatus {
+        UNKNOWN,
+        ACCEPTED,
+        REJECTED,
+        COMMITTED,
+        ROLLED_BACK,
+    }
 
 }

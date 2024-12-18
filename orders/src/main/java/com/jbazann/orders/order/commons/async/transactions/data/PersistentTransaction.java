@@ -1,7 +1,6 @@
 package com.jbazann.orders.order.commons.async.transactions.data;
 
 import com.jbazann.commons.async.transactions.data.Transaction;
-import com.jbazann.commons.async.transactions.data.TransientTransaction;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
@@ -18,6 +17,6 @@ public class PersistentTransaction implements Transaction {
 
     private UUID id;
     private LocalDateTime expires;
-    private TransientTransaction.TransactionStatus status;
+    private TransactionStatus status;
 
 }
