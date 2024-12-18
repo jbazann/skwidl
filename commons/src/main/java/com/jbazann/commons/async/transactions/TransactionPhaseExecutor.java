@@ -27,9 +27,9 @@ public final class TransactionPhaseExecutor {
 
     public TransactionResult runPhaseFor(DomainEvent event) {
         return switch (event.type()) {
-            case REQUEST -> wrapperReservePhase.runForEvent(event);
-            case COMMIT -> wrapperCommitPhase.runForEvent(event);
-            case ROLLBACK -> wrapperRollbackPhase.runForEvent(event);
+            case REQUEST -> wrapperReservePhase.runForEvent(event, null);
+            case COMMIT -> wrapperCommitPhase.runForEvent(event, null);
+            case ROLLBACK -> wrapperRollbackPhase.runForEvent(event, null);
             default -> throw new IllegalArgumentException(
                     "No transaction phase associated with event type: " + event.type());
         };
@@ -52,7 +52,7 @@ public final class TransactionPhaseExecutor {
         }
 
         @Override
-        public TransactionResult runForEvent(DomainEvent event) {
+        public TransactionResult runForEvent(DomainEvent event, Transaction transaction) {
             return new TransactionResult()
                     .simpleResult(SimpleResult.REGISTRY_FAILURE);
         }
@@ -66,13 +66,13 @@ public final class TransactionPhaseExecutor {
             return DomainEvent.class;
         }
         @Override
-        public TransactionResult runForEvent(DomainEvent event) {
-            final Transaction transaction = fetchOrCreateTransaction(event);
+        public TransactionResult runForEvent(DomainEvent event, Transaction transaction) {
+            transaction = fetchOrCreateTransaction(event);
 
             TransactionResult result = new TransactionResult().data(transaction);
             switch (transaction.status()) {
                 case UNKNOWN -> result = registrar.getReservePhaseFor(event).orElse(notFoundPhase)
-                        .runForEvent(event);
+                        .runForEvent(event, transaction);
                 case ACCEPTED, COMMITTED -> result
                         .simpleResult(SimpleResult.WARNED_SUCCESS)
                         .context("The requested transaction has already concluded successfully.");
@@ -94,13 +94,13 @@ public final class TransactionPhaseExecutor {
             return DomainEvent.class;
         }
         @Override
-        public TransactionResult runForEvent(DomainEvent event) {
-            final Transaction transaction = fetchOrCreateTransaction(event);
+        public TransactionResult runForEvent(DomainEvent event, Transaction transaction) {
+            transaction = fetchOrCreateTransaction(event);
 
             TransactionResult result = new TransactionResult().data(transaction);
             switch (transaction.status()) {
                 case ACCEPTED -> result = registrar.getCommitPhaseFor(event).orElse(notFoundPhase)
-                        .runForEvent(event);
+                        .runForEvent(event, transaction);
                 case COMMITTED -> result
                         .simpleResult(SimpleResult.WARNED_SUCCESS)
                         .context("The transaction has already been committed and concluded successfully.");
@@ -119,13 +119,13 @@ public final class TransactionPhaseExecutor {
             return DomainEvent.class;
         }
         @Override
-        public TransactionResult runForEvent(DomainEvent event) {
-            final Transaction transaction = fetchOrCreateTransaction(event);
+        public TransactionResult runForEvent(DomainEvent event, Transaction transaction) {
+            transaction = fetchOrCreateTransaction(event);
 
             TransactionResult result = new TransactionResult().data(transaction);
             switch (transaction.status()) {
                 case ACCEPTED -> result = registrar.getReservePhaseFor(event).orElse(notFoundPhase)
-                        .runForEvent(event);
+                        .runForEvent(event, transaction);
                 case ROLLED_BACK -> result
                         .simpleResult(SimpleResult.WARNED_SUCCESS)
                         .context("The transaction has already been rolled back.");
