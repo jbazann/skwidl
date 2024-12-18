@@ -32,7 +32,7 @@ public final class DomainEventProcessorService {
         if (handleNotRelevantEventType(event)) return;
 
         if (ACTION_EVENTS.contains(event.type())) {
-            final TransactionResult result = transactionPhaseExecutor.run(event);
+            final TransactionResult result = transactionPhaseExecutor.runPhaseFor(event);
             transactionResponseService.sendResponse(event, result);
             return;
         }
