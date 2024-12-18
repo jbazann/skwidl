@@ -1,6 +1,7 @@
 package com.jbazann.commons.async.events;
 
 import com.jbazann.commons.async.transactions.TransactionQuorum;
+import com.jbazann.commons.async.transactions.data.Transaction;
 import com.jbazann.commons.identity.ApplicationMember;
 import com.jbazann.commons.utils.TimeProvider;
 import lombok.Data;
