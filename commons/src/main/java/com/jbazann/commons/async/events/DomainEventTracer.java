@@ -68,6 +68,13 @@ public class DomainEventTracer {
                 .context(context));
     }
 
+    public void warn(DomainEvent event, String context) {
+        publisher.publish(DomainEvent.copyOf(event)
+                .sentBy(member)
+                .type(WARNING)
+                .context(context));
+    }
+
     public void discard(DomainEvent event, String context) {
         publisher.publish(DiscardedEvent.discard(event, context)
                 .sentBy(member));

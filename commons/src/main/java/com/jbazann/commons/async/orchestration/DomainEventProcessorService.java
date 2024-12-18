@@ -57,7 +57,7 @@ public final class DomainEventProcessorService {
 
     private boolean handleNotRelevantEventType(DomainEvent event) {
         final boolean shouldDiscard = switch (event.type()) {
-            case ACK, ERROR, DISCARD, UNKNOWN -> true;
+            case ACK, WARNING, ERROR, DISCARD, UNKNOWN -> true;
             case ACCEPT, REQUEST, COMMIT, REJECT, ROLLBACK -> false;
         };
         if (shouldDiscard) {

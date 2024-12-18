@@ -81,6 +81,7 @@ public abstract class DomainEvent {
         ROLLBACK("rollback.event"),
         COMMIT("commit.event"),
         DISCARD("log.discard.event"),
+        WARNING("warning.event"),
         /**
          * For logging purposes. To be emitted after a successful commit.
          */
