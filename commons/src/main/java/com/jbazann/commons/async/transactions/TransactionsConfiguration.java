@@ -17,8 +17,13 @@ public class TransactionsConfiguration {
     }
 
     @Bean
-    public TransactionPhaseExecutor transactionExecutorService(@Lazy TransactionPhaseRegistrar registrar, TransactionRepository repository) {
-        return new TransactionPhaseExecutor(registrar, repository);
+    public TransactionLifecycleActions transactionLifecycleActions(TransactionRepository repository) {
+        return new TransactionLifecycleActions(repository);
+    }
+
+    @Bean
+    public TransactionPhaseExecutor transactionExecutorService(@Lazy TransactionPhaseRegistrar registrar, TransactionLifecycleActions actions) {
+        return new TransactionPhaseExecutor(registrar, actions);
     }
 
     @Lazy

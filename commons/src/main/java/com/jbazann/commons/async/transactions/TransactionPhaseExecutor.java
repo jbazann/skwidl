@@ -3,22 +3,19 @@ package com.jbazann.commons.async.transactions;
 import com.jbazann.commons.async.events.DomainEvent;
 import com.jbazann.commons.async.transactions.TransactionResult.SimpleResult;
 import com.jbazann.commons.async.transactions.data.Transaction;
-import com.jbazann.commons.async.transactions.data.Transaction.TransactionStatus;
-import com.jbazann.commons.async.transactions.data.TransactionRepository;
-import com.jbazann.commons.async.transactions.data.TransientTransaction;
 
 public final class TransactionPhaseExecutor {
 
     private final TransactionPhaseRegistrar registrar;
-    private final TransactionRepository repository;
+    private final TransactionLifecycleActions transactionActions;
     private final TransactionPhase notFoundPhase;
     private final TransactionPhase wrapperReservePhase;
     private final TransactionPhase wrapperCommitPhase;
     private final TransactionPhase wrapperRollbackPhase;
 
-    public TransactionPhaseExecutor(TransactionPhaseRegistrar registrar, TransactionRepository repository) {
+    public TransactionPhaseExecutor(TransactionPhaseRegistrar registrar, TransactionLifecycleActions transactionActions) {
         this.registrar = registrar;
-        this.repository = repository;
+        this.transactionActions = transactionActions;
         notFoundPhase = new NotFoundPhase();
         wrapperReservePhase = new WrapperReservePhase();
         wrapperCommitPhase = new WrapperCommitPhase();
@@ -35,15 +32,6 @@ public final class TransactionPhaseExecutor {
         };
     }
 
-    private Transaction fetchOrCreateTransaction(DomainEvent event) {
-        Transaction transaction = repository.findById(event.transaction().id());
-        if (transaction == null) {
-            transaction = new TransientTransaction().from(event);
-            transaction.status(TransactionStatus.UNKNOWN);
-            repository.save(transaction);
-        }
-        return transaction;
-    }
     private static final class NotFoundPhase implements TransactionPhase {
 
         @Override
@@ -67,7 +55,7 @@ public final class TransactionPhaseExecutor {
         }
         @Override
         public TransactionResult runForEvent(DomainEvent event, Transaction transaction) {
-            transaction = fetchOrCreateTransaction(event);
+            transaction = transactionActions.fetchOrCreateFor(event);
 
             TransactionResult result = new TransactionResult().data(transaction);
             switch (transaction.status()) {
@@ -95,7 +83,7 @@ public final class TransactionPhaseExecutor {
         }
         @Override
         public TransactionResult runForEvent(DomainEvent event, Transaction transaction) {
-            transaction = fetchOrCreateTransaction(event);
+            transaction = transactionActions.fetchOrCreateFor(event);
 
             TransactionResult result = new TransactionResult().data(transaction);
             switch (transaction.status()) {
@@ -120,7 +108,7 @@ public final class TransactionPhaseExecutor {
         }
         @Override
         public TransactionResult runForEvent(DomainEvent event, Transaction transaction) {
-            transaction = fetchOrCreateTransaction(event);
+            transaction = transactionActions.fetchOrCreateFor(event);
 
             TransactionResult result = new TransactionResult().data(transaction);
             switch (transaction.status()) {
