@@ -13,6 +13,11 @@ public class TransactionLifecycleActions {
         this.repository = repository;
     }
 
+    public Transaction error(Transaction transaction) {
+        transaction.status(Transaction.TransactionStatus.ERROR);
+        return repository.save(transaction);
+    }
+
     public Transaction reject(Transaction transaction) {
         transaction.status(Transaction.TransactionStatus.REJECTED);
         return repository.save(transaction);

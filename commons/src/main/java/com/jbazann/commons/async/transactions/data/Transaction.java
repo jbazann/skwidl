@@ -21,6 +21,7 @@ public interface Transaction {
         REJECTED,
         COMMITTED,
         ROLLED_BACK,
+        ERROR,
     }
 
 }
