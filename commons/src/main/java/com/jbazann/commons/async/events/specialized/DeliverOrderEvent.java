@@ -1,5 +1,6 @@
-package com.jbazann.commons.async.events;
+package com.jbazann.commons.async.events.specialized;
 
+import com.jbazann.commons.async.events.DomainEvent;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
@@ -10,7 +11,7 @@ import java.util.UUID;
 @Data()
 @Accessors(chain = true, fluent = true)
 @EqualsAndHashCode(callSuper = true)
-public class CancelAcceptedOrderEvent extends DomainEvent {
+public class DeliverOrderEvent extends DomainEvent {
 
     private UUID orderId;
     private UUID customerId;
@@ -18,10 +19,9 @@ public class CancelAcceptedOrderEvent extends DomainEvent {
 
     @Override
     protected DomainEvent copy() {
-        return new CancelAcceptedOrderEvent()
+        return new DeliverOrderEvent()
                 .orderId(orderId)
                 .customerId(customerId)
                 .returnedFunds(returnedFunds);
     }
-    
 }

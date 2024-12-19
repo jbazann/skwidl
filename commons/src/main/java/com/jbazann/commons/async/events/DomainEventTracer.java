@@ -1,5 +1,6 @@
 package com.jbazann.commons.async.events;
 
+import com.jbazann.commons.async.events.specialized.DiscardedEvent;
 import com.jbazann.commons.async.rabbitmq.RabbitPublisher;
 import com.jbazann.commons.identity.ApplicationMember;
 

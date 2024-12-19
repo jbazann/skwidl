@@ -1,5 +1,6 @@
-package com.jbazann.commons.async.events;
+package com.jbazann.commons.async.events.specialized;
 
+import com.jbazann.commons.async.events.DomainEvent;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
