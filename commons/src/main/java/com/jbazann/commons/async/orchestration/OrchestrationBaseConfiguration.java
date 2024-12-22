@@ -15,11 +15,12 @@ import org.springframework.context.annotation.Import;
 public class OrchestrationBaseConfiguration {
 
     @Value("${spring.application.name}")
-    private final String APPLICATION_NAME = "";
+    private String APPLICATION_NAME = "";
 
     @Bean
     @ConditionalOnMissingBean
     public ApplicationMember missingIdentity() {
+        if(APPLICATION_NAME.isEmpty()) throw new IllegalStateException("Failed to load application name.");
         return new ApplicationMember(APPLICATION_NAME);
     }
 

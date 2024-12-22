@@ -1,10 +1,10 @@
 package com.jbazann.commons.async.orchestration;
 
 import com.jbazann.commons.async.events.DomainEventTracer;
+import com.jbazann.commons.async.transactions.EnableTransactions;
 import com.jbazann.commons.async.transactions.TransactionLifecycleActions;
 import com.jbazann.commons.async.transactions.TransactionPhaseExecutor;
 import com.jbazann.commons.async.transactions.TransactionPhaseRegistrar;
-import com.jbazann.commons.async.transactions.data.TransactionRepository;
 import com.jbazann.commons.identity.ApplicationMember;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.ApplicationContext;
@@ -13,6 +13,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 
 @Configuration
+@EnableTransactions
 @Import(OrchestrationBaseConfiguration.class)
 public class OrchestrationMemberConfiguration {
 
