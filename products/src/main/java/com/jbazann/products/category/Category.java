@@ -1,4 +1,4 @@
-package com.jbazann.products.domain.entities;
+package com.jbazann.products.category;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -18,7 +18,7 @@ import java.util.UUID;
 @Getter
 @Accessors(chain = true, fluent = true)
 @Entity
-@Table(name = "category",schema = "products")
+@Table(name = "category",schema = "categories")
 public class Category {
 
     @Column @Id private UUID id;

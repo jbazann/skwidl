@@ -1,4 +1,4 @@
-package com.jbazann.products.domain.entities;
+package com.jbazann.products.product;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
+import java.math.BigDecimal;
 import java.util.UUID;
 
 @NoArgsConstructor
@@ -21,9 +22,9 @@ public class Product {
     @Column @Id private UUID id;
     @Column private String name;
     @Column private String description;
-    @Column private Double price;//TODO float money
+    @Column private BigDecimal price;
     @Column private int currentStock;
     @Column private int minimumStock;
-    @Column @ManyToOne private Category category;
+    @Column private UUID category;
 
 }
