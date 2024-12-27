@@ -24,8 +24,14 @@ public class EventsConfiguration {
 
     @Bean
     @ConditionalOnMissingBean
-    public EventAnswerPublisher domainEventBuilder(RabbitPublisher publisher, DomainEventBuilder builder) {
+    public EventAnswerPublisher eventAnswerPublisher(RabbitPublisher publisher, DomainEventBuilder builder) {
         return new EventAnswerPublisher(publisher, builder);
+    }
+
+    @Bean
+    @ConditionalOnMissingBean
+    public EventRequestPublisher eventRequestPublisher(RabbitPublisher publisher, DomainEventBuilder builder) {
+        return new EventRequestPublisher(publisher, builder);
     }
 
 }

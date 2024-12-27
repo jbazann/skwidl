@@ -20,6 +20,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
 import static com.jbazann.orders.order.services.ProductsRemoteService.*;
+import static com.jbazann.commons.identity.KnownMembers.*;
 
 @Service
 @Validated
@@ -29,16 +30,17 @@ public class SyncOrderService {
     private final CustomersRemoteServiceInterface customersRemoteService;
     private final OrderNumberService orderNumberService;
     private final OrderRepository orderRepository;
-    private final DomainEventTracer tracer;
-    private final DomainEventBuilder builder = new DomainEventBuilder();
+    private final DomainEventBuilder builder;
+    private final EventRequestPublisher publisher;
 
     @Autowired
-    public SyncOrderService(ProductsRemoteServiceInterface productsRemoteService, CustomersRemoteServiceInterface customersRemoteService, OrderNumberService orderNumberService, OrderRepository orderRepository, DomainEventTracer tracer) {
+    public SyncOrderService(ProductsRemoteServiceInterface productsRemoteService, CustomersRemoteServiceInterface customersRemoteService, OrderNumberService orderNumberService, OrderRepository orderRepository, DomainEventBuilder builder, EventRequestPublisher publisher) {
         this.productsRemoteService = productsRemoteService;
         this.customersRemoteService = customersRemoteService;
         this.orderNumberService = orderNumberService;
         this.orderRepository = orderRepository;
-        this.tracer = tracer;
+        this.builder = builder;
+        this.publisher = publisher;
     }
 
     public boolean orderExists(@NotNull UUID id) {
@@ -52,8 +54,10 @@ public class SyncOrderService {
 
         Order order = getOrder(id);
         switch (order.getStatus().status()) {
-            case IN_PREPARATION -> tracer.request(
-                    builder.create().asDeliverOrderEvent(order.id(),order.customer(),order.totalCost()),
+            case IN_PREPARATION -> publisher.request(
+                    builder.create()
+                            .withQuorumMembers(memberList(ORDERS,CUSTOMERS))//TODO maybe products too
+                            .asDeliverOrderEvent(order.id(),order.customer(),order.totalCost()),
                     "Deliver order with id: " + order.id()
             );
             default -> throw new IllegalStateException("Cannot deliver Order in status: " + order.getStatus());
@@ -67,21 +71,25 @@ public class SyncOrderService {
 
         Order order = getOrder(id);
         switch (order.getStatus().status()) {
-            case IN_PREPARATION -> tracer.request(
-                    builder.create().asCancelPreparedOrderEvent(
-                            order.id(),
-                            order.customer(),
-                            order.totalCost(),
-                            order.detail().stream()
-                                    .collect(Collectors.toMap(Detail::product, Detail::amount))
+            case IN_PREPARATION -> publisher.request(
+                    builder.create()
+                            .withQuorumMembers(memberList(ORDERS,CUSTOMERS,PRODUCTS))
+                            .asCancelPreparedOrderEvent(
+                                    order.id(),
+                                    order.customer(),
+                                    order.totalCost(),
+                                    order.detail().stream()
+                                            .collect(Collectors.toMap(Detail::product, Detail::amount))
                     ),
                     "Cancel order with id: " + order.id()
             );
-            case ACCEPTED -> tracer.request(
-                    builder.create().asCancelAcceptedOrderEvent(
-                            order.id(),
-                            order.customer(),
-                            order.totalCost()
+            case ACCEPTED -> publisher.request(
+                    builder.create()
+                            .withQuorumMembers(memberList(ORDERS,CUSTOMERS))
+                            .asCancelAcceptedOrderEvent(
+                                    order.id(),
+                                    order.customer(),
+                                    order.totalCost()
                     ),
                     "Cancel order with id: " + order.id()
             );
