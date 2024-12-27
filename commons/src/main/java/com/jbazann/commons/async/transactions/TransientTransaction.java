@@ -1,6 +1,7 @@
-package com.jbazann.commons.async.transactions.data;
+package com.jbazann.commons.async.transactions;
 
 import com.jbazann.commons.async.events.DomainEvent;
+import com.jbazann.commons.async.transactions.api.implement.Transaction;
 import com.jbazann.commons.utils.TimeProvider;
 import lombok.Data;
 import lombok.EqualsAndHashCode;

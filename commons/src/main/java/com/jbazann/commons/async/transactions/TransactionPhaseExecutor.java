@@ -2,7 +2,9 @@ package com.jbazann.commons.async.transactions;
 
 import com.jbazann.commons.async.events.DomainEvent;
 import com.jbazann.commons.async.transactions.TransactionResult.SimpleResult;
-import com.jbazann.commons.async.transactions.data.Transaction;
+import com.jbazann.commons.async.transactions.api.TransactionLifecycleActions;
+import com.jbazann.commons.async.transactions.api.TransactionPhase;
+import com.jbazann.commons.async.transactions.api.implement.Transaction;
 
 public final class TransactionPhaseExecutor {
 

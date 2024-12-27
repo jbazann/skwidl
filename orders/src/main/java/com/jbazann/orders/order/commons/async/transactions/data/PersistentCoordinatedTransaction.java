@@ -1,7 +1,7 @@
 package com.jbazann.orders.order.commons.async.transactions.data;
 
-import com.jbazann.commons.async.transactions.data.CoordinatedTransaction;
-import com.jbazann.commons.async.transactions.data.TransientCoordinatedTransaction;
+import com.jbazann.commons.async.transactions.api.implement.CoordinatedTransaction;
+import com.jbazann.commons.async.transactions.TransientCoordinatedTransaction;
 import com.jbazann.commons.identity.ApplicationMember;
 import lombok.Data;
 import lombok.EqualsAndHashCode;

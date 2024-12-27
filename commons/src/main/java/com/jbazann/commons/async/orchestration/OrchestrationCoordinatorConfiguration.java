@@ -1,7 +1,9 @@
 package com.jbazann.commons.async.orchestration;
 
-import com.jbazann.commons.async.events.DomainEventTracer;
-import com.jbazann.commons.async.transactions.data.CoordinatedTransactionRepository;
+import com.jbazann.commons.async.events.DomainEventBuilder;
+import com.jbazann.commons.async.events.EventAnswerPublisher;
+import com.jbazann.commons.async.events.EventsConfiguration;
+import com.jbazann.commons.async.transactions.api.implement.CoordinatedTransactionRepository;
 import com.jbazann.commons.identity.ApplicationMember;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
@@ -9,7 +11,9 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 
 @Configuration
-@Import(OrchestrationBaseConfiguration.class)
+@Import({
+        EventsConfiguration.class
+})
 public class OrchestrationCoordinatorConfiguration {
 
     @Bean
@@ -22,8 +26,9 @@ public class OrchestrationCoordinatorConfiguration {
     @ConditionalOnMissingBean
     public TransactionCoordinatorService standardTransactionCoordinatorService(ApplicationMember member,
                                                                                CoordinatedTransactionRepository repository,
-                                                                               DomainEventTracer tracer) {
-        return new TransactionCoordinatorService(member, repository, tracer);
+                                                                               EventAnswerPublisher publisher,
+                                                                               DomainEventBuilder builder) {
+        return new TransactionCoordinatorService(member, repository, publisher, builder);
     }
 
 }

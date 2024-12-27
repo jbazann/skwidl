@@ -1,5 +1,6 @@
-package com.jbazann.commons.async.transactions.data;
+package com.jbazann.commons.async.transactions.api.implement;
 
+import com.jbazann.commons.async.transactions.TransientCoordinatedTransaction;
 import com.jbazann.commons.identity.ApplicationMember;
 
 import java.time.LocalDateTime;

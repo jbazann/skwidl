@@ -1,6 +1,6 @@
 package com.jbazann.orders.order.commons.async.transactions.data;
 
-import com.jbazann.commons.async.transactions.data.Transaction;
+import com.jbazann.commons.async.transactions.api.implement.Transaction;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;

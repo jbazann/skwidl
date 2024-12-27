@@ -1,24 +1,28 @@
 package com.jbazann.commons.async.orchestration;
 
 import com.jbazann.commons.async.events.DomainEvent;
-import com.jbazann.commons.async.events.DomainEventTracer;
-import com.jbazann.commons.async.transactions.data.CoordinatedTransactionRepository;
-import com.jbazann.commons.async.transactions.data.TransientCoordinatedTransaction;
+import com.jbazann.commons.async.events.DomainEventBuilder;
+import com.jbazann.commons.async.events.EventAnswerPublisher;
+import com.jbazann.commons.async.transactions.api.implement.CoordinatedTransactionRepository;
+import com.jbazann.commons.async.transactions.TransientCoordinatedTransaction;
 import com.jbazann.commons.identity.ApplicationMember;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 
-import static com.jbazann.commons.async.transactions.data.TransientCoordinatedTransaction.TransactionStatus.*;
+import static com.jbazann.commons.async.transactions.TransientCoordinatedTransaction.TransactionStatus.*;
 
 public class TransactionCoordinatorService {
 
     private final ApplicationMember member;
     private final CoordinatedTransactionRepository repository;
-    private final DomainEventTracer tracer;
+    private final EventAnswerPublisher publisher;
+    private final DomainEventBuilder builder;
 
-    public TransactionCoordinatorService(ApplicationMember member, CoordinatedTransactionRepository repository, DomainEventTracer tracer) {
+
+    public TransactionCoordinatorService(ApplicationMember member, CoordinatedTransactionRepository repository, EventAnswerPublisher publisher, DomainEventBuilder builder) {
         this.member = member;
         this.repository = repository;
-        this.tracer = tracer;
+        this.publisher = publisher;
+        this.builder = builder;
     }
 
     @RabbitListener(queues = "${jbazann.rabbit.queues.event}")
@@ -57,13 +61,14 @@ public class TransactionCoordinatorService {
     private void expired(DomainEvent event, TransientCoordinatedTransaction transaction) {
         if(!CONCLUDED_EXPIRED.equals(transaction.status()))
             repository.save(transaction.status(CONCLUDED_EXPIRED));
-        tracer.reject(event, "Transactional operation timed out.");
+        publisher.reject(builder.answer(event),"Transactional operation timed out.");
     }
 
     private TransientCoordinatedTransaction commit(DomainEvent event, TransientCoordinatedTransaction transaction) {
         if (!transaction.isCommitted()) {
-            tracer.commit(event, "Accepted by full quorum.");
+            publisher.commit(builder.answer(event),"Accepted by full quorum.");
             // Only persist after publishing to protect against double write inconsistencies.
+            // Duplicated commit events are acceptable. TODO are they *actually*?
             return (TransientCoordinatedTransaction) repository.save(transaction.isCommitted(true));
         }
         return transaction;
@@ -96,7 +101,7 @@ public class TransactionCoordinatorService {
     }
 
     private void acknowledge(DomainEvent event, TransientCoordinatedTransaction transaction) {
-        tracer.acknowledge(event, "Processed by coordinator.");
+        publisher.acknowledge(builder.answer(event), "Processed by coordinator.");
     }
 
 }

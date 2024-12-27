@@ -1,5 +1,6 @@
-package com.jbazann.commons.async.transactions;
+package com.jbazann.commons.async.transactions.api;
 
+import com.jbazann.commons.async.transactions.TransactionPhaseRegistrar;
 import org.springframework.core.annotation.AliasFor;
 import org.springframework.stereotype.Component;
 

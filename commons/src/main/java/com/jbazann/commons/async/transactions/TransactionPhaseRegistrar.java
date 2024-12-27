@@ -1,6 +1,10 @@
 package com.jbazann.commons.async.transactions;
 
 import com.jbazann.commons.async.events.DomainEvent;
+import com.jbazann.commons.async.transactions.api.CommitPhase;
+import com.jbazann.commons.async.transactions.api.ReservePhase;
+import com.jbazann.commons.async.transactions.api.RollbackPhase;
+import com.jbazann.commons.async.transactions.api.TransactionPhase;
 import org.springframework.aop.framework.AopProxyUtils;
 import org.springframework.aop.support.AopUtils;
 import org.springframework.context.ApplicationContext;

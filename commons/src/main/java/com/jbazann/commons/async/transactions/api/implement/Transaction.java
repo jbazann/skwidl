@@ -1,4 +1,4 @@
-package com.jbazann.commons.async.transactions.data;
+package com.jbazann.commons.async.transactions.api.implement;
 
 import java.time.LocalDateTime;
 import java.util.UUID;

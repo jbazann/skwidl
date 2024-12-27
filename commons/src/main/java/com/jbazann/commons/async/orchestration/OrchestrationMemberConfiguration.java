@@ -1,8 +1,9 @@
 package com.jbazann.commons.async.orchestration;
 
-import com.jbazann.commons.async.events.DomainEventTracer;
-import com.jbazann.commons.async.transactions.EnableTransactions;
-import com.jbazann.commons.async.transactions.TransactionLifecycleActions;
+import com.jbazann.commons.async.events.EventAnswerPublisher;
+import com.jbazann.commons.async.events.EventsConfiguration;
+import com.jbazann.commons.async.transactions.TransactionsConfiguration;
+import com.jbazann.commons.async.transactions.api.TransactionLifecycleActions;
 import com.jbazann.commons.async.transactions.TransactionPhaseExecutor;
 import com.jbazann.commons.async.transactions.TransactionPhaseRegistrar;
 import com.jbazann.commons.identity.ApplicationMember;
@@ -13,14 +14,16 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 
 @Configuration
-@EnableTransactions
-@Import(OrchestrationBaseConfiguration.class)
+@Import({
+        TransactionsConfiguration.class,
+        EventsConfiguration.class
+})
 public class OrchestrationMemberConfiguration {
 
     @Bean
     @ConditionalOnMissingBean
-    public TransactionResponseProvider standardTransactionResponseProvider(DomainEventTracer tracer) {
-        return new TransactionResponseProvider(tracer);
+    public TransactionResponseProvider standardTransactionResponseProvider(EventAnswerPublisher publisher) {
+        return new TransactionResponseProvider(publisher);
     }
 
     @Bean
@@ -40,8 +43,8 @@ public class OrchestrationMemberConfiguration {
     public DomainEventProcessorService standardDomainEventProcessor(ApplicationMember identity,
                                                                     TransactionPhaseExecutor executor,
                                                                     TransactionResponseProvider responseProvider,
-                                                                    DomainEventTracer tracer) {
-        return new DomainEventProcessorService(executor, identity, responseProvider, tracer);
+                                                                    EventAnswerPublisher publisher) {
+        return new DomainEventProcessorService(executor, identity, responseProvider, publisher);
     }
 
 }

@@ -1,9 +1,9 @@
-package com.jbazann.commons.async.transactions;
+package com.jbazann.commons.async.transactions.api;
 
 import com.jbazann.commons.async.events.DomainEvent;
-import com.jbazann.commons.async.transactions.data.Transaction;
-import com.jbazann.commons.async.transactions.data.TransactionRepository;
-import com.jbazann.commons.async.transactions.data.TransientTransaction;
+import com.jbazann.commons.async.transactions.api.implement.Transaction;
+import com.jbazann.commons.async.transactions.api.implement.TransactionRepository;
+import com.jbazann.commons.async.transactions.TransientTransaction;
 
 public class TransactionLifecycleActions {
 
@@ -38,7 +38,7 @@ public class TransactionLifecycleActions {
         return repository.save(transaction);
     }
 
-    protected Transaction fetchOrCreateFor(DomainEvent event) {
+    public Transaction fetchOrCreateFor(DomainEvent event) {
         Transaction transaction = repository.findById(event.transaction().id());
         if (transaction == null) {
             transaction = new TransientTransaction().from(event);

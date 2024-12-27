@@ -1,4 +1,4 @@
-package com.jbazann.orders.testdata.generators;
+package com.jbazann.commons.testing;
 
 import java.util.Random;
 import java.util.UUID;
@@ -11,8 +11,12 @@ public class SeededUUIDGenerator {
 
     private final Random random;
 
-    protected SeededUUIDGenerator(long seed) {
+    public SeededUUIDGenerator(long seed) {
         random = new Random(seed);
+    }
+
+    public SeededUUIDGenerator(Random random) {
+        this.random = random;
     }
 
     public UUID next() {
