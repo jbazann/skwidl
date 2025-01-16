@@ -5,7 +5,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.3.0</version>
+        <version>3.4.0</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <url/>
@@ -182,14 +182,6 @@
                 <groupId>com.jbazann</groupId>
                 <artifactId>commons</artifactId>
                 <version>0.0.1-SNAPSHOT</version>
-            </dependency>
-            <!-- Manually upgrade to 6.2.x to get the new @TestBean annotation -->
-            <dependency>
-                <groupId>org.springframework</groupId>
-                <artifactId>spring-framework-bom</artifactId>
-                <version>6.2.0</version>
-                <type>pom</type>
-                <scope>import</scope>
             </dependency>
             <dependency>
                 <groupId>org.hibernate.validator</groupId>
