@@ -22,10 +22,10 @@
         <url/>
     </scm>
     <packaging>pom</packaging>
-    <groupId>com.jbazann</groupId>
-    <artifactId>tpdan</artifactId>
+    <groupId>dev.jbazann.skwidl</groupId>
+    <artifactId>skwidl</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>tpdan</name>
+    <name>skwidl</name>
     <description>bombas de papa</description>
     <properties>
         <java.version>21</java.version>

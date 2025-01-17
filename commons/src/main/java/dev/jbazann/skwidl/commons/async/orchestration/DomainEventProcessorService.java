@@ -1,0 +1,61 @@
+package dev.jbazann.skwidl.commons.async.orchestration;
+
+import dev.jbazann.skwidl.commons.async.events.DomainEvent;
+import dev.jbazann.skwidl.commons.async.events.EventAnswerPublisher;
+import dev.jbazann.skwidl.commons.async.transactions.TransactionPhaseExecutor;
+import dev.jbazann.skwidl.commons.async.transactions.TransactionResult;
+import dev.jbazann.skwidl.commons.identity.ApplicationMember;
+import org.springframework.amqp.rabbit.annotation.RabbitListener;
+
+import java.util.List;
+
+import static dev.jbazann.skwidl.commons.async.events.DomainEvent.Type.*;
+
+public final class DomainEventProcessorService {
+
+    private final ApplicationMember member;
+    private final TransactionPhaseExecutor transactionPhaseExecutor;
+    private final TransactionResponseProvider transactionResponseService;
+    private final EventAnswerPublisher publisher;
+    private final List<DomainEvent.Type> ACTION_EVENTS = List.of(REQUEST, COMMIT, ROLLBACK);
+
+    public DomainEventProcessorService(TransactionPhaseExecutor transactionPhaseExecutor, ApplicationMember member, TransactionResponseProvider transactionResponseService, EventAnswerPublisher publisher) {
+        this.member = member;
+        this.transactionPhaseExecutor = transactionPhaseExecutor;
+        this.transactionResponseService = transactionResponseService;
+        this.publisher = publisher;
+    }
+
+    @RabbitListener(queues = "${jbazann.rabbit.queues.event}")
+    public void eventMessage(DomainEvent event) {
+        if (handleNotAMember(event)) return;
+        if (handleNotRelevantEventType(event)) return;
+
+        if (ACTION_EVENTS.contains(event.type())) {
+            final TransactionResult result = transactionPhaseExecutor.runPhaseFor(event);
+            transactionResponseService.sendResponse(event, result);
+        } else {
+            publisher.discard(event, "No action required.");
+        }
+    }
+
+    private boolean handleNotAMember(DomainEvent event) {
+        if (!event.transaction().quorum().isMember(member)) {
+            publisher.discard(event, "Not a quorum member.");
+            return true;
+        }
+        return false;
+    }
+
+    private boolean handleNotRelevantEventType(DomainEvent event) {
+        final boolean shouldDiscard = switch (event.type()) {
+            case ACK, WARNING, ERROR, DISCARD, UNKNOWN -> true;
+            case ACCEPT, REQUEST, COMMIT, REJECT, ROLLBACK -> false;
+        };
+        if (shouldDiscard) {
+            publisher.discard(event, "No action required for event type.");
+            return true;
+        }
+        return false;
+    }
+}

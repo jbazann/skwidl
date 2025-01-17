@@ -7,21 +7,21 @@
 <!-- This file is only used by this plugin, and is not intended for JPA use. -->
 <persistence version="3.0" xmlns="https://jakarta.ee/xml/ns/persistence">
     <persistence-unit name="customer">
-        <class>com.jbazann.customers.customer.Customer</class>
+        <class>dev.jbazann.skwidl.customers.customer.Customer</class>
         <exclude-unlisted-classes>true</exclude-unlisted-classes>
         <properties>
             <property name="hibernate.dialect" value="org.hibernate.dialect.MySQLDialect"/>
         </properties>
     </persistence-unit>
     <persistence-unit name="site">
-        <class>com.jbazann.customers.site.Site</class>
+        <class>dev.jbazann.skwidl.customers.site.Site</class>
         <exclude-unlisted-classes>true</exclude-unlisted-classes>
         <properties>
             <property name="hibernate.dialect" value="org.hibernate.dialect.MySQLDialect"/>
         </properties>
     </persistence-unit>
     <persistence-unit name="user">
-        <class>com.jbazann.customers.user.User</class>
+        <class>dev.jbazann.skwidl.customers.user.User</class>
         <exclude-unlisted-classes>true</exclude-unlisted-classes>
         <properties>
             <property name="hibernate.dialect" value="org.hibernate.dialect.MySQLDialect"/>

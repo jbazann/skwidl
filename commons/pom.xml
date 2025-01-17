@@ -9,7 +9,7 @@
 		<relativePath/>
 	</parent>
 	<packaging>jar</packaging>
-	<groupId>com.jbazann</groupId>
+	<groupId>dev.jbazann.skwidl</groupId>
 	<artifactId>commons</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>commons</name>

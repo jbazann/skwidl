@@ -4,8 +4,8 @@
 	<modelVersion>4.0.0</modelVersion>
 	<packaging>jar</packaging>
 	<parent>
-		<groupId>com.jbazann</groupId>
-		<artifactId>tpdan</artifactId>
+		<groupId>dev.jbazann.skwidl</groupId>
+		<artifactId>skwidl</artifactId>
 		<version>0.0.1-SNAPSHOT</version>
 		<relativePath>/../pom.xml</relativePath>
 	</parent>
@@ -92,9 +92,9 @@
 			<artifactId>spring-boot-starter-aop</artifactId>
 		</dependency>
         <dependency>
-            <groupId>com.jbazann</groupId>
+            <groupId>dev.jbazann.skwidl</groupId>
             <artifactId>commons</artifactId>
-            <scope>test</scope>
+			<version>0.0.1-SNAPSHOT</version>
         </dependency>
 	</dependencies>
 
