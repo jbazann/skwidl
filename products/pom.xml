@@ -91,6 +91,11 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-aop</artifactId>
 		</dependency>
+        <dependency>
+            <groupId>com.jbazann</groupId>
+            <artifactId>commons</artifactId>
+            <scope>test</scope>
+        </dependency>
 	</dependencies>
 
 	<build>
