@@ -76,6 +76,13 @@
     </dependencies>
     <profiles>
 
+        <profile>
+            <id>commons</id>
+            <modules>
+                <module>commons-artifact</module>
+            </modules>
+        </profile>
+
         <!-- Run mvn with '-P skipImage' to skip everything before and including Docker image build -->
         <profile>
             <id>skipImage</id>
