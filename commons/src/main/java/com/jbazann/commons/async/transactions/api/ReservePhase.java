@@ -11,7 +11,7 @@ import org.springframework.stereotype.Component;
 @Component
 public @interface ReservePhase {
 
-    @AliasFor(annotation=Component.class)
+    @AliasFor(annotation = Component.class)
     String value();
 
 }

@@ -5,7 +5,7 @@ import com.jbazann.commons.async.rabbitmq.RabbitPublisher;
 import static com.jbazann.commons.async.events.DomainEvent.Type.*;
 
 /**
- * A bunch of common responses that save me 3 to 5 keystrokes whenever
+ * A bunch of common responses that save me three to five keystrokes whenever
  * I need them.
  */
 public class EventAnswerPublisher {

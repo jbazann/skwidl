@@ -19,7 +19,7 @@ public enum KnownMembers {
         this.identity = new ApplicationMember(name);
     }
 
-    public static List<ApplicationMember> asMemberList(KnownMembers... members) {
+    public static List<ApplicationMember> memberList(KnownMembers... members) {
         return Arrays.stream(members).map(KnownMembers::identity).toList();
     }
 
