@@ -1,5 +1,6 @@
 package com.jbazann.orders.testdata.generators;
 
+import com.jbazann.commons.testing.SeededUUIDGenerator;
 import com.jbazann.orders.order.entities.Order;
 import com.jbazann.orders.order.entities.StatusHistory;
 

@@ -1,6 +1,7 @@
 package com.jbazann.orders.testdata.generators;
 
-import com.jbazann.orders.commons.utils.TimeProvider;
+import com.jbazann.commons.testing.SeededUUIDGenerator;
+import com.jbazann.commons.utils.TimeProvider;
 import com.jbazann.orders.order.entities.Detail;
 import com.jbazann.orders.order.entities.Order;
 
