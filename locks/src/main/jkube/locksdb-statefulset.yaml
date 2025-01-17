@@ -1,0 +1,30 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: locksdb
+  labels:
+    app: locksdb
+  namespace: locksdb
+spec:
+  serviceName: locksdb
+  replicas: 1
+  selector:
+    matchLabels:
+      app: locksdb
+  template:
+    metadata:
+      name: locksdb
+      labels:
+        app: locksdb
+    spec:
+      containers:
+        - name: db
+          image: redis/redis-stack-server:7.4.0-v2
+          imagePullPolicy: IfNotPresent
+          env:
+            - name: REDIS_ARGS
+              value: "--port 12012"
+          ports:
+            - name: app
+              containerPort: 12012
+      restartPolicy: Always
