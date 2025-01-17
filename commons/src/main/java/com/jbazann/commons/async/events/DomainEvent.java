@@ -21,7 +21,7 @@ public abstract class DomainEvent {
     private UUID id;
     private LocalDateTime timestamp;
     private ApplicationMember sentBy;
-    private TransactionDTO transaction;
+    private Transaction transaction;
     private Type type;
     private String context;
 
@@ -29,7 +29,7 @@ public abstract class DomainEvent {
         final TransactionQuorum emptyQuorum = new TransactionQuorum()
                 .members(List.of())
                 .coordinator(new ApplicationMember(""));
-        final TransactionDTO transaction = new TransactionDTO()
+        final Transaction transaction = new Transaction()
                 .id(UUID.randomUUID()) // TODO replace with safe alternative
                 .quorum(emptyQuorum)
                 .status(Transaction.TransactionStatus.UNKNOWN)
@@ -66,14 +66,6 @@ public abstract class DomainEvent {
      * // TODO evaluate the need for deep copies.
      */
     protected abstract DomainEvent copy();
-
-    @Data
-    public static final class TransactionDTO implements Transaction {
-        private UUID id;
-        private TransactionQuorum quorum;
-        private LocalDateTime expires;
-        private Transaction.TransactionStatus status;
-    }
 
     @Getter
     @Accessors(fluent = true)

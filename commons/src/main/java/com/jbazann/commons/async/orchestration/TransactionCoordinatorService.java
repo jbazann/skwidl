@@ -3,12 +3,12 @@ package com.jbazann.commons.async.orchestration;
 import com.jbazann.commons.async.events.DomainEvent;
 import com.jbazann.commons.async.events.DomainEventBuilder;
 import com.jbazann.commons.async.events.EventAnswerPublisher;
+import com.jbazann.commons.async.transactions.api.implement.CoordinatedTransaction;
 import com.jbazann.commons.async.transactions.api.implement.CoordinatedTransactionRepository;
-import com.jbazann.commons.async.transactions.TransientCoordinatedTransaction;
 import com.jbazann.commons.identity.ApplicationMember;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 
-import static com.jbazann.commons.async.transactions.TransientCoordinatedTransaction.TransactionStatus.*;
+import static com.jbazann.commons.async.transactions.api.implement.CoordinatedTransaction.TransactionStatus.*;
 
 public class TransactionCoordinatorService {
 
@@ -29,7 +29,7 @@ public class TransactionCoordinatorService {
     public void coordinate(DomainEvent event) {
         if(!member.equals(event.transaction().quorum().coordinator())) return;
 
-        TransientCoordinatedTransaction transaction = getForEvent(event);
+        CoordinatedTransaction transaction = getForEvent(event);
         if(transaction.isExpired()) {
             expired(event, transaction);
             return;
@@ -50,57 +50,57 @@ public class TransactionCoordinatorService {
         acknowledge(event, transaction);
     }
 
-    private TransientCoordinatedTransaction getForEvent(DomainEvent event) {
-        TransientCoordinatedTransaction transaction = (TransientCoordinatedTransaction)
+    private CoordinatedTransaction getForEvent(DomainEvent event) {
+        CoordinatedTransaction transaction = (CoordinatedTransaction)
                 repository.findById(event.transaction().id());
-        if(transaction == null) transaction = (TransientCoordinatedTransaction)
-                repository.save(TransientCoordinatedTransaction.from(event));
+        if(transaction == null) transaction = (CoordinatedTransaction)
+                repository.save(CoordinatedTransaction.from(event));
         return transaction;
     }
 
-    private void expired(DomainEvent event, TransientCoordinatedTransaction transaction) {
+    private void expired(DomainEvent event, CoordinatedTransaction transaction) {
         if(!CONCLUDED_EXPIRED.equals(transaction.status()))
             repository.save(transaction.status(CONCLUDED_EXPIRED));
         publisher.reject(builder.answer(event),"Transactional operation timed out.");
     }
 
-    private TransientCoordinatedTransaction commit(DomainEvent event, TransientCoordinatedTransaction transaction) {
+    private CoordinatedTransaction commit(DomainEvent event, CoordinatedTransaction transaction) {
         if (!transaction.isCommitted()) {
             publisher.commit(builder.answer(event),"Accepted by full quorum.");
             // Only persist after publishing to protect against double write inconsistencies.
             // Duplicated commit events are acceptable. TODO are they *actually*?
-            return (TransientCoordinatedTransaction) repository.save(transaction.isCommitted(true));
+            return (CoordinatedTransaction) repository.save(transaction.isCommitted(true));
         }
         return transaction;
     }
 
-    private TransientCoordinatedTransaction reject(DomainEvent event, TransientCoordinatedTransaction transaction) {
+    private CoordinatedTransaction reject(DomainEvent event, CoordinatedTransaction transaction) {
         transaction.addReject(event.sentBy());
         if (transaction.isFullyRejected())
-            return (TransientCoordinatedTransaction) repository.save(transaction.status(CONCLUDED_REJECT));
+            return (CoordinatedTransaction) repository.save(transaction.status(CONCLUDED_REJECT));
         return transaction;
     }
 
-    private TransientCoordinatedTransaction accept(DomainEvent event, TransientCoordinatedTransaction transaction) {
+    private CoordinatedTransaction accept(DomainEvent event, CoordinatedTransaction transaction) {
         transaction.addAccept(event.sentBy());
-        return (TransientCoordinatedTransaction) repository.save(transaction.status(ACCEPTED));
+        return (CoordinatedTransaction) repository.save(transaction.status(ACCEPTED));
     }
 
-    private TransientCoordinatedTransaction rollback(DomainEvent event, TransientCoordinatedTransaction transaction) {
+    private CoordinatedTransaction rollback(DomainEvent event, CoordinatedTransaction transaction) {
         transaction.addRollback(event.sentBy());
         if(transaction.isFullyRejected())
             transaction.status(CONCLUDED_REJECT);
-        return (TransientCoordinatedTransaction) repository.save(transaction);
+        return (CoordinatedTransaction) repository.save(transaction);
     }
 
-    private TransientCoordinatedTransaction ackCommit(DomainEvent event, TransientCoordinatedTransaction transaction) {
+    private CoordinatedTransaction ackCommit(DomainEvent event, CoordinatedTransaction transaction) {
         if(!transaction.isCommitted()) return transaction;// TODO maybe something should happen here.
         transaction.addCommit(event.sentBy());
         if(transaction.isFullyCommitted()) transaction.status(CONCLUDED_COMMIT);
-        return (TransientCoordinatedTransaction) repository.save(transaction);
+        return (CoordinatedTransaction) repository.save(transaction);
     }
 
-    private void acknowledge(DomainEvent event, TransientCoordinatedTransaction transaction) {
+    private void acknowledge(DomainEvent event, CoordinatedTransaction transaction) {
         publisher.acknowledge(builder.answer(event), "Processed by coordinator.");
     }
 

@@ -81,7 +81,7 @@ public final class DomainEventBuilder {
         return this;
     }
 
-    public DomainEventBuilder withTransaction(DomainEvent.TransactionDTO transaction) {
+    public DomainEventBuilder withTransaction(Transaction transaction) {
         event.transaction(transaction);
         return this;
     }
@@ -92,7 +92,7 @@ public final class DomainEventBuilder {
             Transaction.TransactionStatus status,
             LocalDateTime expires
     ) {
-        event.transaction(new DomainEvent.TransactionDTO()
+        event.transaction(new Transaction()
                 .id(id)
                 .quorum(quorum)
                 .status(status)

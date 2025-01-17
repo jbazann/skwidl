@@ -1,29 +1,107 @@
 package com.jbazann.commons.async.transactions.api.implement;
 
-import com.jbazann.commons.async.transactions.TransientCoordinatedTransaction;
+import com.jbazann.commons.async.events.DomainEvent;
 import com.jbazann.commons.identity.ApplicationMember;
+import com.jbazann.commons.utils.TimeProvider;
+import lombok.Data;
+import lombok.experimental.Accessors;
 
 import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
-public interface CoordinatedTransaction {
+@Data
+@Accessors(chain = true, fluent = true)
+public class CoordinatedTransaction {
 
-    // Getters
-    UUID id();
-    Map<ApplicationMember, TransientCoordinatedTransaction.QuorumStatus> quorumStatus();
-    List<ApplicationMember> rollback();
-    TransientCoordinatedTransaction.TransactionStatus status();
-    boolean isCommitted();
-    LocalDateTime expires();
+    protected UUID id;
+    protected Map<ApplicationMember, CoordinatedTransaction.QuorumStatus> quorumStatus;
+    protected List<ApplicationMember> rollback;
+    protected CoordinatedTransaction.TransactionStatus status;
+    protected boolean isCommitted;
+    protected LocalDateTime expires;
 
-    // Setters
-    UUID id(UUID id);
-    Map<ApplicationMember, TransientCoordinatedTransaction.QuorumStatus> quorumStatus(Map<ApplicationMember, TransientCoordinatedTransaction.QuorumStatus> quorumStatus);
-    List<ApplicationMember> rollback(List<ApplicationMember> rollback);
-    TransientCoordinatedTransaction.TransactionStatus status(TransientCoordinatedTransaction.TransactionStatus status);
-    boolean isCommitted(boolean isCommitted);
-    LocalDateTime expires(LocalDateTime expires);
+
+    public static CoordinatedTransaction from(DomainEvent event) {
+        final Map<ApplicationMember, QuorumStatus> quorumStatus = new HashMap<>();
+        event.transaction().quorum().members()
+                .forEach(member -> quorumStatus.put(member, QuorumStatus.UNKNOWN));
+        return new CoordinatedTransaction()
+                .id(event.transaction().id())
+                .status(TransactionStatus.NOT_PERSISTED)
+                .quorumStatus(quorumStatus)
+                .rollback(new ArrayList<>())
+                .isCommitted(false)
+                .expires(event.transaction().expires());
+    }
+
+    public boolean isExpired() {
+        return TimeProvider.localDateTimeNow().isAfter(expires);
+    }
+
+    public CoordinatedTransaction addAccept(ApplicationMember member) {
+        quorumStatus.put(member, QuorumStatus.ACCEPT);
+        return this;
+    }
+
+    public CoordinatedTransaction addCommit(ApplicationMember member) {
+        quorumStatus.put(member, QuorumStatus.COMMIT);
+        return this;
+    }
+
+    public CoordinatedTransaction addReject(ApplicationMember member) {
+        quorumStatus.put(member, QuorumStatus.REJECT);
+        return this;
+    }
+
+    public CoordinatedTransaction addRollback(ApplicationMember member) {
+        rollback.add(member);
+        return this;
+    }
+
+    public boolean isFullyRejected() {
+        return quorumStatus.values().stream()
+                .allMatch(v -> v == QuorumStatus.REJECT ||
+                        v == QuorumStatus.ROLLBACK);
+    }
+
+    public boolean isFullyCommitted() {
+        return quorumStatus.values().stream()
+                .allMatch(v -> v == QuorumStatus.COMMIT);
+    }
+
+    public boolean isFullyAccepted() {
+        return quorumStatus.values().stream()
+                .allMatch(v -> v == QuorumStatus.ACCEPT);
+    }
+
+    public boolean isRejected() {
+        return TransactionStatus.REJECTED.equals(status);
+    }
+
+    public boolean isConcluded() {
+        return switch (status) {
+            case CONCLUDED_REJECT, CONCLUDED_COMMIT, CONCLUDED_EXPIRED -> true;
+            case NOT_PERSISTED, STARTED, ACCEPTED, REJECTED, COMMITTED -> false;
+        };
+    }
+
+    public enum QuorumStatus {
+        UNKNOWN,
+        ACCEPT,
+        REJECT,
+        COMMIT,
+        ROLLBACK,
+    }
+
+    public enum TransactionStatus {
+        NOT_PERSISTED,
+        STARTED,
+        ACCEPTED,
+        REJECTED,
+        COMMITTED,
+        CONCLUDED_EXPIRED,
+        CONCLUDED_REJECT,
+        CONCLUDED_COMMIT
+    }
 
 }

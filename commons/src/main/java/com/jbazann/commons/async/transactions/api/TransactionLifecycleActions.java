@@ -3,7 +3,6 @@ package com.jbazann.commons.async.transactions.api;
 import com.jbazann.commons.async.events.DomainEvent;
 import com.jbazann.commons.async.transactions.api.implement.Transaction;
 import com.jbazann.commons.async.transactions.api.implement.TransactionRepository;
-import com.jbazann.commons.async.transactions.TransientTransaction;
 
 public class TransactionLifecycleActions {
 
@@ -41,7 +40,7 @@ public class TransactionLifecycleActions {
     public Transaction fetchOrCreateFor(DomainEvent event) {
         Transaction transaction = repository.findById(event.transaction().id());
         if (transaction == null) {
-            transaction = new TransientTransaction().from(event);
+            transaction = Transaction.from(event);
             transaction.status(Transaction.TransactionStatus.UNKNOWN);
             repository.save(transaction);
         }
