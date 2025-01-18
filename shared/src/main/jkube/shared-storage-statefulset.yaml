@@ -4,7 +4,7 @@ metadata:
   name: shared-storage
   labels:
     app: shared-storage
-  namespace: shared-storage
+  namespace: shared
 spec:
   serviceName: shared-storage
   replicas: 1
