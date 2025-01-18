@@ -58,10 +58,10 @@
     <modules>
         <!-- Commons must be first as it's included in the dependencies below. -->
         <module>commons</module>
-        <!-- Messaging, eureka and locks must come before any dependent modules. -->
+        <!-- Messaging, eureka and shared must come before any dependent modules. -->
         <module>messaging</module>
         <module>eureka</module>
-        <module>locks</module>
+        <module>shared</module>
         <module>customers</module>
         <module>orders</module>
         <module>products</module>

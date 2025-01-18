@@ -1,13 +1,13 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: locksdb
-  namespace: locksdb
+  name: shared-storage
+  namespace: shared
 spec:
   type: ClusterIP
   clusterIP: None
   selector:
-    app: locksdb
+    app: shared-storage
   ports:
     - name: app
       port: 12012

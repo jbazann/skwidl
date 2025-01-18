@@ -1,21 +1,21 @@
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
-  name: locksdb
+  name: shared-storage
   labels:
-    app: locksdb
-  namespace: locksdb
+    app: shared-storage
+  namespace: shared-storage
 spec:
-  serviceName: locksdb
+  serviceName: shared-storage
   replicas: 1
   selector:
     matchLabels:
-      app: locksdb
+      app: shared-storage
   template:
     metadata:
-      name: locksdb
+      name: shared-storage
       labels:
-        app: locksdb
+        app: shared-storage
     spec:
       containers:
         - name: db
