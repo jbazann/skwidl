@@ -186,7 +186,7 @@
     <dependencyManagement>
         <dependencies>
             <dependency>
-                <groupId>com.jbazann</groupId>
+                <groupId>dev.jbazann.skwidl</groupId>
                 <artifactId>commons</artifactId>
                 <version>0.0.1-SNAPSHOT</version>
             </dependency>
@@ -343,7 +343,7 @@
                     </configuration>
                 </plugin>
 
-                <!-- Skip install default behavior -->
+                <!-- Skip default install phase behavior -->
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-install-plugin</artifactId>
@@ -352,7 +352,7 @@
                     </configuration>
                 </plugin>
 
-                <!-- Skip deploy default behavior -->
+                <!-- Skip default deploy phase behavior -->
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-deploy-plugin</artifactId>

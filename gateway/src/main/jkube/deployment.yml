@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: app
-          image: jbazann/gateway:latest
+          image: skwidl/gateway:latest
           ports:
             - name: app
               containerPort: 12012

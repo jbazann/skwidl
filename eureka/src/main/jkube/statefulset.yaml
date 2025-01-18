@@ -18,7 +18,7 @@ spec:
     spec:
       containers:
         - name: app
-          image: jbazann/eureka:latest
+          image: skwidl/eureka:latest
           imagePullPolicy: IfNotPresent
           ports:
             - name: app
