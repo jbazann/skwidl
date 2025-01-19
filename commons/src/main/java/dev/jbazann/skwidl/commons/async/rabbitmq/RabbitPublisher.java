@@ -10,7 +10,7 @@ public class RabbitPublisher {
 
     @Value("${jbazann.rabbit.exchanges.event}")
     public final String EVENT_XCHNG = "";
-    @Value("${jbazann.rabbit.queues.orders.event}")
+    @Value("${jbazann.rabbit.queues.event}")
     public final String EVENT_Q = "";
 
     private final RabbitMessagingTemplate rabbitMessagingTemplate;
