@@ -36,12 +36,13 @@
         <jbazann.amqp.username>${env.JBAZANN_AMQP_USR}</jbazann.amqp.username>
         <jbazann.amqp.password>${env.JBAZANN_AMQP_PWD}</jbazann.amqp.password>
         <!-- RabbitMQ message routing -->
-        <jbazann.rabbit.exchanges.event>TPDAN_EVENT</jbazann.rabbit.exchanges.event>
-        <jbazann.rabbit.queues.orders.event>TPDAN_ORDERS_EVENT</jbazann.rabbit.queues.orders.event>
+        <!-- TODO routing keys for better scoping -->
+        <jbazann.rabbit.exchanges.event>SKWIDL_EVENT</jbazann.rabbit.exchanges.event>
+        <jbazann.rabbit.queues.orders.event>SKWIDL_ORDERS_EVENT</jbazann.rabbit.queues.orders.event>
         <jbazann.rabbit.routing.orders.event>"*.event.#"</jbazann.rabbit.routing.orders.event>
-        <jbazann.rabbit.queues.customers.event>TPDAN_CUSTOMERS_EVENT</jbazann.rabbit.queues.customers.event>
+        <jbazann.rabbit.queues.customers.event>SKWIDL_CUSTOMERS_EVENT</jbazann.rabbit.queues.customers.event>
         <jbazann.rabbit.routing.customers.event>"*.event.#"</jbazann.rabbit.routing.customers.event>
-        <jbazann.rabbit.queues.products.event>TPDAN_PRODUCTS_EVENT</jbazann.rabbit.queues.products.event>
+        <jbazann.rabbit.queues.products.event>SKWIDL_PRODUCTS_EVENT</jbazann.rabbit.queues.products.event>
         <jbazann.rabbit.routing.products.event>"*.event.#"</jbazann.rabbit.routing.products.event>
 
         <!-- Kubernetes port mappings (see src/main/jkube/service.yml) -->
