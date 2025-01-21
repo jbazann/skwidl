@@ -50,7 +50,7 @@ public class TransactionCoordinatorService {
 
     private CoordinatedTransaction getForEvent(DomainEvent event) {
         CoordinatedTransaction transaction = (CoordinatedTransaction)
-                repository.findById(event.transaction().id());
+                repository.findById(event.transaction().id()).orElse(null);
         if(transaction == null) transaction = (CoordinatedTransaction)
                 repository.save(CoordinatedTransaction.from(event));
         return transaction;
