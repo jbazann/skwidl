@@ -6,7 +6,7 @@ import dev.jbazann.skwidl.commons.async.transactions.TransactionResult;
 import dev.jbazann.skwidl.commons.async.transactions.api.CommitPhase;
 import dev.jbazann.skwidl.commons.async.transactions.api.TransactionLifecycleActions;
 import dev.jbazann.skwidl.commons.async.transactions.api.TransactionPhase;
-import dev.jbazann.skwidl.commons.async.transactions.api.implement.Transaction;
+import dev.jbazann.skwidl.commons.async.transactions.entities.Transaction;
 import dev.jbazann.skwidl.orders.order.entities.Order;
 import dev.jbazann.skwidl.orders.order.entities.StatusHistory;
 import dev.jbazann.skwidl.orders.order.services.OrderLifecycleActions;
