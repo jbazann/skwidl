@@ -5,15 +5,18 @@ import dev.jbazann.skwidl.commons.identity.ApplicationMember;
 import dev.jbazann.skwidl.commons.utils.TimeProvider;
 import lombok.Data;
 import lombok.experimental.Accessors;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.redis.core.RedisHash;
 
 import java.time.LocalDateTime;
 import java.util.*;
 
 @Data
 @Accessors(chain = true, fluent = true)
+@RedisHash
 public class CoordinatedTransaction {
 
-    private UUID id;
+    @Id private UUID id;
     private Map<ApplicationMember, CoordinatedTransaction.QuorumStatus> quorumStatus;
     private List<ApplicationMember> rollback;
     private CoordinatedTransaction.TransactionStatus status;

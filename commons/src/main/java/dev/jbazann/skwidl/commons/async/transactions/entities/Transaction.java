@@ -5,18 +5,21 @@ import dev.jbazann.skwidl.commons.async.transactions.TransactionQuorum;
 import dev.jbazann.skwidl.commons.utils.TimeProvider;
 import lombok.Data;
 import lombok.experimental.Accessors;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.redis.core.RedisHash;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Data
 @Accessors(chain = true, fluent = true)
+@RedisHash
 public class Transaction {
 
-    protected UUID id;
-    protected LocalDateTime expires;
-    protected TransactionStatus status;
-    protected TransactionQuorum quorum;
+    @Id private UUID id;
+    private LocalDateTime expires;
+    private TransactionStatus status;
+    private TransactionQuorum quorum;
 
     public enum TransactionStatus {
         UNKNOWN,

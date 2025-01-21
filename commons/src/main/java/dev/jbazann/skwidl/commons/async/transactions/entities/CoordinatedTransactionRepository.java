@@ -1,10 +1,9 @@
 package dev.jbazann.skwidl.commons.async.transactions.entities;
 
+import org.springframework.data.repository.CrudRepository;
+
 import java.util.UUID;
 
-public interface CoordinatedTransactionRepository {
-
-    CoordinatedTransaction findById(UUID transactionId);
-    CoordinatedTransaction save(CoordinatedTransaction transaction);
+public interface CoordinatedTransactionRepository extends CrudRepository<CoordinatedTransaction, UUID> {
 
 }

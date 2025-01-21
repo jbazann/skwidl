@@ -10,11 +10,15 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.repository.configuration.EnableRedisRepositories;
 
 
 @Configuration
 @PropertySource("classpath:commons.properties")
 @EnableConfigurationProperties(RedisConfigurationProperties.class)
+@EnableRedisRepositories(basePackages = {
+        "dev.jbazann.skwidl.commons.async.transactions.entities"
+})
 public class RedisConfiguration {
 
 
