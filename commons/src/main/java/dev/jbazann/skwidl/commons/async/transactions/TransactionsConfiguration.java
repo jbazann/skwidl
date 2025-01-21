@@ -1,7 +1,7 @@
 package dev.jbazann.skwidl.commons.async.transactions;
 
 import dev.jbazann.skwidl.commons.async.transactions.api.TransactionLifecycleActions;
-import dev.jbazann.skwidl.commons.async.transactions.api.implement.TransactionRepository;
+import dev.jbazann.skwidl.commons.async.transactions.entities.TransactionRepository;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;

@@ -1,4 +1,4 @@
-package dev.jbazann.skwidl.commons.async.transactions.api.implement;
+package dev.jbazann.skwidl.commons.async.transactions.entities;
 
 import java.util.UUID;
 

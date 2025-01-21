@@ -1,7 +1,7 @@
 package dev.jbazann.skwidl.commons.async.events;
 
 import dev.jbazann.skwidl.commons.async.transactions.TransactionQuorum;
-import dev.jbazann.skwidl.commons.async.transactions.api.implement.Transaction;
+import dev.jbazann.skwidl.commons.async.transactions.entities.Transaction;
 import dev.jbazann.skwidl.commons.identity.ApplicationMember;
 import dev.jbazann.skwidl.commons.utils.TimeProvider;
 import lombok.Data;

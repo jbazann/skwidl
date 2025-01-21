@@ -1,6 +1,6 @@
 package dev.jbazann.skwidl.commons.async.transactions;
 
-import dev.jbazann.skwidl.commons.async.transactions.api.implement.Transaction;
+import dev.jbazann.skwidl.commons.async.transactions.entities.Transaction;
 import lombok.Data;
 import lombok.experimental.Accessors;
 

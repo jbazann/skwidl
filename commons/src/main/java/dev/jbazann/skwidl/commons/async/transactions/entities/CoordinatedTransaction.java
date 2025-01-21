@@ -1,4 +1,4 @@
-package dev.jbazann.skwidl.commons.async.transactions.api.implement;
+package dev.jbazann.skwidl.commons.async.transactions.entities;
 
 import dev.jbazann.skwidl.commons.async.events.DomainEvent;
 import dev.jbazann.skwidl.commons.identity.ApplicationMember;
@@ -13,12 +13,12 @@ import java.util.*;
 @Accessors(chain = true, fluent = true)
 public class CoordinatedTransaction {
 
-    protected UUID id;
-    protected Map<ApplicationMember, CoordinatedTransaction.QuorumStatus> quorumStatus;
-    protected List<ApplicationMember> rollback;
-    protected CoordinatedTransaction.TransactionStatus status;
-    protected boolean isCommitted;
-    protected LocalDateTime expires;
+    private UUID id;
+    private Map<ApplicationMember, CoordinatedTransaction.QuorumStatus> quorumStatus;
+    private List<ApplicationMember> rollback;
+    private CoordinatedTransaction.TransactionStatus status;
+    private boolean isCommitted;
+    private LocalDateTime expires;
 
 
     public static CoordinatedTransaction from(DomainEvent event) {

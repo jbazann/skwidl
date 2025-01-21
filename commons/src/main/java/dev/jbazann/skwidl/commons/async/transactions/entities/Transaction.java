@@ -1,4 +1,4 @@
-package dev.jbazann.skwidl.commons.async.transactions.api.implement;
+package dev.jbazann.skwidl.commons.async.transactions.entities;
 
 import dev.jbazann.skwidl.commons.async.events.DomainEvent;
 import dev.jbazann.skwidl.commons.async.transactions.TransactionQuorum;

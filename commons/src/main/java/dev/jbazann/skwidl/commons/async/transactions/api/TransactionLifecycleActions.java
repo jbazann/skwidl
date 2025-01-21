@@ -1,8 +1,8 @@
 package dev.jbazann.skwidl.commons.async.transactions.api;
 
 import dev.jbazann.skwidl.commons.async.events.DomainEvent;
-import dev.jbazann.skwidl.commons.async.transactions.api.implement.Transaction;
-import dev.jbazann.skwidl.commons.async.transactions.api.implement.TransactionRepository;
+import dev.jbazann.skwidl.commons.async.transactions.entities.Transaction;
+import dev.jbazann.skwidl.commons.async.transactions.entities.TransactionRepository;
 
 public class TransactionLifecycleActions {
 

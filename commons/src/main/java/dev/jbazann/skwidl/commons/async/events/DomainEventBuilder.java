@@ -5,7 +5,7 @@ import dev.jbazann.skwidl.commons.async.events.specialized.CancelPreparedOrderEv
 import dev.jbazann.skwidl.commons.async.events.specialized.DeliverOrderEvent;
 import dev.jbazann.skwidl.commons.async.events.specialized.DiscardedEvent;
 import dev.jbazann.skwidl.commons.async.transactions.TransactionQuorum;
-import dev.jbazann.skwidl.commons.async.transactions.api.implement.Transaction;
+import dev.jbazann.skwidl.commons.async.transactions.entities.Transaction;
 import dev.jbazann.skwidl.commons.identity.ApplicationMember;
 
 import java.math.BigDecimal;

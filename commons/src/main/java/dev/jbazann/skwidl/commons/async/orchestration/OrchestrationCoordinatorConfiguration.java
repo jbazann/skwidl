@@ -3,7 +3,7 @@ package dev.jbazann.skwidl.commons.async.orchestration;
 import dev.jbazann.skwidl.commons.async.events.DomainEventBuilder;
 import dev.jbazann.skwidl.commons.async.events.EventAnswerPublisher;
 import dev.jbazann.skwidl.commons.async.events.EventsConfiguration;
-import dev.jbazann.skwidl.commons.async.transactions.api.implement.CoordinatedTransactionRepository;
+import dev.jbazann.skwidl.commons.async.transactions.entities.CoordinatedTransactionRepository;
 import dev.jbazann.skwidl.commons.identity.ApplicationMember;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
