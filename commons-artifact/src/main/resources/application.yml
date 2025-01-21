@@ -1,0 +1,42 @@
+spring:
+  application:
+    name: commons
+  rabbitmq:
+    host: amqp-0
+    port: 5671
+    username: @jbazann.amqp.username@
+    password: @jbazann.amqp.password@
+    virtual-host: @jbazann.amqp.username@
+    ssl:
+      enabled: true
+      verify-hostname: false
+
+server:
+  port: @jbazann.kube.main-port@
+
+eureka:
+  client:
+    enabled: false
+    serviceUrl:
+      defaultZone: http://eureka:@jbazann.kube.main-port@/eureka/
+    fetch-registry: false
+
+management:
+  server:
+    port: @jbazann.kube.management-port@
+  endpoints:
+    web:
+      exposure:
+        include: httpexchanges,health
+
+# TODO fix dis
+jbazann:
+  timeout:
+    standard: @jbazann.timeout.standard@
+  rabbit:
+    exchanges:
+      event: @jbazann.rabbit.exchanges.event@
+    queues:
+      event: @jbazann.rabbit.queues.orders.event@
+    routing: # [escape].operation.queue.[source].[target]
+      event: @jbazann.rabbit.routing.orders.event@
