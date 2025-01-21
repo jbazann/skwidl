@@ -17,12 +17,17 @@ import org.springframework.data.redis.core.RedisTemplate;
 @EnableConfigurationProperties(RedisConfigurationProperties.class)
 public class RedisConfiguration {
 
-    @Bean
-    public RedisConnectionFactory redisConnectionFactory(RedisConfigurationProperties properties) {
+
+    @Bean(destroyMethod = "shutdown")
+    public RedissonClient redissonClient(RedisConfigurationProperties properties) {
         final String RedisAddress = String.format("redis://%s:%d", properties.getHost(), properties.getPort());
         Config config = new Config();
         config.useSingleServer().setAddress(RedisAddress);
-        RedissonClient client = Redisson.create(config);
+        return Redisson.create(config);
+    }
+
+    @Bean
+    public RedisConnectionFactory redisConnectionFactory(RedissonClient client) {
         return  new RedissonConnectionFactory(client);
     }
 
