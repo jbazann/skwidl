@@ -49,10 +49,8 @@ public class TransactionCoordinatorService {
     }
 
     private CoordinatedTransaction getForEvent(DomainEvent event) {
-        CoordinatedTransaction transaction = (CoordinatedTransaction)
-                repository.findById(event.transaction().id()).orElse(null);
-        if(transaction == null) transaction = (CoordinatedTransaction)
-                repository.save(CoordinatedTransaction.from(event));
+        CoordinatedTransaction transaction = repository.findById(event.transaction().id()).orElse(null);
+        if(transaction == null) transaction = repository.save(CoordinatedTransaction.from(event));
         return transaction;
     }
 
@@ -67,7 +65,7 @@ public class TransactionCoordinatorService {
             publisher.commit(builder.answer(event),"Accepted by full quorum.");
             // Only persist after publishing to protect against double write inconsistencies.
             // Duplicated commit events are acceptable. TODO are they *actually*?
-            return (CoordinatedTransaction) repository.save(transaction.isCommitted(true));
+            return repository.save(transaction.isCommitted(true));
         }
         return transaction;
     }
@@ -75,27 +73,27 @@ public class TransactionCoordinatorService {
     private CoordinatedTransaction reject(DomainEvent event, CoordinatedTransaction transaction) {
         transaction.addReject(event.sentBy());
         if (transaction.isFullyRejected())
-            return (CoordinatedTransaction) repository.save(transaction.status(CoordinatedTransaction.TransactionStatus.CONCLUDED_REJECT));
+            return repository.save(transaction.status(CoordinatedTransaction.TransactionStatus.CONCLUDED_REJECT));
         return transaction;
     }
 
     private CoordinatedTransaction accept(DomainEvent event, CoordinatedTransaction transaction) {
         transaction.addAccept(event.sentBy());
-        return (CoordinatedTransaction) repository.save(transaction.status(CoordinatedTransaction.TransactionStatus.ACCEPTED));
+        return repository.save(transaction.status(CoordinatedTransaction.TransactionStatus.ACCEPTED));
     }
 
     private CoordinatedTransaction rollback(DomainEvent event, CoordinatedTransaction transaction) {
         transaction.addRollback(event.sentBy());
         if(transaction.isFullyRejected())
             transaction.status(CoordinatedTransaction.TransactionStatus.CONCLUDED_REJECT);
-        return (CoordinatedTransaction) repository.save(transaction);
+        return repository.save(transaction);
     }
 
     private CoordinatedTransaction ackCommit(DomainEvent event, CoordinatedTransaction transaction) {
         if(!transaction.isCommitted()) return transaction;// TODO maybe something should happen here.
         transaction.addCommit(event.sentBy());
         if(transaction.isFullyCommitted()) transaction.status(CoordinatedTransaction.TransactionStatus.CONCLUDED_COMMIT);
-        return (CoordinatedTransaction) repository.save(transaction);
+        return repository.save(transaction);
     }
 
     private void acknowledge(DomainEvent event, CoordinatedTransaction transaction) {
