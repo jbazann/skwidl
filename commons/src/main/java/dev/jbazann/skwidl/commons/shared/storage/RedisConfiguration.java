@@ -20,7 +20,7 @@ import org.springframework.data.redis.repository.configuration.EnableRedisReposi
         "dev.jbazann.skwidl.commons.async.transactions.entities"
 })
 public class RedisConfiguration {
-
+// TODO redis doesn't actually fit the use case, replace it
 
     @Bean(destroyMethod = "shutdown")
     public RedissonClient redissonClient(RedisConfigurationProperties properties) {
