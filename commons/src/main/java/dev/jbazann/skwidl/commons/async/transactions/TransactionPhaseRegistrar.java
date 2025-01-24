@@ -1,10 +1,7 @@
 package dev.jbazann.skwidl.commons.async.transactions;
 
 import dev.jbazann.skwidl.commons.async.events.DomainEvent;
-import dev.jbazann.skwidl.commons.async.transactions.api.CommitPhase;
-import dev.jbazann.skwidl.commons.async.transactions.api.ReservePhase;
-import dev.jbazann.skwidl.commons.async.transactions.api.RollbackPhase;
-import dev.jbazann.skwidl.commons.async.transactions.api.TransactionPhase;
+import dev.jbazann.skwidl.commons.async.transactions.api.*;
 import org.springframework.aop.framework.AopProxyUtils;
 import org.springframework.aop.support.AopUtils;
 import org.springframework.context.ApplicationContext;
@@ -15,41 +12,29 @@ import java.util.stream.Collectors;
 
 public final class TransactionPhaseRegistrar {
 
-    private final Map<Class<? extends DomainEvent>, TransactionPhase> reservePhase;
-    private final Map<Class<? extends DomainEvent>, TransactionPhase> commitPhase;
-    private final Map<Class<? extends DomainEvent>, TransactionPhase> rollbackPhase;
+    public record StageKey(Class<? extends DomainEvent> eventClass, DomainEvent.Type eventType) {}
 
+    private final Map<StageKey, TransactionStage> stages;
+
+    //TODO check instantiation timing (must occur when stages exist)
+    //TODO static factory method
     public TransactionPhaseRegistrar(ApplicationContext applicationContext) {
-        reservePhase = buildOperationMap(applicationContext.getBeansWithAnnotation(ReservePhase.class));
-        commitPhase = buildOperationMap(applicationContext.getBeansWithAnnotation(CommitPhase.class));
-        rollbackPhase = buildOperationMap(applicationContext.getBeansWithAnnotation(RollbackPhase.class));
+        stages = mapStages(applicationContext.getBeansWithAnnotation(TransactionStageBean.class));
     }
 
-    public Optional<TransactionPhase> getReservePhaseFor(DomainEvent event) {
-        return getForPhase(reservePhase, event);
+    public Optional<TransactionStage> getStageForEvent(DomainEvent event) {
+        StageKey key = new StageKey(event.getClass(), event.type());
+        if (!stages.containsKey(key)) return Optional.empty();
+        return Optional.of(stages.get(key));
     }
 
-    public Optional<TransactionPhase> getCommitPhaseFor(DomainEvent event) {
-        return getForPhase(commitPhase, event);
-    }
-
-    public Optional<TransactionPhase> getRollbackPhaseFor(DomainEvent event) {
-        return getForPhase(rollbackPhase, event);
-    }
-
-    private Optional<TransactionPhase> getForPhase(Map<Class<? extends DomainEvent>, TransactionPhase> phaseBeans, DomainEvent event) {
-        final Class<? extends DomainEvent> eventClass = event.getClass();
-        if (!phaseBeans.containsKey(eventClass)) return Optional.empty();
-        return Optional.of(phaseBeans.get(eventClass));
-    }
-
-    private static Map<Class<? extends DomainEvent>, TransactionPhase> buildOperationMap(Map<String, Object> beans) {
+    private static Map<StageKey, TransactionStage> mapStages(Map<String, Object> beans) {
         return beans.values().stream()
                 .filter(TransactionPhaseRegistrar::isTransactionPhaseOrProxy)
-                .map(TransactionPhase.class::cast)
+                .map(TransactionStage.class::cast)
                 .collect(Collectors.toMap(
-                        TransactionPhase::getEventClass,
-                        obj -> obj
+                        stage -> new StageKey(getAnnotatedEventClass(stage),getAnnotatedEventType(stage)),
+                        stage -> stage
                 ));
     }
 
@@ -61,6 +46,34 @@ public final class TransactionPhaseRegistrar {
             }
         }
         return false;
+    }
+
+    private static DomainEvent.Type getAnnotatedEventType(TransactionStage stage) {
+        DomainEvent.Type type = getAnnotation(stage).eventType();
+        if (type == null) throw new IllegalStateException("TransactionStage beans must " +
+                "define TransactionStageBean::eventType.");
+        return type;
+    }
+
+    private static Stage getAnnotatedStage(TransactionStage stage) {
+        Stage _stage = getAnnotation(stage).stage();
+        if (_stage == null) throw new IllegalStateException("TransactionStage beans must " +
+                "define TransactionStageBean::stage.");
+        return _stage;
+    }
+
+    private static Class<? extends DomainEvent> getAnnotatedEventClass(TransactionStage stage) {
+        Class<? extends DomainEvent> eventClass = getAnnotation(stage).eventClass();
+        if (eventClass == null) throw new IllegalStateException("TransactionStage beans must " +
+                "define TransactionStageBean::eventClass.");
+        return eventClass;
+    }
+
+    private static TransactionStageBean getAnnotation(TransactionStage stage) {
+        if (stage.getClass().isAnnotationPresent(TransactionStageBean.class)) { // TODO yap about defensive programming
+            return stage.getClass().getAnnotation(TransactionStageBean.class);
+        }
+        throw new IllegalStateException("A TransactionStage bean was somehow found without @TransactionStageBean.");
     }
 
 }

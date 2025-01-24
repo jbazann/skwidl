@@ -7,7 +7,6 @@ import dev.jbazann.skwidl.commons.async.transactions.entities.Transaction;
 
 public interface TransactionPhase {
 
-    Class<? extends DomainEvent> getEventClass();
     TransactionResult runForEvent(DomainEvent domainEvent, Transaction transaction);
 
 }
