@@ -10,7 +10,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-public final class TransactionPhaseRegistrar {
+public final class TransactionStageRegistrarService {
 
     public record StageKey(Class<? extends DomainEvent> eventClass, DomainEvent.Type eventType) {}
 
@@ -18,7 +18,7 @@ public final class TransactionPhaseRegistrar {
 
     //TODO check instantiation timing (must occur when stages exist)
     //TODO static factory method
-    public TransactionPhaseRegistrar(ApplicationContext applicationContext) {
+    public TransactionStageRegistrarService(ApplicationContext applicationContext) {
         stages = mapStages(applicationContext.getBeansWithAnnotation(TransactionStageBean.class));
     }
 
@@ -30,7 +30,7 @@ public final class TransactionPhaseRegistrar {
 
     private static Map<StageKey, TransactionStage> mapStages(Map<String, Object> beans) {
         return beans.values().stream()
-                .filter(TransactionPhaseRegistrar::isTransactionPhaseOrProxy)
+                .filter(TransactionStageRegistrarService::isTransactionPhaseOrProxy)
                 .map(TransactionStage.class::cast)
                 .collect(Collectors.toMap(
                         stage -> new StageKey(getAnnotatedEventClass(stage),getAnnotatedEventType(stage)),

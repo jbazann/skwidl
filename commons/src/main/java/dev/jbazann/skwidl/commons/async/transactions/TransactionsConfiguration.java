@@ -25,16 +25,16 @@ public class TransactionsConfiguration {
     }
 
     @Bean
-    public TransactionPhaseExecutor transactionExecutorService(@Lazy TransactionPhaseRegistrar registrar,
-                                                               TransactionLifecycleActions actions,
-                                                               TransactionLockingService lockingService) {
-        return new TransactionPhaseExecutor(registrar, actions, lockingService);
+    public TransactionStageExecutorService transactionExecutorService(@Lazy TransactionStageRegistrarService registrar,
+                                                                      TransactionLifecycleActions actions,
+                                                                      TransactionLockingService lockingService) {
+        return new TransactionStageExecutorService(registrar, actions, lockingService);
     }
 
     @Lazy
     @Bean
-    public TransactionPhaseRegistrar standardTransactionRegistrarService(ApplicationContext applicationContext) {
-        return new TransactionPhaseRegistrar(applicationContext);
+    public TransactionStageRegistrarService standardTransactionRegistrarService(ApplicationContext applicationContext) {
+        return new TransactionStageRegistrarService(applicationContext);
     }
 
 

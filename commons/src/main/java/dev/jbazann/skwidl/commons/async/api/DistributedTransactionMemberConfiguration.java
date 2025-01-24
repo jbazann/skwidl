@@ -14,7 +14,7 @@ import org.springframework.context.annotation.Import;
         EventsConfiguration.class,
         DistributedTransactionListenerConfiguration.class
 })
-public class OrchestrationMemberConfiguration {
+public class DistributedTransactionMemberConfiguration {
 
     @Bean
     public TransactionResponseProvider standardTransactionResponseProvider(EventAnswerPublisher publisher) {

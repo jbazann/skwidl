@@ -7,13 +7,13 @@ import dev.jbazann.skwidl.commons.async.transactions.entities.Transaction;
 
 import java.util.Optional;
 
-public final class TransactionPhaseExecutor {
+public final class TransactionStageExecutorService {
 
-    private final TransactionPhaseRegistrar registrar;
+    private final TransactionStageRegistrarService registrar;
     private final TransactionLifecycleActions transactionActions;
     private final TransactionLockingService lockingService;
 
-    public TransactionPhaseExecutor(TransactionPhaseRegistrar registrar, TransactionLifecycleActions transactionActions, TransactionLockingService lockingService) {
+    public TransactionStageExecutorService(TransactionStageRegistrarService registrar, TransactionLifecycleActions transactionActions, TransactionLockingService lockingService) {
         this.registrar = registrar;
         this.transactionActions = transactionActions;
         this.lockingService = lockingService;

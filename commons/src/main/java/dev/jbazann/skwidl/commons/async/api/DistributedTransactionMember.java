@@ -10,7 +10,7 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
 @Import({
-        OrchestrationMemberConfiguration.class,
+        DistributedTransactionMemberConfiguration.class,
 })
 public @interface DistributedTransactionMember {
 }

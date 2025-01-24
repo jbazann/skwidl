@@ -15,7 +15,7 @@ import org.springframework.context.annotation.Import;
         EventsConfiguration.class,
         DistributedTransactionListenerConfiguration.class
 })
-public class OrchestrationCoordinatorConfiguration {
+public class DistributedTransactionCoordinatorConfiguration {
 
     @Bean
     public TransactionCoordinatorService standardTransactionCoordinatorService(ApplicationMember member,

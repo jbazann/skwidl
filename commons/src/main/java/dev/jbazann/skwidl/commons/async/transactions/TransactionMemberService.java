@@ -11,14 +11,14 @@ import static dev.jbazann.skwidl.commons.async.events.DomainEvent.Type.*;
 public class TransactionMemberService {
 
     private final ApplicationMember member;
-    private final TransactionPhaseExecutor transactionPhaseExecutor;
+    private final TransactionStageExecutorService transactionStageExecutorService;
     private final TransactionResponseProvider transactionResponseService;
     private final EventAnswerPublisher publisher;
     private final List<DomainEvent.Type> ACTION_EVENTS = List.of(REQUEST, COMMIT, ROLLBACK);
 
-    public TransactionMemberService(TransactionPhaseExecutor transactionPhaseExecutor, ApplicationMember member, TransactionResponseProvider transactionResponseService, EventAnswerPublisher publisher) {
+    public TransactionMemberService(TransactionStageExecutorService transactionStageExecutorService, ApplicationMember member, TransactionResponseProvider transactionResponseService, EventAnswerPublisher publisher) {
         this.member = member;
-        this.transactionPhaseExecutor = transactionPhaseExecutor;
+        this.transactionStageExecutorService = transactionStageExecutorService;
         this.transactionResponseService = transactionResponseService;
         this.publisher = publisher;
     }
@@ -28,7 +28,7 @@ public class TransactionMemberService {
         if (handleNotRelevantEventType(event)) return;
 
         if (ACTION_EVENTS.contains(event.type())) {
-            final TransactionResult result = transactionPhaseExecutor.runPhaseFor(event);
+            final TransactionResult result = transactionStageExecutorService.runPhaseFor(event);
             transactionResponseService.sendResponse(event, result);
         } else {
             publisher.discard(event, "No action required.");
