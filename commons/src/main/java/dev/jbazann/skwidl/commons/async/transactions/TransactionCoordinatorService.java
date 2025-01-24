@@ -1,4 +1,4 @@
-package dev.jbazann.skwidl.commons.async.orchestration;
+package dev.jbazann.skwidl.commons.async.transactions;
 
 import dev.jbazann.skwidl.commons.async.events.DomainEvent;
 import dev.jbazann.skwidl.commons.async.events.DomainEventBuilder;
@@ -6,7 +6,6 @@ import dev.jbazann.skwidl.commons.async.events.EventAnswerPublisher;
 import dev.jbazann.skwidl.commons.async.transactions.entities.CoordinatedTransaction;
 import dev.jbazann.skwidl.commons.async.transactions.entities.CoordinatedTransactionRepository;
 import dev.jbazann.skwidl.commons.identity.ApplicationMember;
-import org.springframework.amqp.rabbit.annotation.RabbitListener;
 
 public class TransactionCoordinatorService {
 
@@ -15,7 +14,6 @@ public class TransactionCoordinatorService {
     private final EventAnswerPublisher publisher;
     private final DomainEventBuilder builder;
 
-
     public TransactionCoordinatorService(ApplicationMember member, CoordinatedTransactionRepository repository, EventAnswerPublisher publisher, DomainEventBuilder builder) {
         this.member = member;
         this.repository = repository;
@@ -23,8 +21,7 @@ public class TransactionCoordinatorService {
         this.builder = builder;
     }
 
-    @RabbitListener(queues = "${jbazann.rabbit.queues.event}")
-    public void coordinate(DomainEvent event) {
+    public void handleEvent(DomainEvent event) {
         if(!member.equals(event.transaction().quorum().coordinator())) return;
 
         CoordinatedTransaction transaction = getForEvent(event);

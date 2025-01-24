@@ -2,20 +2,17 @@ package dev.jbazann.skwidl.commons.async.transactions;
 
 import dev.jbazann.skwidl.commons.async.transactions.api.TransactionLifecycleActions;
 import dev.jbazann.skwidl.commons.async.transactions.entities.TransactionRepository;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import dev.jbazann.skwidl.commons.shared.storage.RedisConfiguration;
+import org.redisson.api.RedissonClient;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.Lazy;
 
 @Configuration
+@Import(RedisConfiguration.class)
 public class TransactionsConfiguration {
-
-    @Bean
-    @ConditionalOnMissingBean
-    public TransactionRepository missingTransactionRepository() {
-        throw new IllegalStateException("A TransactionRepository @Bean was not provided.");
-    }
 
     @Bean
     public TransactionLifecycleActions transactionLifecycleActions(TransactionRepository repository) {
@@ -23,8 +20,15 @@ public class TransactionsConfiguration {
     }
 
     @Bean
-    public TransactionPhaseExecutor transactionExecutorService(@Lazy TransactionPhaseRegistrar registrar, TransactionLifecycleActions actions) {
-        return new TransactionPhaseExecutor(registrar, actions);
+    TransactionLockingService transactionLockingService(RedissonClient client) {
+        return new TransactionLockingService(client);
+    }
+
+    @Bean
+    public TransactionPhaseExecutor transactionExecutorService(@Lazy TransactionPhaseRegistrar registrar,
+                                                               TransactionLifecycleActions actions,
+                                                               TransactionLockingService lockingService) {
+        return new TransactionPhaseExecutor(registrar, actions, lockingService);
     }
 
     @Lazy

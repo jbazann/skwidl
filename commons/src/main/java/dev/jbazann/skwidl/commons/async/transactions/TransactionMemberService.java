@@ -1,17 +1,14 @@
-package dev.jbazann.skwidl.commons.async.orchestration;
+package dev.jbazann.skwidl.commons.async.transactions;
 
 import dev.jbazann.skwidl.commons.async.events.DomainEvent;
 import dev.jbazann.skwidl.commons.async.events.EventAnswerPublisher;
-import dev.jbazann.skwidl.commons.async.transactions.TransactionPhaseExecutor;
-import dev.jbazann.skwidl.commons.async.transactions.TransactionResult;
 import dev.jbazann.skwidl.commons.identity.ApplicationMember;
-import org.springframework.amqp.rabbit.annotation.RabbitListener;
 
 import java.util.List;
 
 import static dev.jbazann.skwidl.commons.async.events.DomainEvent.Type.*;
 
-public final class DomainEventProcessorService {
+public class TransactionMemberService {
 
     private final ApplicationMember member;
     private final TransactionPhaseExecutor transactionPhaseExecutor;
@@ -19,15 +16,14 @@ public final class DomainEventProcessorService {
     private final EventAnswerPublisher publisher;
     private final List<DomainEvent.Type> ACTION_EVENTS = List.of(REQUEST, COMMIT, ROLLBACK);
 
-    public DomainEventProcessorService(TransactionPhaseExecutor transactionPhaseExecutor, ApplicationMember member, TransactionResponseProvider transactionResponseService, EventAnswerPublisher publisher) {
+    public TransactionMemberService(TransactionPhaseExecutor transactionPhaseExecutor, ApplicationMember member, TransactionResponseProvider transactionResponseService, EventAnswerPublisher publisher) {
         this.member = member;
         this.transactionPhaseExecutor = transactionPhaseExecutor;
         this.transactionResponseService = transactionResponseService;
         this.publisher = publisher;
     }
 
-    @RabbitListener(queues = "${jbazann.rabbit.queues.event}")
-    public void eventMessage(DomainEvent event) {
+    public void handleEvent(DomainEvent event) {
         if (handleNotAMember(event)) return;
         if (handleNotRelevantEventType(event)) return;
 
@@ -58,4 +54,5 @@ public final class DomainEventProcessorService {
         }
         return false;
     }
+
 }
