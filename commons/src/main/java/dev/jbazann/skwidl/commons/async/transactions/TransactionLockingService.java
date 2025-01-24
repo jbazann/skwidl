@@ -1,8 +1,8 @@
 package dev.jbazann.skwidl.commons.async.transactions;
 
 import dev.jbazann.skwidl.commons.async.events.DomainEvent;
-import dev.jbazann.skwidl.commons.async.transactions.api.EntityLock;
-import dev.jbazann.skwidl.commons.async.transactions.api.Locking;
+import dev.jbazann.skwidl.commons.async.transactions.api.locking.EntityLock;
+import dev.jbazann.skwidl.commons.async.transactions.api.locking.Locking;
 import dev.jbazann.skwidl.commons.async.transactions.api.TransactionStage;
 import dev.jbazann.skwidl.commons.exceptions.LockAcquisitionException;
 import org.redisson.api.RLock;

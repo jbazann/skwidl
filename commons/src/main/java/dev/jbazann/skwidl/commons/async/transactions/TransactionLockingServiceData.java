@@ -1,6 +1,6 @@
 package dev.jbazann.skwidl.commons.async.transactions;
 
-import dev.jbazann.skwidl.commons.async.transactions.api.Locking;
+import dev.jbazann.skwidl.commons.async.transactions.api.locking.Locking;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

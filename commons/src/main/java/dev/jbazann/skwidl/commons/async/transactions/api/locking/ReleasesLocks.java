@@ -1,4 +1,4 @@
-package dev.jbazann.skwidl.commons.async.transactions.api;
+package dev.jbazann.skwidl.commons.async.transactions.api.locking;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
