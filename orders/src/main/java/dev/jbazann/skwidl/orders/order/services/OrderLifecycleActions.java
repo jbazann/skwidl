@@ -37,4 +37,18 @@ public class OrderLifecycleActions {
                 .status(StatusHistory.Status.ACCEPTED)
                 .detail(detail.isEmpty() ? "Rollback." : detail)));
     }
+
+    public Order deliver(@NotNull Order order, @NotNull String detail) {
+        return orderRepository.save(order.setStatus(new StatusHistory()
+                .id(UUID.randomUUID())// TODO safe ids
+                .status(StatusHistory.Status.DELIVERED)
+                .detail(detail.isEmpty() ? "Order delivered." : detail)));
+    }
+
+    public Order rollbackToPreparation(Order order, String detail) {
+        return orderRepository.save(order.setStatus(new StatusHistory()
+                .id(UUID.randomUUID())// TODO safe ids
+                .status(StatusHistory.Status.IN_PREPARATION)
+                .detail(detail.isEmpty() ? "Rollback." : detail)));
+    }
 }
