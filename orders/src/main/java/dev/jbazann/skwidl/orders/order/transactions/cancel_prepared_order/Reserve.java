@@ -2,10 +2,13 @@ package dev.jbazann.skwidl.orders.order.transactions.cancel_prepared_order;
 
 import dev.jbazann.skwidl.commons.async.events.DomainEvent;
 import dev.jbazann.skwidl.commons.async.events.specialized.CancelAcceptedOrderEvent;
+import dev.jbazann.skwidl.commons.async.events.specialized.CancelPreparedOrderEvent;
 import dev.jbazann.skwidl.commons.async.transactions.TransactionResult;
-import dev.jbazann.skwidl.commons.async.transactions.api.ReservePhase;
+import dev.jbazann.skwidl.commons.async.transactions.api.Stage;
 import dev.jbazann.skwidl.commons.async.transactions.api.TransactionLifecycleActions;
-import dev.jbazann.skwidl.commons.async.transactions.api.TransactionPhase;
+import dev.jbazann.skwidl.commons.async.transactions.api.TransactionStage;
+import dev.jbazann.skwidl.commons.async.transactions.api.TransactionStageBean;
+import dev.jbazann.skwidl.commons.async.transactions.api.locking.EntityLock;
 import dev.jbazann.skwidl.commons.async.transactions.entities.Transaction;
 import dev.jbazann.skwidl.orders.order.entities.Order;
 import dev.jbazann.skwidl.orders.order.entities.StatusHistory;
@@ -13,10 +16,15 @@ import dev.jbazann.skwidl.orders.order.services.OrderLifecycleActions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Optional;
 
-@ReservePhase("CancelAcceptedOrderReserve")
-public class Reserve implements TransactionPhase {
+@TransactionStageBean(
+        value = "CancelPreparedOrderReserve",
+        eventClass = CancelPreparedOrderEvent.class,
+        stage = Stage.RESERVE
+)
+public class Reserve implements TransactionStage {
 
     private final OrderLifecycleActions orderActions;
     private final TransactionLifecycleActions transactionActions;
@@ -28,14 +36,14 @@ public class Reserve implements TransactionPhase {
     }
 
     @Override
-    public Class<? extends DomainEvent> getEventClass() {
-        return CancelAcceptedOrderEvent.class;
+    public List<EntityLock> getRequiredLocks(DomainEvent domainEvent) {
+        return TransactionStage.super.getRequiredLocks(domainEvent);
     }
 
     @Override
     @Transactional
-    public TransactionResult runForEvent(DomainEvent domainEvent, Transaction transaction) {
-        if (!(domainEvent instanceof CancelAcceptedOrderEvent event))
+    public TransactionResult runStage(DomainEvent domainEvent, Transaction transaction) {
+        if (!(domainEvent instanceof CancelPreparedOrderEvent event))
             throw new IllegalArgumentException("Wrong DomainEvent type.");
         if (transaction == null)
             throw new IllegalArgumentException("Transactions API failed to provide a Transaction instance."); // TODO proper validation
@@ -67,14 +75,13 @@ public class Reserve implements TransactionPhase {
         }
 
         // TODO transaction.
-        // TODO lock resource until commit.
         orderActions.cancel(OPT.get(), "Canceled by transaction id: "+event.transaction().id());
         transaction = transactionActions.accept(transaction);
         return new TransactionResult()
                 .data(transaction)
                 .simpleResult(TransactionResult.SimpleResult.SUCCESS)
                 .context("Order gracefully canceled.");
-    }
 
+    }
 }
 
