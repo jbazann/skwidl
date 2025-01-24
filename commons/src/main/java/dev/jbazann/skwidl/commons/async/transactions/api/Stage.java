@@ -9,7 +9,8 @@ public enum Stage {
     ;
 
     public final DomainEvent.Type trigger;
-    private Stage(DomainEvent.Type trigger) {
+
+    Stage(DomainEvent.Type trigger) {
         this.trigger = trigger;
     }
 
