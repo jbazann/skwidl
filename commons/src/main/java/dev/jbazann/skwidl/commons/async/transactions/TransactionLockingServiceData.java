@@ -22,6 +22,6 @@ public class TransactionLockingServiceData {
     private List<RLock> locks;
     private List<RLock> acquiredLocks;
     private Locking metadata;
-    private int retries = 1;
+    private int retries = 1; // this is a counter
 
 }
