@@ -37,7 +37,7 @@ public class TransactionLifecycleActions {
         return repository.save(transaction);
     }
 
-    public Transaction fetchOrCreateFor(DomainEvent event) {
+    public Transaction fetchOrCreateForEvent(DomainEvent event) {
         Transaction transaction = repository.findById(event.transaction().id()).orElse(null);
         if (transaction == null) {
             transaction = Transaction.from(event);

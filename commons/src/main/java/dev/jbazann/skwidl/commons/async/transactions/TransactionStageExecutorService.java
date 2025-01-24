@@ -5,8 +5,6 @@ import dev.jbazann.skwidl.commons.async.transactions.api.TransactionLifecycleAct
 import dev.jbazann.skwidl.commons.async.transactions.api.TransactionStage;
 import dev.jbazann.skwidl.commons.async.transactions.entities.Transaction;
 
-import java.util.Optional;
-
 public final class TransactionStageExecutorService {
 
     private final TransactionStageRegistrarService registrar;
@@ -19,12 +17,9 @@ public final class TransactionStageExecutorService {
         this.lockingService = lockingService;
     }
 
-    public TransactionResult runPhaseFor(DomainEvent event) {
-        Optional<TransactionStage> opt = registrar.getStageForEvent(event);
-        if (opt.isEmpty()) throw new IllegalStateException(
-                String.format("No TransactionStage registered for event ID %s of type %s.", event.id(), event.type()));
-        TransactionStage stage = opt.get();
-        Transaction transaction = transactionActions.fetchOrCreateFor(event);
+    public TransactionResult runStageFor(DomainEvent event) {
+        TransactionStage stage = registrar.getStageForEvent(event);
+        Transaction transaction = transactionActions.fetchOrCreateForEvent(event);
         lockingService.getLocks(stage, event);
         TransactionResult result = stage.runStage(event, transaction);
         lockingService.releaseLocks(stage, event);

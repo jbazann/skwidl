@@ -7,7 +7,6 @@ import org.springframework.aop.support.AopUtils;
 import org.springframework.context.ApplicationContext;
 
 import java.util.Map;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 public final class TransactionStageRegistrarService {
@@ -22,10 +21,11 @@ public final class TransactionStageRegistrarService {
         stages = mapStages(applicationContext.getBeansWithAnnotation(TransactionStageBean.class));
     }
 
-    public Optional<TransactionStage> getStageForEvent(DomainEvent event) {
+    public TransactionStage getStageForEvent(DomainEvent event) {
         StageKey key = new StageKey(event.getClass(), event.type());
-        if (!stages.containsKey(key)) return Optional.empty();
-        return Optional.of(stages.get(key));
+        if (!stages.containsKey(key)) throw new IllegalStateException(String.format(
+                "No TransactionStage registered for event ID %s of type %s.", event.id(), event.type()));
+        return stages.get(key);
     }
 
     private static Map<StageKey, TransactionStage> mapStages(Map<String, Object> beans) {
@@ -33,7 +33,7 @@ public final class TransactionStageRegistrarService {
                 .filter(TransactionStageRegistrarService::isTransactionStageOrProxy)
                 .map(TransactionStage.class::cast)
                 .collect(Collectors.toMap(
-                        stage -> new StageKey(getAnnotatedEventClass(stage),getAnnotatedEventType(stage)),
+                        stage -> new StageKey(getAnnotatedEventClass(stage),getAnnotatedStage(stage).trigger),
                         stage -> stage
                 ));
     }
@@ -48,10 +48,10 @@ public final class TransactionStageRegistrarService {
         return false;
     }
 
-    private static DomainEvent.Type getAnnotatedEventType(TransactionStage stage) {
-        DomainEvent.Type type = getAnnotation(stage).eventType();
+    private static Stage getAnnotatedStage(TransactionStage stage) {
+        Stage type = getAnnotation(stage).stage();
         if (type == null) throw new IllegalStateException("TransactionStage beans must " +
-                "define TransactionStageBean::eventType.");
+                "define TransactionStageBean::stage.");
         return type;
     }
 

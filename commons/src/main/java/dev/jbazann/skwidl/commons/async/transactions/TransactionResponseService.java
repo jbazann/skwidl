@@ -3,11 +3,11 @@ package dev.jbazann.skwidl.commons.async.transactions;
 import dev.jbazann.skwidl.commons.async.events.DomainEvent;
 import dev.jbazann.skwidl.commons.async.events.EventAnswerPublisher;
 
-public class TransactionResponseProvider {
+public class TransactionResponseService {
 
     private final EventAnswerPublisher publisher;
 
-    public TransactionResponseProvider(EventAnswerPublisher publisher) {
+    public TransactionResponseService(EventAnswerPublisher publisher) {
         this.publisher = publisher;
     }
 

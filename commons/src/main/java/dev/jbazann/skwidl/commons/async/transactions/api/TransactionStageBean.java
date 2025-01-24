@@ -16,8 +16,6 @@ public @interface TransactionStageBean {
 
     Class<? extends DomainEvent> eventClass();
 
-    DomainEvent.Type eventType();
-
     Stage stage();
 
 }
