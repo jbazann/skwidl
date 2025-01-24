@@ -30,7 +30,7 @@ public final class TransactionStageRegistrarService {
 
     private static Map<StageKey, TransactionStage> mapStages(Map<String, Object> beans) {
         return beans.values().stream()
-                .filter(TransactionStageRegistrarService::isTransactionPhaseOrProxy)
+                .filter(TransactionStageRegistrarService::isTransactionStageOrProxy)
                 .map(TransactionStage.class::cast)
                 .collect(Collectors.toMap(
                         stage -> new StageKey(getAnnotatedEventClass(stage),getAnnotatedEventType(stage)),
@@ -38,11 +38,11 @@ public final class TransactionStageRegistrarService {
                 ));
     }
 
-    private static boolean isTransactionPhaseOrProxy(Object obj) {
-        if (obj instanceof TransactionPhase) return true;
+    private static boolean isTransactionStageOrProxy(Object obj) {
+        if (obj instanceof TransactionStage) return true;
         if (AopUtils.isAopProxy(obj)) {
             for (Class<?> interfaceClass : AopProxyUtils.proxiedUserInterfaces(obj)) {
-                if(interfaceClass.equals(TransactionPhase.class)) return true;
+                if(interfaceClass.equals(TransactionStage.class)) return true;
             }
         }
         return false;
@@ -53,13 +53,6 @@ public final class TransactionStageRegistrarService {
         if (type == null) throw new IllegalStateException("TransactionStage beans must " +
                 "define TransactionStageBean::eventType.");
         return type;
-    }
-
-    private static Stage getAnnotatedStage(TransactionStage stage) {
-        Stage _stage = getAnnotation(stage).stage();
-        if (_stage == null) throw new IllegalStateException("TransactionStage beans must " +
-                "define TransactionStageBean::stage.");
-        return _stage;
     }
 
     private static Class<? extends DomainEvent> getAnnotatedEventClass(TransactionStage stage) {
