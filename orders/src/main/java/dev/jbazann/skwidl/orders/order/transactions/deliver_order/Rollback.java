@@ -57,8 +57,9 @@ public class Rollback implements TransactionStage {
                     .simpleResult(TransactionResult.SimpleResult.CRITICAL_FAILURE)
                     .context("Order not found.");
         }
+        final Order order = OPT.get();
 
-        final StatusHistory.Status STATUS = OPT.get().statusHistory().getLast().status();
+        final StatusHistory.Status STATUS = order.statusHistory().getLast().status();
         if (STATUS != StatusHistory.Status.DELIVERED) {
             transaction = transactionActions.error(transaction);
             // TODO single stage transactions are never committed
@@ -68,7 +69,7 @@ public class Rollback implements TransactionStage {
                     .context("Order status was expected to be 'delivered', but is instead " + STATUS + '.');
         }
 
-        orderActions.rollbackToPreparation(OPT.get(), "Failed to deliver with context " + event.context());
+        orderActions.rollbackToPreparation(order, "Failed to deliver with context " + event.context());
         transactionActions.rollback(transaction);
         return new TransactionResult()
                 .data(transaction)

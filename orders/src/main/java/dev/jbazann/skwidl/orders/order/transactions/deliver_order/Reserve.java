@@ -57,8 +57,9 @@ public class Reserve implements TransactionStage {
                     .simpleResult(TransactionResult.SimpleResult.FAILURE)
                     .context("Order not found.");
         }
+        final Order order = OPT.get();
 
-        final StatusHistory.Status STATUS = OPT.get().statusHistory().getLast().status();
+        final StatusHistory.Status STATUS = order.statusHistory().getLast().status();
         if (STATUS == StatusHistory.Status.DELIVERED) {
             transaction = transactionActions.accept(transaction);
             // TODO single stage transactions are never committed
@@ -76,7 +77,7 @@ public class Reserve implements TransactionStage {
                     .context("Order not prepared.");
         }
 
-        orderActions.deliver(OPT.get(), "Delivered by transaction id: " + event.transaction().id());
+        orderActions.deliver(order, "Delivered by transaction id: " + event.transaction().id());
         transactionActions.accept(transaction);
         return new TransactionResult()
                 .data(transaction)

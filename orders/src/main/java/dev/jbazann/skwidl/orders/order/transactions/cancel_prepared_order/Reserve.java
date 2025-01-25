@@ -57,8 +57,9 @@ public class Reserve implements TransactionStage {
                     .simpleResult(TransactionResult.SimpleResult.FAILURE)
                     .context("Order not found.");
         }
+        final Order order = OPT.get();
 
-        final StatusHistory.Status STATUS = OPT.get().statusHistory().getLast().status();
+        final StatusHistory.Status STATUS = order.statusHistory().getLast().status();
         if (STATUS == StatusHistory.Status.CANCELED) {
             // TODO exceptional transaction status
             return new TransactionResult()
@@ -76,7 +77,7 @@ public class Reserve implements TransactionStage {
         }
 
         // TODO transaction.
-        orderActions.cancel(OPT.get(), "Canceled by transaction id: "+event.transaction().id());
+        orderActions.cancel(order, "Canceled by transaction id: "+event.transaction().id());
         transaction = transactionActions.accept(transaction);
         return new TransactionResult()
                 .data(transaction)

@@ -56,8 +56,9 @@ public class Rollback implements TransactionStage {
                     .simpleResult(TransactionResult.SimpleResult.CRITICAL_FAILURE)
                     .context("Order not found.");
         }
+        final Order order = OPT.get();
 
-        final StatusHistory.Status STATUS = OPT.get().statusHistory().getLast().status();
+        final StatusHistory.Status STATUS = order.statusHistory().getLast().status();
         if (STATUS != StatusHistory.Status.CANCELED) {
             transactionActions.error(transaction);
             return new TransactionResult()
@@ -66,7 +67,7 @@ public class Rollback implements TransactionStage {
                     .context("Order status was expected to be 'canceled', but is instead " + STATUS + '.');
         }
 
-        orderActions.rollbackToAccepted(OPT.get(), "Failed to cancel with event context: " + event.context());
+        orderActions.rollbackToAccepted(order, "Failed to cancel with event context: " + event.context());
         transactionActions.rollback(transaction);
         return new TransactionResult()
                 .data(transaction)
