@@ -12,7 +12,7 @@ import org.springframework.data.mongodb.repository.config.EnableMongoRepositorie
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 @SpringBootApplication()
-@EnableMongoRepositories("com.jbazann.orders.order")
+@EnableMongoRepositories("dev.jbazann.skwidl.orders.order")
 @EnableTransactionManagement
 @DistributedTransactionCoordinator
 @DistributedTransactionMember
