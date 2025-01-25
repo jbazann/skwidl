@@ -7,5 +7,5 @@ jbazann:
     customers:
       base: http://gateway:@jbazann.kube.main-port@/customers/
       budget: customer/{id}/budget/
-      bill: customer/{id}/billFor/{amount}
-      credit: customer/{id}/creditFor/{amount}
+      bill: customer/{id}/bill/{amount}
+      credit: customer/{id}/credit/{amount}
