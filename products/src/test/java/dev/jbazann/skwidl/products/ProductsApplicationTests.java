@@ -1,5 +1,9 @@
 package dev.jbazann.skwidl.products;
 
+import dev.jbazann.skwidl.products.category.dto.CategoryDTO;
+import dev.jbazann.skwidl.products.product.ProductRepository;
+import dev.jbazann.skwidl.products.product.dto.NewProductDTO;
+import dev.jbazann.skwidl.products.product.dto.ProductDTO;
 import dev.jbazann.skwidl.products.product.testdata.ProductDataset;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -10,25 +14,26 @@ import org.springframework.test.web.reactive.server.WebTestClient;
 
 import java.util.UUID;
 
+import static dev.jbazann.skwidl.products.integration.testdata.IntegrationDataset.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @SpringBootTest
 class ProductsApplicationTests {
 
-	private final ProductsRepository productsRepository;
+	private final ProductRepository productRepository;
 	private final WebTestClient webClient;
 
 	@Autowired
-    ProductsApplicationTests(ProductsRepository productsRepository, WebTestClient webClient) {
-        this.productsRepository = productsRepository;
+    ProductsApplicationTests(ProductRepository productRepository, WebTestClient webClient) {
+        this.productRepository = productRepository;
         this.webClient = webClient;
     }
 
 	@BeforeEach
 	void clearPostgresData() {
-		productsRepository.deleteAll();
+		productRepository.deleteAll();
 		resetData();
-		productsRepository.saveAll(ProductDataset.PERSISTED_PRODUCTS);
+		productRepository.saveAll(ProductDataset.PERSISTED_PRODUCTS);
 	}
 
 	@Test
@@ -64,14 +69,15 @@ class ProductsApplicationTests {
 
     @Test
 	void findCategoryByName() {
-		String QUERY = "";
+		String QUERY = PERSISTED_GENERIC.entry().category().name();
 		webClient.get().uri("/category/{query}", QUERY)
 				.accept(MediaType.APPLICATION_JSON)
 				.exchange()
 				.expectHeader().contentType(MediaType.APPLICATION_JSON)
 				.expectStatus().isOk()
 				.expectBodyList(CategoryDTO.class)
-				.
+				.hasSize(1)
+				.contains(PERSISTED_GENERIC.asCategoryDTO());
 	}
 
 

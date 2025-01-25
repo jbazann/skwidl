@@ -1,5 +1,6 @@
 package dev.jbazann.skwidl.products.category;
 
+import dev.jbazann.skwidl.products.category.dto.CategoryDTO;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
@@ -24,4 +25,7 @@ public class Category {
     @Column @Id private UUID id;
     @Column private String name;
 
+    public CategoryDTO toDto() {
+        return null;
+    }
 }

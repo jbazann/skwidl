@@ -1,5 +1,6 @@
 package dev.jbazann.skwidl.products.product;
 
+import dev.jbazann.skwidl.products.product.dto.ProductDTO;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -27,4 +28,7 @@ public class Product {
     @Column private int minimumStock;
     @Column private UUID category;
 
+    public ProductDTO toDto() {
+        return null;
+    }
 }

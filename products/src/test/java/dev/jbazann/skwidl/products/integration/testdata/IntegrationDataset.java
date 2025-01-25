@@ -1,6 +1,7 @@
 package dev.jbazann.skwidl.products.integration.testdata;
 
 import dev.jbazann.skwidl.products.category.Category;
+import dev.jbazann.skwidl.products.category.dto.CategoryDTO;
 import dev.jbazann.skwidl.products.product.Product;
 import lombok.Getter;
 import lombok.experimental.Accessors;
@@ -35,6 +36,10 @@ public enum IntegrationDataset {
     public static final List<Product> PERSISTED_PRODUCTS = List.copyOf(buildPersistedProducts());
     public static final List<Category> PERSISTED_CATEGORIES = List.copyOf(buildPersistedCategories());
 
+    public static void resetData() {
+        //TODO
+    }
+
     private static List<IntegrationDatasetEntry> buildPersistedEntries() {
         final int AMOUNT_SINGLE = 20;
         final int AMOUNT_LIST = 12;
@@ -62,6 +67,10 @@ public enum IntegrationDataset {
             if (e.categories() != null) return e.categories().stream();
             return null;
         }).filter(Objects::nonNull).toList());
+    }
+
+    public CategoryDTO asCategoryDTO() {
+        return this.entry.category().toDto();
     }
 
 }

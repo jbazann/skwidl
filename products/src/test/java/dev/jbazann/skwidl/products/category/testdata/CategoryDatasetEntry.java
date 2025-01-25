@@ -1,6 +1,8 @@
 package dev.jbazann.skwidl.products.category.testdata;
 
 import dev.jbazann.skwidl.products.category.Category;
+import dev.jbazann.skwidl.products.category.dto.CategoryDTO;
+import dev.jbazann.skwidl.products.category.dto.NewCategoryDTO;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

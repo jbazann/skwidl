@@ -1,6 +1,8 @@
 package dev.jbazann.skwidl.products.product.testdata;
 
 import dev.jbazann.skwidl.products.product.Product;
+import dev.jbazann.skwidl.products.product.dto.NewProductDTO;
+import dev.jbazann.skwidl.products.product.dto.ProductDTO;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -28,7 +30,8 @@ public class ProductDatasetEntry {
     }
 
     public NewProductDTO asNewProductDTO() {
-        return new NewCategoryDTO(product.name());
+        return new NewProductDTO()
+                .name(product.name());
     }
 
 }
