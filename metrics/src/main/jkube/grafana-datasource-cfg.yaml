@@ -2,6 +2,7 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: datasource-cfg
+  namespace: metrics
 data:
   prometheus-datasource.yml: |
     apiVersion: 1

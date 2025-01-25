@@ -2,6 +2,7 @@ apiVersion: apps/v1
 kind: StatefulSet
 metadata:
   name: mongodb
+  namespace: orders
   labels:
     app: mongodb
 spec:
