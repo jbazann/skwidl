@@ -1,14 +1,20 @@
 package dev.jbazann.skwidl.commons.identity;
 
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
+import org.springframework.validation.annotation.Validated;
+
 import java.util.Arrays;
 import java.util.List;
 
+@Validated
 public enum KnownMembers {
     ORDERS("orders"),
     PRODUCTS("products"),
     CUSTOMERS("customers"),
     ;
 
+    @Valid @NotNull
     private final ApplicationMember identity;
 
     public ApplicationMember identity() {

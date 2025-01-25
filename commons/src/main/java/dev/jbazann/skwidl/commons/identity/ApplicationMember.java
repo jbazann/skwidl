@@ -1,6 +1,8 @@
 package dev.jbazann.skwidl.commons.identity;
 
 import dev.jbazann.skwidl.commons.async.transactions.TransactionQuorum;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
@@ -23,6 +25,7 @@ public final class ApplicationMember {
      * A unique ID for each different service. The same for
      * replicas of the same service.
      */
+    @NotNull @NotEmpty
     private final String id;
 
 }

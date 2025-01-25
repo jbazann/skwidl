@@ -3,6 +3,8 @@ package dev.jbazann.skwidl.commons.async.transactions.entities;
 import dev.jbazann.skwidl.commons.async.events.DomainEvent;
 import dev.jbazann.skwidl.commons.async.transactions.TransactionQuorum;
 import dev.jbazann.skwidl.commons.utils.TimeProvider;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 import lombok.experimental.Accessors;
 import org.springframework.data.annotation.Id;
@@ -16,9 +18,14 @@ import java.util.UUID;
 @RedisHash
 public class Transaction {
 
-    @Id private UUID id;
+    @Id
+    @NotNull @Valid
+    private UUID id;
+    @NotNull @Valid
     private LocalDateTime expires;
+    @NotNull
     private TransactionStatus status;
+    @NotNull @Valid
     private TransactionQuorum quorum;
 
     public enum TransactionStatus {
@@ -30,7 +37,7 @@ public class Transaction {
         ERROR,
     }
 
-    public static Transaction from(DomainEvent event) {
+    public static Transaction from(@NotNull @Valid DomainEvent event) {
         return new Transaction()
                 .id(event.transaction().id())
                 .expires(event.transaction().expires())

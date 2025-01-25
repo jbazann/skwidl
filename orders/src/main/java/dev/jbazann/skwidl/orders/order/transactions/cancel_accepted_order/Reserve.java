@@ -12,6 +12,8 @@ import dev.jbazann.skwidl.commons.async.transactions.entities.Transaction;
 import dev.jbazann.skwidl.orders.order.entities.Order;
 import dev.jbazann.skwidl.orders.order.entities.StatusHistory;
 import dev.jbazann.skwidl.orders.order.services.OrderLifecycleActions;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -35,17 +37,16 @@ public class Reserve implements TransactionStage {
     }
 
     @Override
-    public List<EntityLock> getRequiredLocks(DomainEvent domainEvent) {
+    public List<EntityLock> getRequiredLocks(@NotNull @Valid DomainEvent domainEvent) {
         return TransactionStage.super.getRequiredLocks(domainEvent);
     }
 
     @Override
     @Transactional
-    public TransactionResult runStage(DomainEvent domainEvent, Transaction transaction) {
+    public TransactionResult runStage(@NotNull @Valid DomainEvent domainEvent,
+                                      @NotNull @Valid Transaction transaction) {
         if (!(domainEvent instanceof CancelAcceptedOrderEvent event))
             throw new IllegalArgumentException("Wrong DomainEvent type.");
-        if (transaction == null)
-            throw new IllegalArgumentException("Transactions API failed to provide a Transaction instance."); // TODO proper validation
 
         final Optional<Order> OPT = orderActions.fetch(event.orderId());
         if (OPT.isEmpty()) {

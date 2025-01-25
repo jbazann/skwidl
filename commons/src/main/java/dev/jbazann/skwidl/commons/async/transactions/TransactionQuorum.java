@@ -2,6 +2,8 @@ package dev.jbazann.skwidl.commons.async.transactions;
 
 import dev.jbazann.skwidl.commons.async.events.DomainEvent;
 import dev.jbazann.skwidl.commons.identity.ApplicationMember;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
@@ -19,14 +21,16 @@ import java.util.List;
 @EqualsAndHashCode
 public final class TransactionQuorum {
 
-    private List<ApplicationMember> members;
+    @NotNull
+    private List<@Valid ApplicationMember> members;
+    @NotNull @Valid
     private ApplicationMember coordinator;
 
-    public boolean isMember(ApplicationMember member) {
+    public boolean isMember(@NotNull ApplicationMember member) {
         return members.contains(member);
     }
 
-    public boolean isCoordinator(ApplicationMember member) {
+    public boolean isCoordinator(@NotNull ApplicationMember member) {
         return coordinator == member;
     }
 
