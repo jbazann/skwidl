@@ -2,6 +2,9 @@ package dev.jbazann.skwidl.products.product;
 
 import dev.jbazann.skwidl.products.product.dto.ProductDTO;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -20,15 +23,30 @@ import java.util.UUID;
 @Table(name = "product",schema = "products")
 public class Product {
 
-    @Column @Id private UUID id;
-    @Column private String name;
-    @Column private String description;
-    @Column private BigDecimal price;
-    @Column private int currentStock;
-    @Column private int minimumStock;
-    @Column private UUID category;
+    @Column @Id
+    @NotNull
+    private UUID id;
+    @Column
+    @NotNull @NotEmpty
+    private String name;
+    @Column
+    @NotNull
+    private String description;
+    @Column
+    @NotNull @Min(0)
+    private BigDecimal price;
+    @Column
+    @Min(0)
+    private int currentStock;
+    @Column
+    @Min(0)
+    private int minimumStock;
+    @Column
+    @NotNull
+    private UUID category;
 
     public ProductDTO toDto() {
-        return null;
+        return new ProductDTO(id, name, description, price, currentStock, minimumStock, category);
     }
+
 }
