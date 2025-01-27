@@ -3,7 +3,6 @@ package dev.jbazann.skwidl.customers.user;
 import dev.jbazann.skwidl.customers.user.exceptions.InvalidUserException;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -17,7 +16,6 @@ public class UserService {
 
     private final UserRepository userRepository;
 
-    @Autowired
     public UserService(UserRepository userRepository) {
         this.userRepository = userRepository;
     }
@@ -50,7 +48,7 @@ public class UserService {
      * @param userId a valid user ID.
      * @return the updated {@link User} instance.
      */
-    @Transactional
+    @Transactional// TODO
     public User addAllowedUser(@NotNull UUID customerId, @NotNull UUID userId) {
         final @NotNull User user = fetchUser(userId);
         if(isEnabledFor(user, customerId)) {

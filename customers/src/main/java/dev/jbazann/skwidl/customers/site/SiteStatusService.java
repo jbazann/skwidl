@@ -3,7 +3,6 @@ package dev.jbazann.skwidl.customers.site;
 import dev.jbazann.skwidl.customers.site.exceptions.InvalidSiteStatusChangeException;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -12,7 +11,6 @@ public class SiteStatusService {
 
     private final SiteCallerService siteCallerService;
 
-    @Autowired
     public SiteStatusService(SiteCallerService siteCallerService) {
         this.siteCallerService = siteCallerService;
     }

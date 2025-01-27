@@ -3,7 +3,6 @@ package dev.jbazann.skwidl.customers.customer;
 import dev.jbazann.skwidl.customers.customer.dto.CustomerDTO;
 import dev.jbazann.skwidl.customers.customer.dto.EditableFieldsDTO;
 import jakarta.validation.constraints.NotNull;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -11,13 +10,11 @@ import java.util.List;
 import java.util.UUID;
 
 
-@RestController
-@RequestMapping("/customer")
+@RestController("/customer")
 public class CustomerController {
 
     private final CustomerService customerService;
 
-    @Autowired
     public CustomerController(CustomerService customerService) {
         this.customerService = customerService;
     }

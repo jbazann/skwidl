@@ -4,7 +4,6 @@ import dev.jbazann.skwidl.customers.customer.CustomerService;
 import dev.jbazann.skwidl.customers.site.exceptions.InvalidSiteException;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -20,7 +19,6 @@ public class SiteService {
     private final SiteRepository siteRepository;
     private final SiteStatusService siteStatusService;
 
-    @Autowired
     public SiteService(final SiteRepository siteRepository, SiteStatusService siteStatusService) {
         this.siteRepository = siteRepository;
         this.siteStatusService = siteStatusService;
@@ -53,7 +51,7 @@ public class SiteService {
      * @param siteId a site ID
      * @param newStatus the status to try to update to
      */
-    @Transactional()
+    @Transactional()// TODO
     public void updateSiteStatus(@NotNull UUID siteId, @NotNull Site.SiteStatus newStatus) {
         @NotNull final Site site = fetchSite(siteId);
         siteStatusService.updateSiteStatus(site, newStatus);
@@ -73,7 +71,7 @@ public class SiteService {
 
     /**
      * Temporary internal method to let {@link CustomerService} activate pending sites when capacity is made available.
-     * @implNote Annotated as transactional due to self invocation of {@link SiteService#updateSiteStatus(UUID, Site.SiteStatus)}.
+     * @implNote Annotated as transactional due to self-invocation of {@link SiteService#updateSiteStatus(UUID, Site.SiteStatus)}.
      * This operation should be coordinated asynchronously through events in some final implementation.
      * @param customerId a customer ID which may or may not have spare capacity to activate new sites.
      */

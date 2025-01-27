@@ -40,7 +40,6 @@ public class SiteCallerService {
         return customerService.activateSite(customer, id);
     }
 
-    @Autowired
     public SiteCallerService setCustomerService(@Lazy CustomerService customerService) {
         this.customerService = customerService;
         return this;

@@ -96,7 +96,11 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-aop</artifactId>
 		</dependency>
-	</dependencies>
+        <dependency>
+            <groupId>dev.jbazann.skwidl</groupId>
+            <artifactId>commons</artifactId>
+        </dependency>
+    </dependencies>
 
 	<build>
 		<resources>

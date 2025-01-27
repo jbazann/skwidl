@@ -1,13 +1,11 @@
 package dev.jbazann.skwidl.customers.customer;
 
-import com.google.common.collect.ComputationException;
-import dev.jbazann.skwidl.customers.commons.exceptions.DistributedTransactionException;
+import dev.jbazann.skwidl.commons.exceptions.DistributedTransactionException;
 import dev.jbazann.skwidl.customers.customer.dto.EditableFieldsDTO;
 import dev.jbazann.skwidl.customers.customer.exceptions.InvalidCustomerException;
 import dev.jbazann.skwidl.customers.user.User;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -17,6 +15,7 @@ import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.CancellationException;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CompletionException;
 
 
 @Service
@@ -27,7 +26,6 @@ public class CustomerService {
     private final CustomerUserService customerUserService;
     private final CustomerCallerService customerCallerService;
 
-    @Autowired
     public CustomerService(CustomerRepository customerRepository, CustomerSiteService customerSiteService, CustomerUserService customerUserService, CustomerCallerService customerCallerService) {
         this.customerRepository = customerRepository;
         this.customerSiteService = customerSiteService;
@@ -99,7 +97,7 @@ public class CustomerService {
         // await successful completion before returning
         try{
             externalTransaction.join();
-        }catch (CancellationException | ComputationException e) {
+        }catch (CancellationException | CompletionException e) {
             throw new DistributedTransactionException("User service failed.",e);
         }
     }

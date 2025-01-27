@@ -1,7 +1,6 @@
 package dev.jbazann.skwidl.customers.site;
 
 import dev.jbazann.skwidl.customers.site.dto.SiteDTO;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -14,7 +13,6 @@ public class SiteController {
 
     private final SiteService siteService;
 
-    @Autowired
     public SiteController(final SiteService siteService) {
         this.siteService = siteService;
     }
