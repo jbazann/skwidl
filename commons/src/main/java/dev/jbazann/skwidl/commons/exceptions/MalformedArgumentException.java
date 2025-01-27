@@ -1,4 +1,4 @@
-package dev.jbazann.skwidl.orders.order.exceptions;
+package dev.jbazann.skwidl.commons.exceptions;
 
 /**
  * To be thrown by service classes when a parameter value

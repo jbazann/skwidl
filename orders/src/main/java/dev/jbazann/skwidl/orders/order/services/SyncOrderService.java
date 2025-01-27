@@ -9,7 +9,7 @@ import dev.jbazann.skwidl.orders.order.dto.StatusUpdateDTO;
 import dev.jbazann.skwidl.orders.order.entities.Detail;
 import dev.jbazann.skwidl.orders.order.entities.Order;
 import dev.jbazann.skwidl.orders.order.entities.StatusHistory;
-import dev.jbazann.skwidl.orders.order.exceptions.MalformedArgumentException;
+import dev.jbazann.skwidl.commons.exceptions.MalformedArgumentException;
 import dev.jbazann.skwidl.commons.async.events.DomainEventBuilder;
 import dev.jbazann.skwidl.commons.identity.KnownMembers;
 import dev.jbazann.skwidl.orders.order.dto.NewOrderDTO;
