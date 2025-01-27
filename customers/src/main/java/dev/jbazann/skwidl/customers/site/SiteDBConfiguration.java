@@ -17,7 +17,7 @@ import java.util.Objects;
 
 @Configuration
 @EnableJpaRepositories(
-        basePackages = "com.jbazann.customers.site",
+        basePackages = "dev.jbazann.skwidl.customers.site",
         entityManagerFactoryRef = "siteEntityManagerFactory",
         transactionManagerRef = "siteTransactionManager"
 )
@@ -34,7 +34,7 @@ public class SiteDBConfiguration {
             EntityManagerFactoryBuilder builder, @Qualifier("siteDataSource") @NotNull DataSource siteDataSource) {
         return builder
                 .dataSource(siteDataSource)
-                .packages("com.jbazann.customers.site")
+                .packages("dev.jbazann.skwidl.customers.site")
                 .persistenceUnit("customerPU")
                 .build();
     }

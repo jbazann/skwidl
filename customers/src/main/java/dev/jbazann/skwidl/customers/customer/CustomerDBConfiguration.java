@@ -18,7 +18,7 @@ import java.util.Objects;
 
 @Configuration
 @EnableJpaRepositories(
-        basePackages = "com.jbazann.customers.customer",
+        basePackages = "dev.jbazann.skwidl.customers.customer",
         entityManagerFactoryRef = "customerEntityManagerFactory",
         transactionManagerRef = "customerTransactionManager"
 )
@@ -37,7 +37,7 @@ public class CustomerDBConfiguration {
             EntityManagerFactoryBuilder builder, @Qualifier("customerDataSource") @NotNull DataSource customerDataSource) {
         return builder
                 .dataSource(customerDataSource)
-                .packages("com.jbazann.customers.customer")
+                .packages("dev.jbazann.skwidl.customers.customer")
                 .persistenceUnit("customerPU")
                 .build();
     }
