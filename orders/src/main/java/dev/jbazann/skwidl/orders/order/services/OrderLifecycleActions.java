@@ -15,7 +15,6 @@ public class OrderLifecycleActions {
 
     private final OrderRepository orderRepository;
 
-    @Autowired
     public OrderLifecycleActions(OrderRepository orderRepository) {
         this.orderRepository = orderRepository;
     }
