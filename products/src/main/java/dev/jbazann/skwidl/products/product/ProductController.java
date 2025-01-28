@@ -1,10 +1,12 @@
 package dev.jbazann.skwidl.products.product;
 
+import dev.jbazann.skwidl.products.product.dto.DiscountDTO;
 import dev.jbazann.skwidl.products.product.dto.NewProductDTO;
 import dev.jbazann.skwidl.products.product.dto.ProductDTO;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import dev.jbazann.skwidl.products.product.dto.ProvisioningDTO;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.UUID;
 
 @RestController
 public class ProductController {
@@ -21,6 +23,14 @@ public class ProductController {
         return productService.newProduct(product).toDto();
     }
 
+    @PutMapping("/product/{id}")
+    public ProductDTO updateProduct(@PathVariable UUID id, @RequestBody ProvisioningDTO update) {
+        return productService.updateProduct(update.productId(id)).toDto();
+    }
 
+    @PutMapping("/product/{id}")
+    public ProductDTO discountProduct(@PathVariable UUID id, @RequestBody DiscountDTO discount) {
+        return productService.discountProduct(discount.productId(id)).toDto();
+    }
 
 }

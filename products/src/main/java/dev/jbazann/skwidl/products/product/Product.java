@@ -23,25 +23,21 @@ import java.util.UUID;
 @Table(name = "product",schema = "products")
 public class Product {
 
-    @Column @Id
+    @Id
     @NotNull
     private UUID id;
-    @Column
     @NotNull @NotEmpty
     private String name;
-    @Column
     @NotNull
     private String description;
-    @Column
     @NotNull @Min(0)
     private BigDecimal price;
-    @Column
+    @NotNull @Min(0)
+    private BigDecimal discount;
     @Min(0)
     private int currentStock;
-    @Column
     @Min(0)
     private int minimumStock;
-    @Column
     @NotNull
     private UUID category;
 
