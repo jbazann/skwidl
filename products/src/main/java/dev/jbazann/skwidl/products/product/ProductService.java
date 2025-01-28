@@ -14,11 +14,11 @@ import java.util.UUID;
 @Service
 public class ProductService {
 
-    private final ProductRepository repository;
+    private final ProductLifecycleActions actions;
     private final ProductRequestService request;
 
-    public ProductService(ProductRepository repository, ProductRequestService request) {
-        this.repository = repository;
+    public ProductService(ProductLifecycleActions actions, ProductRequestService request) {
+        this.actions = actions;
         this.request = request;
     }
 
@@ -31,30 +31,30 @@ public class ProductService {
         product.category(categoryId);
         product.id(UUID.randomUUID());//TODO ids
         product.currentStock(0);
-        return repository.save(product);
+        return actions.save(product);
     }
 
     public Product updateProduct(@NotNull @Valid ProvisioningDTO update) {
-        Product product = findById(update.productId());
+        Product product = actions.fetch(update.productId())
+                .orElseThrow(() -> new EntityNotFoundException(String.format(
+                        "No product found with id %s.", update.productId()
+                )));
         final boolean shouldUpdatePrice = update.price() != null &&
                 update.price().compareTo(BigDecimal.ZERO) >= 0;
         final boolean shouldUpdateStock = update.units() != null &&
                 update.units() > 0;
         if (shouldUpdatePrice) product.price(update.price());
         if (shouldUpdateStock) product.currentStock(product.currentStock() + update.units());
-        return repository.save(product);
+        return actions.save(product);
     }
 
     public Product discountProduct(@NotNull @Valid DiscountDTO discount) {
-        Product product = findById(discount.productId());
-        return repository.save(product.discount(discount.discount()));
-    }
-
-    private Product findById(@NotNull UUID id) {
-        return repository.findById(id)
+        Product product = actions.fetch(discount.productId())
                 .orElseThrow(() -> new EntityNotFoundException(String.format(
-                        "No product found with id %s.", id
+                        "No product found with id %s.", discount.productId()
                 )));
+        product.discount(discount.discount());
+        return actions.save(product);
     }
 
 }
