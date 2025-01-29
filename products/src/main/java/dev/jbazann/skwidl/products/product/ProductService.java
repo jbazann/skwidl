@@ -1,15 +1,20 @@
 package dev.jbazann.skwidl.products.product;
 
 import dev.jbazann.skwidl.commons.exceptions.EntityNotFoundException;
+import dev.jbazann.skwidl.commons.exceptions.UnknownErrorException;
+import dev.jbazann.skwidl.products.product.api.AvailabilityResponse;
+import dev.jbazann.skwidl.products.product.api.StockRequest;
 import dev.jbazann.skwidl.products.product.dto.DiscountDTO;
 import dev.jbazann.skwidl.products.product.dto.NewProductDTO;
 import dev.jbazann.skwidl.products.product.dto.ProvisioningDTO;
+import dev.jbazann.skwidl.products.product.exceptions.InsufficientStockException;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
-import java.util.UUID;
+import java.util.*;
 
 @Service
 public class ProductService {
@@ -57,4 +62,42 @@ public class ProductService {
         return actions.save(product);
     }
 
+    public AvailabilityResponse checkAvailability(@NotNull @NotEmpty List<@Valid StockRequest> entries) {
+        Collection<Product> products = actions.fetchAll(entries.stream().map(StockRequest::productId).toList());
+        final AvailabilityResponse response = new AvailabilityResponse();
+
+        response.productsExist(products.size() == entries.size());
+
+        response.unitCost(new HashMap<>());
+        products.forEach(p -> {
+            response.unitCost().put(p.id(), p.price().subtract(p.price().multiply(p.discount())));
+            entries.removeIf(e -> e.productId().equals(p.id())); // TODO optimize
+        });
+
+        if (!entries.isEmpty()) {
+            response.missingProducts(new ArrayList<>());
+            entries.forEach(e -> {
+                response.missingProducts().add(e.productId());
+            });
+        }
+
+        response.totalCost(
+                response.unitCost().values().stream().reduce(BigDecimal::add).
+                        orElseThrow(UnknownErrorException::new)
+        );
+
+        return response;
+    }
+
+    public void reserveProducts(List<StockRequest> entries) {
+        Collection<Product> products = actions.fetchAll(entries.stream().map(StockRequest::productId).toList());
+        final Map<UUID, Product> productMap = new HashMap<>();
+        products.forEach(p -> productMap.put(p.id(),p));
+        entries.forEach(e -> {
+            Product p = productMap.get(e.productId());
+            if (p.currentStock() < e.amount()) throw new InsufficientStockException();
+            p.currentStock(p.currentStock() - e.amount());
+        });
+        actions.saveAll(products);
+    }
 }
