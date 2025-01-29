@@ -1,1 +1,1 @@
-The TPDAN project. A marvel of science and engineering.
+The SKWIDL project. A marvel of science and engineering.
