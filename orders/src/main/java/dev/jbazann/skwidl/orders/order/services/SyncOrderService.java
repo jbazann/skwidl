@@ -253,7 +253,7 @@ public class SyncOrderService {
         if (o.detail() != null && !o.detail().isEmpty()) {
             if(o.detail().stream().anyMatch(d -> d.amount() == null)) detail.append("'amount', ");
             if(o.detail().stream().anyMatch(d -> d.product() == null)) detail.append("'product', ");
-        }
+        } // 8=D
         if(!order.isEmpty()) message.append("The field(s) ").append(order).append("cannot be null.");
         if(o.detail() != null && o.detail().isEmpty()) message.append("The field 'detail' cannot be empty.");
         if(!detail.isEmpty()) message.append("The detail field(s) ").append(detail).append("cannot be null.");
