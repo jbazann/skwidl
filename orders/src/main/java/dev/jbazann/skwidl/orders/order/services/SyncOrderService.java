@@ -13,6 +13,7 @@ import dev.jbazann.skwidl.commons.exceptions.MalformedArgumentException;
 import dev.jbazann.skwidl.commons.async.events.DomainEventBuilder;
 import dev.jbazann.skwidl.commons.identity.KnownMembers;
 import dev.jbazann.skwidl.orders.order.dto.NewOrderDTO;
+import dev.jbazann.skwidl.orders.order.exceptions.ReserveFailureException;
 import jakarta.validation.constraints.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Example;
@@ -133,12 +134,6 @@ public class SyncOrderService {
             return reject(order,"Products did not exist.");
         }
 
-        // Parse product availability, only necessary because I deserialized into a map instead of a proper object.
-        if ( !(validatedBatch.get(ProductsRemoteService.STOCK_AVAILABLE) instanceof final Boolean stockAvailable) ) {
-            order.totalCost(BigDecimal.valueOf(-1));
-            return reject(order,"Internal communication error.");
-        }
-
         // Double-check the retrieved total cost; because I must justify using CompletableFuture.
             // Type check.
         if( !(validatedBatch.get(ProductsRemoteService.TOTAL_COST) instanceof final BigDecimal expectedValue) ) {
@@ -170,12 +165,15 @@ public class SyncOrderService {
             return reject(order, success == null ? "Null billing response." : "Insufficient funds.");
         }
 
-        // Reserve stock, if available.
-        if( stockAvailable ) {
-            final Boolean productsReserved = productsRemoteService.reserveProducts(products);
-            if( productsReserved != null && productsReserved ) {
-                order = prepare(order, "");
-            }
+        // Attempt to reserve stock.// TODO yuck
+        Boolean productsReserved;
+        try {
+            productsReserved = productsRemoteService.reserveProducts(products);
+        } catch (ReserveFailureException e) {
+            productsReserved = false;
+        }
+        if( productsReserved != null && productsReserved ) {
+            order = prepare(order, "");
         }
 
         return order;

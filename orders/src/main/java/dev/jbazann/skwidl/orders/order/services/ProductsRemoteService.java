@@ -1,10 +1,13 @@
 package dev.jbazann.skwidl.orders.order.services;
 
+import dev.jbazann.skwidl.commons.exceptions.UnexpectedResponseException;
 import dev.jbazann.skwidl.orders.order.Sin;
 import dev.jbazann.skwidl.orders.order.dto.ProductAmountDTO;
+import dev.jbazann.skwidl.orders.order.exceptions.ReserveFailureException;
 import jakarta.validation.constraints.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
@@ -23,24 +26,30 @@ public class ProductsRemoteService implements ProductsRemoteServiceInterface {
     // Map<> keys expected by the external service
     // to be used when other classes must construct maps for batch operations
     public static final String PRODUCT_ID = "productId";
-    public static final String REQUESTED_STOCK = "requestedStock";
+    public static final String REQUESTED_STOCK = "amount";
     public static final String TOTAL_COST = "totalCost";
     public static final String PRODUCTS_EXIST = "productsExist";
-    public static final String STOCK_AVAILABLE = "stockAvailable";
+    public static final String UNIT_COST = "unitCost";
 
     private final WebClient.Builder webClientBuilder;
 
     @Value("${jbazann.timeout.standard}")
     private final Duration TIMEOUT = Duration.ofMillis(5000);
 
-    @Value("${jbazann.gateway.products.base}")
-    private final String PRODUCTS_BASE = "";
+    @Value("${jbazann.routes.gateway.products}")
+    private final String PRODUCTS = "";
 
-    @Value("${jbazann.gateway.products.validate}")
-    private final String PRODUCTS_VALIDATE = "";
+    @Value("${jbazann.routes.products.v1.collection.path}")
+    private final String PRODUCTS_COLLECTION = "";
 
-    @Value("${jbazann.gateway.products.reserve}")
-    public final String PRODUCTS_RESERVE_STOCK = "";
+    @Value("${jbazann.routes.products.v1.collection.params.operation.param}")
+    private final String PRODUCTS_PARAMS_OPERATION = "";
+
+    @Value("${jbazann.routes.products.v1.collection.params.operation.availability}")
+    private final String PRODUCTS_OPERATION_AVAILABILITY = "";
+
+    @Value("${jbazann.routes.products.v1.collection.params.operation.reserve}")
+    private final String PRODUCTS_OPERATION_RESERVE = "";
 
     @Autowired
     public ProductsRemoteService(WebClient.Builder webClientBuilder) {
@@ -56,9 +65,8 @@ public class ProductsRemoteService implements ProductsRemoteServiceInterface {
      *              {@link ProductsRemoteService#REQUESTED_STOCK}: {@link Integer}
      * }
      * @return a {@link Map} containing at least the key {@link ProductsRemoteService#PRODUCTS_EXIST},
-     * and potentially {@link ProductsRemoteService#TOTAL_COST}, {@link ProductsRemoteService#STOCK_AVAILABLE},
-     * and one entry in the form {{@link UUID}: {@link BigDecimal}} per product ID in the list
-     * received as argument.
+     * and potentially {@link ProductsRemoteService#TOTAL_COST} plus one entry in the form
+     * {{@link UUID}: {@link BigDecimal}} per product ID in the list received as argument.
      */
     @Async
     public CompletableFuture<Map<String, Object>> validateProductAndFetchCost(@NotNull List<Map<String, Object>> batch) {
@@ -66,9 +74,13 @@ public class ProductsRemoteService implements ProductsRemoteServiceInterface {
         if (!batch.stream().allMatch(m -> m.get(PRODUCT_ID) instanceof UUID && m.size() == 1))
             throw new IllegalArgumentException();// TODO exception messages
         // send request, sanitize response
-        final WebClient webClient = webClientBuilder.baseUrl(PRODUCTS_BASE).build();
+        final WebClient webClient = webClientBuilder.baseUrl(PRODUCTS).build();
         return CompletableFuture.supplyAsync( () -> {
-            final Map<String, Object> response = webClient.post().uri(PRODUCTS_VALIDATE).bodyValue(batch)
+            final Map<String, Object> response = webClient.post()
+                    .uri(builder -> builder.path(PRODUCTS_COLLECTION)
+                            .queryParam(PRODUCTS_PARAMS_OPERATION, PRODUCTS_OPERATION_AVAILABILITY)
+                            .build())
+                    .bodyValue(batch)
                     .retrieve().bodyToMono(new Sin()).block(TIMEOUT);
             return sanitizeValidatedProducts(Objects.requireNonNull(response));
         });
@@ -83,19 +95,37 @@ public class ProductsRemoteService implements ProductsRemoteServiceInterface {
                 return sanitizedResponse;
             }
         } else {
-            // TODO exceptions
+            throw new UnexpectedResponseException(String.format(
+                    "%s attribute missing or malformed in Products service response.", PRODUCTS_EXIST
+            ));
         }
 
-        if( response.get(TOTAL_COST) instanceof BigDecimal );
-        if( response.get(STOCK_AVAILABLE) instanceof Boolean );
+        if( !(response.get(TOTAL_COST) instanceof BigDecimal) )
+            throw new UnexpectedResponseException(String.format(
+                    "%s attribute missing or malformed in Products service response.", TOTAL_COST
+            ));
+        if( !(response.get(UNIT_COST) instanceof Map<?,?> unitCost) )
+            throw new UnexpectedResponseException(String.format(
+                    "%s attribute missing or malformed in Products service response.", TOTAL_COST
+            ));
+
+        unitCost.keySet().forEach(k -> {
+            response.put((String) k, unitCost.get(k));
+        });
+
         return response;
     }
 
 
     public Boolean reserveProducts(@NotNull Map<UUID, ProductAmountDTO> products) {
-        return webClientBuilder.baseUrl(PRODUCTS_BASE).build()
-                .post().uri(PRODUCTS_RESERVE_STOCK)
+        return webClientBuilder.baseUrl(PRODUCTS).build()
+                .post().uri(builder -> builder.path(PRODUCTS_COLLECTION)
+                        .queryParam(PRODUCTS_PARAMS_OPERATION, PRODUCTS_OPERATION_RESERVE)
+                        .build())
                 .bodyValue(products.values().stream().collect(Collectors.toMap(ProductAmountDTO::id, ProductAmountDTO::amount)))
-                .retrieve().bodyToMono(Boolean.class).block(TIMEOUT);
+                .retrieve().onStatus(HttpStatusCode::is4xxClientError, (p) -> {
+                    throw new ReserveFailureException();
+                })
+                .toBodilessEntity().thenReturn(true).block(TIMEOUT);
     }
 }
