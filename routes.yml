@@ -1,11 +1,30 @@
 jbazann:
-  gateway:
+  routes:
+    gateway:
+      base: http://gateway:@jbazann.kube.main-port@
+      products: /products
+      customers: /customers
     products:
-      base: http://gateway:@jbazann.kube.main-port@/products/
-      validate: validate/
-      reserve: reserve/
+      v1:
+        collection:
+          path: /v1/products
+          params:
+            operation:
+              param: 'operation'
+              availability: 'availability'
+              reserve: 'reserve'
+        identified:
+          path: /v1/products/{id}
     customers:
-      base: http://gateway:@jbazann.kube.main-port@/customers/
-      budget: customer/{id}/budget/
-      bill: customer/{id}/bill/{amount}
-      credit: customer/{id}/credit/{amount}
+      v1:
+        collection:
+          path: /v1/customers
+        identified:
+          path: /v1/customers/{id}
+        wallet:
+          path: /v1/customers/{id}/wallet
+          params:
+            operation:
+              param: 'operation'
+              bill: 'bill'
+              credit: 'credit'
