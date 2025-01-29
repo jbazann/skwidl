@@ -2,8 +2,8 @@ jbazann:
   routes:
     gateway:
       base: http://gateway:@jbazann.kube.main-port@
-      products: /products
-      customers: /customers
+      products: http://gateway:@jbazann.kube.main-port@/products
+      customers: http://gateway:@jbazann.kube.main-port@/customers
     products:
       v1:
         collection:
