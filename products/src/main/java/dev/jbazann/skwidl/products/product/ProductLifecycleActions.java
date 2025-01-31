@@ -1,5 +1,8 @@
 package dev.jbazann.skwidl.products.product;
 
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 import org.springframework.stereotype.Service;
 
 import java.util.Collection;
@@ -15,19 +18,19 @@ public class ProductLifecycleActions {
         this.productRepository = productRepository;
     }
 
-    public Optional<Product> fetch(UUID id) {
+    public Optional<Product> fetch(@NotNull UUID id) {
         return productRepository.findById(id);
     }
 
-    public Collection<Product> fetchAll(Iterable<UUID> ids) {
+    public Collection<Product> fetchAll(@NotNull @NotEmpty Iterable<@NotNull UUID> ids) {
         return productRepository.findAllById(ids);
     }
 
-    public Product save(Product product) {
+    public Product save(@NotNull @Valid Product product) {
         return productRepository.save(product);
     }
 
-    public Collection<Product> saveAll(Collection<Product> products) {
+    public Collection<Product> saveAll(@NotNull @NotEmpty Collection<@Valid Product> products) {
         return productRepository.saveAll(products);
     }
 }

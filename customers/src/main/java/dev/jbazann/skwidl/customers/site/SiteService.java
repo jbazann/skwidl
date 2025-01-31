@@ -53,7 +53,7 @@ public class SiteService {
      */
     @Transactional()// TODO
     public void updateSiteStatus(@NotNull UUID siteId, @NotNull Site.SiteStatus newStatus) {
-        @NotNull final Site site = fetchSite(siteId);
+        Site site = fetchSite(siteId);
         siteStatusService.updateSiteStatus(site, newStatus);
         siteRepository.save(site);
     }
@@ -78,8 +78,8 @@ public class SiteService {
     @Transactional
     public void activatePendingSites(@NotNull UUID customerId) {
         // fetch some pending sites (ideally go through all of them in the future)
-        final Example<Site> query = Example.of(new Site().customer(customerId).status(Site.SiteStatus.PENDING));
-        final Iterator<Site> sites = siteRepository.findAll(query, Pageable.ofSize(5)).iterator();
+        Example<Site> query = Example.of(new Site().customer(customerId).status(Site.SiteStatus.PENDING));
+        Iterator<Site> sites = siteRepository.findAll(query, Pageable.ofSize(5)).iterator();
 
         // try activating sites until max capacity
         boolean previousSucceeded = true;

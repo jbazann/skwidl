@@ -60,7 +60,7 @@ public class CustomerService {
      *               no changes will be made, but all the database operations will be performed as if they were.
      */
     public void updateCustomer(@NotNull UUID customerId, @NotNull EditableFieldsDTO fields) {
-        final @NotNull Customer customer = fetchCustomer(customerId);
+        Customer customer = fetchCustomer(customerId);
         fields.update(customer);
         customerRepository.save(customer);
     }
@@ -109,7 +109,7 @@ public class CustomerService {
      */
     @Transactional
     public boolean activateSite(@NotNull UUID customerId, @NotNull UUID siteId) {
-        final Customer customer = fetchCustomer(customerId);
+        Customer customer = fetchCustomer(customerId);
         if(customer.activeSites().size() < customer.maxActiveSites()) {
             customer.addActiveSite(siteId);
             customerRepository.save(customer);
@@ -127,7 +127,7 @@ public class CustomerService {
      */
     @Transactional
     public void activatePendingSite(@NotNull UUID customerId, @NotNull UUID siteId) {
-        @NotNull final Customer customer = fetchCustomer(customerId);
+        Customer customer = fetchCustomer(customerId);
         if (customer.activeSites().size() < customer.maxActiveSites()) {
             customer.addActiveSite(siteId);
             if (customer.pendingSites() < 1); // TODO log, customer unaware of pending site
@@ -143,7 +143,7 @@ public class CustomerService {
      */
     @Transactional
     public void finishSite(@NotNull UUID customerId, @NotNull UUID siteId) {
-        final Customer customer = fetchCustomer(customerId);
+        Customer customer = fetchCustomer(customerId);
         if(!customer.activeSites().contains(siteId)) {
             // TODO log, customer unaware of active site
             return;
@@ -160,7 +160,7 @@ public class CustomerService {
      * @param customerId a valid customer ID.
      */
     public void addPendingSite(@NotNull UUID customerId) {
-        final @NotNull Customer customer = fetchCustomer(customerId);
+        Customer customer = fetchCustomer(customerId);
         customerRepository.save(customer.countPendingSite());
     }
 
@@ -171,7 +171,7 @@ public class CustomerService {
      * @param siteId a site ID that is presumed, but not required to be valid.
      */
     public void deactivateSite(@NotNull UUID customerId, @NotNull UUID siteId) {
-        final @NotNull Customer customer = fetchCustomer(customerId);
+        Customer customer = fetchCustomer(customerId);
         if(!customer.activeSites().contains(siteId)) {
             // TODO log, customer unaware of active site
             return;

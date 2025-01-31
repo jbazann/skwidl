@@ -101,7 +101,7 @@ public class OrderService {
     }
 
     public Order newOrder(@NotNull NewOrderDTO orderDto) {
-        final StringBuilder message = validate(orderDto);
+        StringBuilder message = validate(orderDto);
         if(!message.isEmpty()) throw new MalformedArgumentException(message.toString());
         Order order = orderDto.toEntity()
                 .id(UUID.randomUUID())// TODO safe ids
@@ -111,20 +111,20 @@ public class OrderService {
         order.detail().forEach(d -> d.id(UUID.randomUUID()));// TODO safe ids
 
         // Request validation and unit cost for all the products in the order.
-        final List<Map<String, Object>> batchToValidate = new LinkedList<>();
+        List<Map<String, Object>> batchToValidate = new LinkedList<>();
         order.detail().forEach(detail -> {
             Map<String, Object> entryToValidate = new HashMap<>();
             entryToValidate.put(ProductServiceHttpClient.PRODUCT_ID, detail.product());
             entryToValidate.put(ProductServiceHttpClient.REQUESTED_STOCK, detail.amount());
             batchToValidate.add(entryToValidate);
         });
-        final CompletableFuture<Map<String, Object>> detailValidationResponse = productsRemoteService.validateProductAndFetchCost(batchToValidate);
+        CompletableFuture<Map<String, Object>> detailValidationResponse = productsRemoteService.validateProductAndFetchCost(batchToValidate);
 
         // Request validation that customer exists, as well as their available budget.
-        final CompletableFuture<BigDecimal> budgetResponse = customersRemoteService.validateCustomerAndFetchBudget(order.customer());
+        CompletableFuture<BigDecimal> budgetResponse = customersRemoteService.validateCustomerAndFetchBudget(order.customer());
 
         // Wait for response from Products service.
-        final Map<String, Object> validatedBatch = detailValidationResponse.join();
+        Map<String, Object> validatedBatch = detailValidationResponse.join();
         if ( !(validatedBatch.get(ProductServiceHttpClient.PRODUCTS_EXIST) instanceof final Boolean exist) ) {
             order.totalCost(BigDecimal.valueOf(-1));
             return reject(order,"Internal communication error.");
@@ -141,9 +141,9 @@ public class OrderService {
             return reject(order,"Internal communication error.");
         }
             // Build the data structures that simplify the calculations.
-        final Map<UUID, ProductAmountDTO> products = ProductAmountDTO.fromOrder(order);
-        final Map<UUID, ProductUnitCostDTO> costs = ProductUnitCostDTO.fromValidatedBatch(validatedBatch);
-        final BigDecimal verifiedCost;
+        Map<UUID, ProductAmountDTO> products = ProductAmountDTO.fromOrder(order);
+        Map<UUID, ProductUnitCostDTO> costs = ProductUnitCostDTO.fromValidatedBatch(validatedBatch);
+        BigDecimal verifiedCost;
             // Verify, and add the correct value to the order.
         if( (verifiedCost = costsMatch(expectedValue, costs, products) )
                 .compareTo(BigDecimal.valueOf(-1)) == 0 ) {// if (verifiedCost == -1).
@@ -236,7 +236,7 @@ public class OrderService {
         return orderRepository.findOne(Example.of(new Order().id(id))).orElseThrow();
     }
 
-    public List<Order> getCustomerOrders(UUID customer) {
+    public List<Order> getCustomerOrders(@NotNull UUID customer) {
         return orderRepository.findAll(Example.of(new Order().customer(customer)));
     }
 

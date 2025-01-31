@@ -2,6 +2,7 @@ package dev.jbazann.skwidl.customers.site;
 
 import dev.jbazann.skwidl.customers.customer.CustomerService;
 import jakarta.validation.constraints.NotNull;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
@@ -40,6 +41,7 @@ public class CustomerServiceLocalClient implements CustomerServiceClient {
         return customerService.activateSite(customer, id);
     }
 
+    @Autowired
     public CustomerServiceLocalClient setCustomerService(@Lazy CustomerService customerService) {
         this.customerService = customerService;
         return this;

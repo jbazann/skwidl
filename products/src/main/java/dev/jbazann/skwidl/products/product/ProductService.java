@@ -20,9 +20,9 @@ import java.util.*;
 public class ProductService {
 
     private final ProductLifecycleActions actions;
-    private final ProductRequestService request;
+    private final CategoryServiceClient request;
 
-    public ProductService(ProductLifecycleActions actions, ProductRequestService request) {
+    public ProductService(ProductLifecycleActions actions, CategoryServiceClient request) {
         this.actions = actions;
         this.request = request;
     }
@@ -44,9 +44,9 @@ public class ProductService {
                 .orElseThrow(() -> new EntityNotFoundException(String.format(
                         "No product found with id %s.", update.productId()
                 )));
-        final boolean shouldUpdatePrice = update.price() != null &&
+        boolean shouldUpdatePrice = update.price() != null &&
                 update.price().compareTo(BigDecimal.ZERO) >= 0;
-        final boolean shouldUpdateStock = update.units() != null &&
+        boolean shouldUpdateStock = update.units() != null &&
                 update.units() > 0;
         if (shouldUpdatePrice) product.price(update.price());
         if (shouldUpdateStock) product.currentStock(product.currentStock() + update.units());
@@ -62,9 +62,9 @@ public class ProductService {
         return actions.save(product);
     }
 
-    public AvailabilityResponse checkAvailability(@NotNull @NotEmpty List<@Valid StockRequest> entries) {
+    public AvailabilityResponse checkAvailability(@NotNull @NotEmpty List<@NotNull @Valid StockRequest> entries) {
         Collection<Product> products = actions.fetchAll(entries.stream().map(StockRequest::productId).toList());
-        final AvailabilityResponse response = new AvailabilityResponse();
+        AvailabilityResponse response = new AvailabilityResponse();
 
         response.productsExist(products.size() == entries.size());
 
@@ -89,9 +89,9 @@ public class ProductService {
         return response;
     }
 
-    public void reserveProducts(List<StockRequest> entries) {
+    public void reserveProducts(@NotNull @NotEmpty List<@NotNull @Valid StockRequest> entries) {
         Collection<Product> products = actions.fetchAll(entries.stream().map(StockRequest::productId).toList());
-        final Map<UUID, Product> productMap = new HashMap<>();
+        Map<UUID, Product> productMap = new HashMap<>();
         products.forEach(p -> productMap.put(p.id(),p));
         entries.forEach(e -> {
             Product p = productMap.get(e.productId());

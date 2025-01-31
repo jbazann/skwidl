@@ -1,8 +1,6 @@
 package dev.jbazann.skwidl.customers.user;
 
 import dev.jbazann.skwidl.customers.user.dto.UserDTO;
-import jakarta.validation.constraints.NotNull;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -37,7 +35,7 @@ public class UserController {
     }
 
     @PostMapping()
-    public ResponseEntity<UserDTO> createUser(@RequestBody @NotNull UserDTO user) {
+    public ResponseEntity<UserDTO> createUser(@RequestBody UserDTO user) {
         user.id(userService.generateUserId());
         return ResponseEntity.ok(userService.newUser(user.toEntity()).toDto());
     }

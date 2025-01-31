@@ -7,7 +7,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
-public class SiteStatusService { // TODO switch statements
+public class SiteStatusService {
 
     private final CustomerServiceClient customerServiceLocalClient;
 
@@ -22,8 +22,7 @@ public class SiteStatusService { // TODO switch statements
     @Transactional
     public void setInitialStatus(@NotNull @Valid Site site) {
         site.status(Site.SiteStatus.PENDING);
-        final boolean active = customerServiceLocalClient.activateSite(site.customer(),site.id());
-        if(active) {
+        if (customerServiceLocalClient.activateSite(site.customer(),site.id())) {
             site.status(Site.SiteStatus.ACTIVE);
         } else {
             customerServiceLocalClient.addPendingSite(site.customer());
@@ -40,8 +39,8 @@ public class SiteStatusService { // TODO switch statements
     public void updateSiteStatus(@Valid @NotNull Site site, @NotNull Site.SiteStatus newStatus) {
         validateTransition(site, newStatus);
         switch(newStatus) { // TODO delegate to Spring state machine
-            case ACTIVE: transitionFromActive(site, newStatus); break;
-            case PENDING: transitionFromPending(site, newStatus); break;
+            case ACTIVE -> transitionFromActive(site, newStatus);
+            case PENDING -> transitionFromPending(site, newStatus);
         }
     }
 
@@ -54,8 +53,8 @@ public class SiteStatusService { // TODO switch statements
     @Transactional
     protected void transitionFromActive(Site site, Site.SiteStatus newStatus) {
         switch(newStatus) {
-            case FINISHED: customerServiceLocalClient.finishSite(site.customer(),site.id()); break;
-            case PENDING: customerServiceLocalClient.deactivateSite(site.customer(),site.id()); break;
+            case FINISHED -> customerServiceLocalClient.finishSite(site.customer(),site.id());
+            case PENDING -> customerServiceLocalClient.deactivateSite(site.customer(),site.id());
         }
         site.status(newStatus);
     }
@@ -63,7 +62,7 @@ public class SiteStatusService { // TODO switch statements
     @Transactional
     protected void transitionFromPending(Site site, Site.SiteStatus newStatus) {
         switch(newStatus) {
-            case ACTIVE: customerServiceLocalClient.activatePendingSite(site.customer(),site.id()); break;
+            case ACTIVE -> customerServiceLocalClient.activatePendingSite(site.customer(),site.id());
         }
         site.status(newStatus);
     }

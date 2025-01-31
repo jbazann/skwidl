@@ -50,7 +50,7 @@ public class UserService {
      */
     @Transactional// TODO
     public User addAllowedUser(@NotNull UUID customerId, @NotNull UUID userId) {
-        final @NotNull User user = fetchUser(userId);
+        User user = fetchUser(userId);
         if(isEnabledFor(user, customerId)) {
             /* do not throw exception until decoupled from CustomerService
             throw new InvalidOperationException("User " + userId + " is already enabled for client " + customerId + '.') ;
@@ -67,7 +67,7 @@ public class UserService {
      * @param user an example user with null fields, except for those intended to be matched against.
      * @return a size-limited list of matching results.
      */
-    public List<User> findUsersByExample(User user) {
+    public List<User> findUsersByExample(@NotNull User user) {
         return userRepository.findAll(Example.of(user), Pageable.ofSize(5)).toList();
     }
 
@@ -77,7 +77,7 @@ public class UserService {
         );
     }
 
-    private boolean isEnabledFor(User user, UUID customerId) {
+    private boolean isEnabledFor(@NotNull User user,@NotNull UUID customerId) {
         return user.enabledForCustomerId(customerId);
     }
 

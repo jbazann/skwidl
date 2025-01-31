@@ -1,6 +1,5 @@
 package dev.jbazann.skwidl.customers.customer;
 
-import dev.jbazann.skwidl.customers.user.User;
 import dev.jbazann.skwidl.customers.user.UserService;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;

@@ -4,7 +4,6 @@ import dev.jbazann.skwidl.orders.order.OrderRepository;
 import dev.jbazann.skwidl.orders.order.entities.Order;
 import dev.jbazann.skwidl.orders.order.entities.StatusHistory;
 import jakarta.validation.constraints.NotNull;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
