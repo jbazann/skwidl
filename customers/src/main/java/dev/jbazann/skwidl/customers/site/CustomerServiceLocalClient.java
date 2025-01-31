@@ -1,7 +1,7 @@
 package dev.jbazann.skwidl.customers.site;
 
 import dev.jbazann.skwidl.customers.customer.CustomerService;
-import org.springframework.beans.factory.annotation.Autowired;
+import jakarta.validation.constraints.NotNull;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
@@ -16,31 +16,31 @@ import java.util.UUID;
  */
 @Lazy
 @Service
-public class SiteCallerService {
+public class CustomerServiceLocalClient implements CustomerServiceClient {
 
     private CustomerService customerService;
 
-    public void finishSite(UUID customer, UUID id) {
+    public void finishSite(@NotNull UUID customer, @NotNull UUID id) {
         customerService.finishSite(customer, id);
     }
 
-    public void deactivateSite(UUID customer, UUID id) {
+    public void deactivateSite(@NotNull UUID customer,@NotNull UUID id) {
         customerService.deactivateSite(customer, id);
     }
 
-    public void activatePendingSite(UUID customer, UUID id) {
+    public void activatePendingSite(@NotNull UUID customer,@NotNull UUID id) {
         customerService.activatePendingSite(customer, id);
     }
 
-    public void addPendingSite(UUID customer) {
+    public void addPendingSite(@NotNull UUID customer) {
         customerService.addPendingSite(customer);
     }
 
-    public boolean activateSite(UUID customer, UUID id) {
+    public boolean activateSite(@NotNull UUID customer,@NotNull UUID id) {
         return customerService.activateSite(customer, id);
     }
 
-    public SiteCallerService setCustomerService(@Lazy CustomerService customerService) {
+    public CustomerServiceLocalClient setCustomerService(@Lazy CustomerService customerService) {
         this.customerService = customerService;
         return this;
     }

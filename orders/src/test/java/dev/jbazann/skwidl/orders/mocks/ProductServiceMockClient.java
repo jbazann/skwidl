@@ -2,8 +2,8 @@ package dev.jbazann.skwidl.orders.mocks;
 
 import dev.jbazann.skwidl.orders.order.dto.OrderDTO;
 import dev.jbazann.skwidl.orders.order.dto.ProductAmountDTO;
-import dev.jbazann.skwidl.orders.order.services.ProductsRemoteService;
-import dev.jbazann.skwidl.orders.order.services.ProductsRemoteServiceInterface;
+import dev.jbazann.skwidl.orders.order.services.ProductServiceHttpClient;
+import dev.jbazann.skwidl.orders.order.services.ProductServiceClient;
 import dev.jbazann.skwidl.orders.testdata.StandardDataset;
 import dev.jbazann.skwidl.orders.order.entities.Detail;
 import org.mockito.Mockito;
@@ -19,27 +19,27 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 
-public class ProductsRemoteServiceMock implements ProductsRemoteServiceInterface {
+public class ProductServiceMockClient implements ProductServiceClient {
 
-    private final ProductsRemoteServiceInterface mock = Mockito.mock();
+    private final ProductServiceClient mock = Mockito.mock();
     private final Function<UUID, BigDecimal> getTotalCost = Mockito.mock();
     private final Function<UUID, BigDecimal> getUnitCost = Mockito.mock();
 
-    public ProductsRemoteServiceMock() {
+    public ProductServiceMockClient() {
         mockProductCost();
         when(mock.validateProductAndFetchCost(any()))
                 .thenAnswer((Answer<CompletableFuture<Map<String, Object>>>) (invocationOnMock) -> {
                     final List<Map<String, Object>> batch = invocationOnMock.getArgument(0);
                     final Map<String, Object> response = new HashMap<>();
-                    response.put(ProductsRemoteService.PRODUCTS_EXIST, Boolean.TRUE);
-                    response.put(ProductsRemoteService.STOCK_AVAILABLE, Boolean.TRUE);
-                    response.put(ProductsRemoteService.TOTAL_COST,
-                            batch.stream().map(element -> element.get(ProductsRemoteService.PRODUCT_ID))
+                    response.put(ProductServiceHttpClient.PRODUCTS_EXIST, Boolean.TRUE);
+                    response.put(ProductServiceHttpClient.STOCK_AVAILABLE, Boolean.TRUE);
+                    response.put(ProductServiceHttpClient.TOTAL_COST,
+                            batch.stream().map(element -> element.get(ProductServiceHttpClient.PRODUCT_ID))
                                     .map(id -> (UUID) id)
                                     .map(getTotalCost)
                                     .reduce(BigDecimal::add)
                     );
-                    batch.stream().map(element -> element.get(ProductsRemoteService.PRODUCT_ID))
+                    batch.stream().map(element -> element.get(ProductServiceHttpClient.PRODUCT_ID))
                             .map(id -> (UUID) id)
                             .forEach(product -> response.put(product.toString(), getUnitCost.apply(product)));
                     return CompletableFuture.completedFuture(response);
@@ -58,7 +58,7 @@ public class ProductsRemoteServiceMock implements ProductsRemoteServiceInterface
     }
 
     /**
-     * This simulates the "FetchCost" part of {@link ProductsRemoteServiceInterface#validateProductAndFetchCost(List)}
+     * This simulates the "FetchCost" part of {@link ProductServiceClient#validateProductAndFetchCost(List)}
      * by simply returning the calculated total cost from every relevant {@link Detail}
      * in the test data.
      */

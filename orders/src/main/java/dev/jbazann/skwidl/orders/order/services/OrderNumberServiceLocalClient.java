@@ -11,16 +11,16 @@ import java.util.concurrent.atomic.AtomicLong;
  * a distributed environment with optimal network overhead.
  */
 @Service
-public class OrderNumberService {
+public class OrderNumberServiceLocalClient {
 
     private AtomicLong lastUsedIndex;
     private AtomicLong base;
     private long max;
 
-    private final OrderNumberRemoteServiceInterface remoteService;
+    private final OrderNumberServiceClient remoteService;
 
     @Autowired
-    public OrderNumberService(OrderNumberRemoteServiceInterface remoteService) {
+    public OrderNumberServiceLocalClient(OrderNumberServiceClient remoteService) {
         this.remoteService = remoteService;
         lastUsedIndex = new AtomicLong(0);
         base = new AtomicLong(0);

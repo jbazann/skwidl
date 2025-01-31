@@ -11,7 +11,7 @@ import org.springframework.stereotype.Service;
  * singleton service that provides an atomic "nextRange" endpoint.
  */
 @Service
-public class OrderNumberRemoteService implements OrderNumberRemoteServiceInterface {
+public class OrderNumberRemoteService implements OrderNumberServiceClient {
 
     @Override
     public DangerousIllegalBadSinfulOrderNumberRange requestNextRange(DangerousIllegalBadSinfulOrderNumberRange current) {

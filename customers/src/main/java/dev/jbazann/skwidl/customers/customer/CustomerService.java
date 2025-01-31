@@ -3,7 +3,6 @@ package dev.jbazann.skwidl.customers.customer;
 import dev.jbazann.skwidl.commons.exceptions.DistributedTransactionException;
 import dev.jbazann.skwidl.customers.customer.dto.EditableFieldsDTO;
 import dev.jbazann.skwidl.customers.customer.exceptions.InvalidCustomerException;
-import dev.jbazann.skwidl.customers.user.User;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import org.springframework.data.domain.Example;
@@ -22,15 +21,13 @@ import java.util.concurrent.CompletionException;
 public class CustomerService {
 
     private final CustomerRepository customerRepository;
-    private final CustomerSiteService customerSiteService;
-    private final CustomerUserService customerUserService;
-    private final CustomerCallerService customerCallerService;
+    private final SiteServiceClient siteService;
+    private final UserServiceClient userService;
 
-    public CustomerService(CustomerRepository customerRepository, CustomerSiteService customerSiteService, CustomerUserService customerUserService, CustomerCallerService customerCallerService) {
+    public CustomerService(CustomerRepository customerRepository, SiteServiceClient siteService, UserServiceClient userService) {
         this.customerRepository = customerRepository;
-        this.customerSiteService = customerSiteService;
-        this.customerUserService = customerUserService;
-        this.customerCallerService = customerCallerService;
+        this.siteService = siteService;
+        this.userService = userService;
     }
 
     /**
@@ -88,32 +85,37 @@ public class CustomerService {
     @Transactional
     public void addAllowedUser(@NotNull UUID customerId, @NotNull UUID userId) {
         // trigger distributed transaction
-        CompletableFuture<User> externalTransaction = CompletableFuture.supplyAsync(
-                () -> customerCallerService.addAllowedUser(customerId, userId)
+        CompletableFuture<Void> externalTransaction = CompletableFuture.runAsync(
+                () -> userService.addAllowedUser(customerId, userId)
         );
         // perform local operations
-        @NotNull final Customer customer = fetchCustomer(customerId);
-        customerUserService.addAllowedUser(customer, userId);
-        // await successful completion before returning
+        Customer customer = fetchCustomer(customerId);
+        customer.addAllowedUser(userId);
+
+        // await success from user service
         try{
             externalTransaction.join();
-        }catch (CancellationException | CompletionException e) {
+        } catch (CancellationException | CompletionException e) {
             throw new DistributedTransactionException("User service failed.",e);
         }
+
+        customerRepository.save(customer);
     }
 
     /**
-     * Refer to {@link CustomerSiteService#activateSite(Customer, UUID)}.
      * @param customerId a valid customer ID.
      * @param siteId a site ID that is presumed, but not required to be valid.
      * @return whether the site was registered as active by the customer instance.
      */
     @Transactional
     public boolean activateSite(@NotNull UUID customerId, @NotNull UUID siteId) {
-        @NotNull final Customer customer = fetchCustomer(customerId);
-        final boolean activated = customerSiteService.activateSite(customer, siteId);
-        customerRepository.save(customer);
-        return activated;
+        final Customer customer = fetchCustomer(customerId);
+        if(customer.activeSites().size() < customer.maxActiveSites()) {
+            customer.addActiveSite(siteId);
+            customerRepository.save(customer);
+            return true;
+        }
+        return false;
     }
 
     /**
@@ -126,8 +128,12 @@ public class CustomerService {
     @Transactional
     public void activatePendingSite(@NotNull UUID customerId, @NotNull UUID siteId) {
         @NotNull final Customer customer = fetchCustomer(customerId);
-        customerSiteService.activatePendingSite(customer, siteId);
-        customerRepository.save(customer);
+        if (customer.activeSites().size() < customer.maxActiveSites()) {
+            customer.addActiveSite(siteId);
+            if (customer.pendingSites() < 1); // TODO log, customer unaware of pending site
+            customer.removePendingSite();
+            customerRepository.save(customer);
+        }
     }
 
     /**
@@ -137,9 +143,16 @@ public class CustomerService {
      */
     @Transactional
     public void finishSite(@NotNull UUID customerId, @NotNull UUID siteId) {
-        @NotNull final Customer customer = fetchCustomer(customerId);
-        customerSiteService.finishSite(customer, siteId);
+        final Customer customer = fetchCustomer(customerId);
+        if(!customer.activeSites().contains(siteId)) {
+            // TODO log, customer unaware of active site
+            return;
+        }
+        customer.removeActiveSite(siteId);
         customerRepository.save(customer);
+        // the customer may now activate more sites
+        // TODO concurrency, retry
+        if(customer.pendingSites() > 0) siteService.signalActivatePendingSites(customer.id());
     }
 
     /**
@@ -159,7 +172,11 @@ public class CustomerService {
      */
     public void deactivateSite(@NotNull UUID customerId, @NotNull UUID siteId) {
         final @NotNull Customer customer = fetchCustomer(customerId);
-        customerSiteService.deactivateSite(customer, siteId);
+        if(!customer.activeSites().contains(siteId)) {
+            // TODO log, customer unaware of active site
+            return;
+        }
+        customer.removeActiveSite(siteId).countPendingSite();
         customerRepository.save(customer);
     }
 

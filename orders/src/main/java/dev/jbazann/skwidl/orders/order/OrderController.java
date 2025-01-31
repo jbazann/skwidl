@@ -9,7 +9,7 @@ import dev.jbazann.skwidl.commons.exceptions.BadRequestException;
 import dev.jbazann.skwidl.orders.order.exceptions.CustomerNotFoundException;
 import dev.jbazann.skwidl.commons.exceptions.MalformedArgumentException;
 import dev.jbazann.skwidl.orders.order.exceptions.OrderNotFoundException;
-import dev.jbazann.skwidl.orders.order.services.SyncOrderService;
+import dev.jbazann.skwidl.orders.order.services.OrderService;
 import jakarta.validation.constraints.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -21,37 +21,37 @@ import java.util.UUID;
 @RestController
 public class OrderController {
 
-    private final SyncOrderService syncOrderService;
+    private final OrderService orderService;
 
     @Autowired
-    public OrderController(SyncOrderService syncOrderService) {
-        this.syncOrderService = syncOrderService;
+    public OrderController(OrderService orderService) {
+        this.orderService = orderService;
     }
 
     @GetMapping("/order/{id}")
     public OrderDTO getOrder(@NotNull @PathVariable UUID id) {
-        return syncOrderService.getOrder(id).toDto();
+        return orderService.getOrder(id).toDto();
     }
 
     @GetMapping("/customer/{id}")
     public List<OrderDTO> getCustomerOrders(@NotNull @PathVariable UUID id) {
-        return syncOrderService.getCustomerOrders(id).stream().map(Order::toDto).toList();
+        return orderService.getCustomerOrders(id).stream().map(Order::toDto).toList();
     }
 
     @PostMapping("/order")
     @ResponseStatus(HttpStatus.CREATED)
     public OrderDTO newOrder(@NotNull @RequestBody NewOrderDTO order) {
-        return syncOrderService.newOrder(order).toDto();
+        return orderService.newOrder(order).toDto();
     }
 
     @PutMapping("/order/{id}")
     @ResponseStatus(HttpStatus.ACCEPTED)
     public void updateOrder(@PathVariable UUID id,
                                 @NotNull @RequestBody StatusUpdateDTO update) {
-        if (!syncOrderService.orderExists(id)) throw new OrderNotFoundException("No Order found with id: " + id +'.');
+        if (!orderService.orderExists(id)) throw new OrderNotFoundException("No Order found with id: " + id +'.');
         switch(update.status()) {
-            case StatusHistory.Status.DELIVERED -> syncOrderService.deliverOrder(id, update);
-            case StatusHistory.Status.CANCELED -> syncOrderService.cancelOrder(id, update);
+            case StatusHistory.Status.DELIVERED -> orderService.deliverOrder(id, update);
+            case StatusHistory.Status.CANCELED -> orderService.cancelOrder(id, update);
             default -> throw new BadRequestException("Status must be one of: " +
                         StatusHistory.Status.DELIVERED + ", " + StatusHistory.Status.CANCELED + '.');
         };

@@ -1,7 +1,7 @@
 package dev.jbazann.skwidl.orders.mocks;
 
 import dev.jbazann.skwidl.orders.order.exceptions.CustomerNotFoundException;
-import dev.jbazann.skwidl.orders.order.services.CustomersRemoteServiceInterface;
+import dev.jbazann.skwidl.orders.order.services.CustomerServiceClient;
 import dev.jbazann.skwidl.orders.testdata.StandardDataset;
 import org.junit.jupiter.api.Assertions;
 import org.mockito.Mockito;
@@ -16,11 +16,11 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 
-public class CustomersRemoteServiceMock implements CustomersRemoteServiceInterface {
+public class CustomerServiceMockClient implements CustomerServiceClient {
 
-    private final CustomersRemoteServiceInterface mock = Mockito.mock();
+    private final CustomerServiceClient mock = Mockito.mock();
 
-    public CustomersRemoteServiceMock() {
+    public CustomerServiceMockClient() {
         System.out.println("TPDAN: ### Building mocks: CustomerRemoteServiceMock.");// TODO print
 
         //

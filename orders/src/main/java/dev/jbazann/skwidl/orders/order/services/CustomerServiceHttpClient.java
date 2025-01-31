@@ -12,7 +12,7 @@ import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
 @Service
-public class CustomersRemoteService implements CustomersRemoteServiceInterface {
+public class CustomerServiceHttpClient implements CustomerServiceClient {
 
     private final WebClient.Builder webClientBuilder;
 
@@ -28,7 +28,7 @@ public class CustomersRemoteService implements CustomersRemoteServiceInterface {
     private final String CUSTOMERS_CREDIT = "";
 
     @Autowired
-    public CustomersRemoteService(WebClient.Builder webClientBuilder) {
+    public CustomerServiceHttpClient(WebClient.Builder webClientBuilder) {
         this.webClientBuilder = webClientBuilder;
     }
 

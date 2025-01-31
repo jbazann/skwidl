@@ -8,7 +8,7 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
-public interface ProductsRemoteServiceInterface {
+public interface ProductServiceClient {
 
     CompletableFuture<Map<String, Object>> validateProductAndFetchCost(@NotNull List<Map<String, Object>> batch);
     Boolean reserveProducts(@NotNull Map<UUID, ProductAmountDTO> products);

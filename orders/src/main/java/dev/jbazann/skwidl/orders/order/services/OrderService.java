@@ -27,20 +27,20 @@ import java.util.stream.Collectors;
 
 @Service
 @Validated
-public class SyncOrderService {
+public class OrderService {
 
-    private final ProductsRemoteServiceInterface productsRemoteService;
-    private final CustomersRemoteServiceInterface customersRemoteService;
-    private final OrderNumberService orderNumberService;
+    private final ProductServiceClient productsRemoteService;
+    private final CustomerServiceClient customersRemoteService;
+    private final OrderNumberServiceLocalClient orderNumberServiceLocalClient;
     private final OrderRepository orderRepository;
     private final DomainEventBuilder builder;
     private final EventRequestPublisher publisher;
 
     @Autowired
-    public SyncOrderService(ProductsRemoteServiceInterface productsRemoteService, CustomersRemoteServiceInterface customersRemoteService, OrderNumberService orderNumberService, OrderRepository orderRepository, DomainEventBuilder builder, EventRequestPublisher publisher) {
+    public OrderService(ProductServiceClient productsRemoteService, CustomerServiceClient customersRemoteService, OrderNumberServiceLocalClient orderNumberServiceLocalClient, OrderRepository orderRepository, DomainEventBuilder builder, EventRequestPublisher publisher) {
         this.productsRemoteService = productsRemoteService;
         this.customersRemoteService = customersRemoteService;
-        this.orderNumberService = orderNumberService;
+        this.orderNumberServiceLocalClient = orderNumberServiceLocalClient;
         this.orderRepository = orderRepository;
         this.builder = builder;
         this.publisher = publisher;
@@ -105,7 +105,7 @@ public class SyncOrderService {
         if(!message.isEmpty()) throw new MalformedArgumentException(message.toString());
         Order order = orderDto.toEntity()
                 .id(UUID.randomUUID())// TODO safe ids
-                .orderNumber(orderNumberService.next())
+                .orderNumber(orderNumberServiceLocalClient.next())
                 .ordered(TimeProvider.localDateTimeNow())
                 .totalCost(BigDecimal.valueOf(-1));
         order.detail().forEach(d -> d.id(UUID.randomUUID()));// TODO safe ids
@@ -114,8 +114,8 @@ public class SyncOrderService {
         final List<Map<String, Object>> batchToValidate = new LinkedList<>();
         order.detail().forEach(detail -> {
             Map<String, Object> entryToValidate = new HashMap<>();
-            entryToValidate.put(ProductsRemoteService.PRODUCT_ID, detail.product());
-            entryToValidate.put(ProductsRemoteService.REQUESTED_STOCK, detail.amount());
+            entryToValidate.put(ProductServiceHttpClient.PRODUCT_ID, detail.product());
+            entryToValidate.put(ProductServiceHttpClient.REQUESTED_STOCK, detail.amount());
             batchToValidate.add(entryToValidate);
         });
         final CompletableFuture<Map<String, Object>> detailValidationResponse = productsRemoteService.validateProductAndFetchCost(batchToValidate);
@@ -125,7 +125,7 @@ public class SyncOrderService {
 
         // Wait for response from Products service.
         final Map<String, Object> validatedBatch = detailValidationResponse.join();
-        if ( !(validatedBatch.get(ProductsRemoteService.PRODUCTS_EXIST) instanceof final Boolean exist) ) {
+        if ( !(validatedBatch.get(ProductServiceHttpClient.PRODUCTS_EXIST) instanceof final Boolean exist) ) {
             order.totalCost(BigDecimal.valueOf(-1));
             return reject(order,"Internal communication error.");
         }
@@ -136,7 +136,7 @@ public class SyncOrderService {
 
         // Double-check the retrieved total cost; because I must justify using CompletableFuture.
             // Type check.
-        if( !(validatedBatch.get(ProductsRemoteService.TOTAL_COST) instanceof final BigDecimal expectedValue) ) {
+        if( !(validatedBatch.get(ProductServiceHttpClient.TOTAL_COST) instanceof final BigDecimal expectedValue) ) {
             order.totalCost(BigDecimal.valueOf(-1));
             return reject(order,"Internal communication error.");
         }

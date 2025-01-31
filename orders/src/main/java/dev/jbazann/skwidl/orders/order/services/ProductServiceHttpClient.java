@@ -21,7 +21,7 @@ import java.util.stream.Collectors;
 
 @Service
 @Validated
-public class ProductsRemoteService implements ProductsRemoteServiceInterface {
+public class ProductServiceHttpClient implements ProductServiceClient {
 
     // Map<> keys expected by the external service
     // to be used when other classes must construct maps for batch operations
@@ -52,7 +52,7 @@ public class ProductsRemoteService implements ProductsRemoteServiceInterface {
     private final String PRODUCTS_OPERATION_RESERVE = "";
 
     @Autowired
-    public ProductsRemoteService(WebClient.Builder webClientBuilder) {
+    public ProductServiceHttpClient(WebClient.Builder webClientBuilder) {
         this.webClientBuilder = webClientBuilder;
     }
 
@@ -61,11 +61,11 @@ public class ProductsRemoteService implements ProductsRemoteServiceInterface {
      * fetch the unit cost of each product, and whether enough stock is available.
      * @param batch a list of {@link Map} instances where each item is equivalent to the JSON <p>
      * {
-     *              {@link ProductsRemoteService#PRODUCT_ID}: {@link UUID},
-     *              {@link ProductsRemoteService#REQUESTED_STOCK}: {@link Integer}
+     *              {@link ProductServiceHttpClient#PRODUCT_ID}: {@link UUID},
+     *              {@link ProductServiceHttpClient#REQUESTED_STOCK}: {@link Integer}
      * }
-     * @return a {@link Map} containing at least the key {@link ProductsRemoteService#PRODUCTS_EXIST},
-     * and potentially {@link ProductsRemoteService#TOTAL_COST} plus one entry in the form
+     * @return a {@link Map} containing at least the key {@link ProductServiceHttpClient#PRODUCTS_EXIST},
+     * and potentially {@link ProductServiceHttpClient#TOTAL_COST} plus one entry in the form
      * {{@link UUID}: {@link BigDecimal}} per product ID in the list received as argument.
      */
     @Async

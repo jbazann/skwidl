@@ -7,12 +7,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
-public class SiteStatusService {
+public class SiteStatusService { // TODO switch statements
 
-    private final SiteCallerService siteCallerService;
+    private final CustomerServiceClient customerServiceLocalClient;
 
-    public SiteStatusService(SiteCallerService siteCallerService) {
-        this.siteCallerService = siteCallerService;
+    public SiteStatusService(CustomerServiceClient customerServiceLocalClient) {
+        this.customerServiceLocalClient = customerServiceLocalClient;
     }
 
     /**
@@ -22,11 +22,11 @@ public class SiteStatusService {
     @Transactional
     public void setInitialStatus(@NotNull @Valid Site site) {
         site.status(Site.SiteStatus.PENDING);
-        final boolean active = siteCallerService.activateSite(site.customer(),site.id());
+        final boolean active = customerServiceLocalClient.activateSite(site.customer(),site.id());
         if(active) {
             site.status(Site.SiteStatus.ACTIVE);
         } else {
-            siteCallerService.addPendingSite(site.customer());
+            customerServiceLocalClient.addPendingSite(site.customer());
         }
     }
 
@@ -54,8 +54,8 @@ public class SiteStatusService {
     @Transactional
     protected void transitionFromActive(Site site, Site.SiteStatus newStatus) {
         switch(newStatus) {
-            case FINISHED: siteCallerService.finishSite(site.customer(),site.id()); break;
-            case PENDING: siteCallerService.deactivateSite(site.customer(),site.id()); break;
+            case FINISHED: customerServiceLocalClient.finishSite(site.customer(),site.id()); break;
+            case PENDING: customerServiceLocalClient.deactivateSite(site.customer(),site.id()); break;
         }
         site.status(newStatus);
     }
@@ -63,7 +63,7 @@ public class SiteStatusService {
     @Transactional
     protected void transitionFromPending(Site site, Site.SiteStatus newStatus) {
         switch(newStatus) {
-            case ACTIVE: siteCallerService.activatePendingSite(site.customer(),site.id()); break;
+            case ACTIVE: customerServiceLocalClient.activatePendingSite(site.customer(),site.id()); break;
         }
         site.status(newStatus);
     }

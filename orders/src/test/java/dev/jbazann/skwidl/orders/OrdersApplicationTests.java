@@ -1,15 +1,15 @@
 package dev.jbazann.skwidl.orders;
 
-import dev.jbazann.skwidl.orders.mocks.CustomersRemoteServiceMock;
-import dev.jbazann.skwidl.orders.mocks.ProductsRemoteServiceMock;
+import dev.jbazann.skwidl.orders.mocks.CustomerServiceMockClient;
+import dev.jbazann.skwidl.orders.mocks.ProductServiceMockClient;
 import dev.jbazann.skwidl.orders.order.dto.NewOrderDTO;
 import dev.jbazann.skwidl.orders.order.dto.OrderDTO;
 import dev.jbazann.skwidl.orders.order.dto.StatusUpdateDTO;
 import dev.jbazann.skwidl.orders.order.entities.Order;
 import dev.jbazann.skwidl.orders.order.entities.StatusHistory;
-import dev.jbazann.skwidl.orders.order.services.CustomersRemoteServiceInterface;
+import dev.jbazann.skwidl.orders.order.services.CustomerServiceClient;
 import dev.jbazann.skwidl.orders.order.OrderRepository;
-import dev.jbazann.skwidl.orders.order.services.ProductsRemoteServiceInterface;
+import dev.jbazann.skwidl.orders.order.services.ProductServiceClient;
 import dev.jbazann.skwidl.orders.testdata.StandardDataset;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -44,16 +44,16 @@ class OrdersApplicationTests {
 	 * to replace Beans with mocks.
 	 */
 	@TestBean(enforceOverride = true)
-	private CustomersRemoteServiceInterface customersRemoteServiceMock;
+	private CustomerServiceClient customersRemoteServiceMock;
 	@TestBean(enforceOverride = true)
-	private ProductsRemoteServiceInterface productsRemoteServiceMock;
+	private ProductServiceClient productsRemoteServiceMock;
 
-	public static CustomersRemoteServiceInterface customersRemoteServiceMock() {
-		return new CustomersRemoteServiceMock();
+	public static CustomerServiceClient customersRemoteServiceMock() {
+		return new CustomerServiceMockClient();
 	}
 
-	public static ProductsRemoteServiceInterface productsRemoteServiceMock() {
-		return new ProductsRemoteServiceMock();
+	public static ProductServiceClient productsRemoteServiceMock() {
+		return new ProductServiceMockClient();
 	}
 
 

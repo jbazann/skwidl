@@ -6,7 +6,7 @@ import java.math.BigDecimal;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
-public interface CustomersRemoteServiceInterface {
+public interface CustomerServiceClient {
 
     Boolean billFor(@NotNull UUID id,@NotNull BigDecimal amount);
     CompletableFuture<BigDecimal> validateCustomerAndFetchBudget(UUID id);
