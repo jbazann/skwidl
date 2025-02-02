@@ -218,15 +218,6 @@
         </dependencies>
     </dependencyManagement>
     <build>
-        <resources>
-            <resource>
-                <directory>${project.basedir}/src/main/resources/</directory>
-                <includes>
-                    <include>**.yml</include>
-                </includes>
-                <filtering>true</filtering>
-            </resource>
-        </resources>
         <plugins>
 <!--            <plugin>
                 <groupId>org.graalvm.buildtools</groupId>
