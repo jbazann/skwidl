@@ -21,7 +21,7 @@ import java.util.UUID;
 @Getter
 @Accessors(chain = true, fluent = true)
 @Entity
-@Table(name = "category",schema = "categories")
+@Table(name = "category",schema = "category")
 public class Category {
 
     @Column @Id

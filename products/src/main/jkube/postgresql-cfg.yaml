@@ -1,0 +1,8 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: postgresql-cfg
+  namespace: products
+data:
+  postgresql.cnf: |
+    port = 12012

@@ -1,0 +1,44 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: postgresql
+  namespace: products
+  labels:
+    app: postgresql
+spec:
+  serviceName: postgresql
+  replicas: 1
+  selector:
+    matchLabels:
+      app: postgresql
+  template:
+    metadata:
+      name: postgresql
+      labels:
+        app: postgresql
+    spec:
+      containers:
+        - name: db
+          image: postgres:17.2
+          imagePullPolicy: IfNotPresent
+          env:
+            - name: POSTGRES_DB
+              value: public
+            - name: POSTGRES_USER
+              value: jbazann
+            - name : POSTGRES_PASSWORD
+              value: jbazann
+          ports:
+            - containerPort: 12012
+              protocol: TCP
+          volumeMounts:
+            - name: postgresql-cfg
+              mountPath: /etc/postgresql/postgresql.cnf
+              subPath: postgresql.cnf
+      volumes:
+        - name: postgresql-cfg
+          configMap:
+            name: postgresql-cfg
+        - name: init-ddl
+
+      restartPolicy: Always

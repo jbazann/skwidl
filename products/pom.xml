@@ -99,6 +99,16 @@
 	</dependencies>
 
 	<build>
+		<resources>
+			<resource>
+				<filtering>true</filtering>
+				<targetPath>META-INF/</targetPath>
+				<directory>${project.basedir}/src/main/resources/postgresql/</directory>
+				<includes>
+					<include>persistence.xml</include>
+				</includes>
+			</resource>
+		</resources>
 		<plugins>
 			<plugin>
 				<groupId>org.eclipse.jkube</groupId>
@@ -107,6 +117,38 @@
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
+			</plugin>
+			<plugin>
+				<!-- https://github.com/archiecobbs/hibernate-jpa-schemagen -->
+				<groupId>org.dellroad</groupId>
+				<artifactId>hibernate-jpa-schemagen</artifactId>
+				<version>6.4.0</version>
+				<executions>
+					<execution>
+						<id>generate-ddl-product</id>
+						<phase>process-classes</phase>
+						<configuration>
+							<jpaUnit>product</jpaUnit>
+							<outputFile>${project.basedir}/src/main/resources/postgresql/product/ddl.sql</outputFile>
+							<verifyFile>${project.basedir}/src/main/resources/postgresql/product/ddl.sql</verifyFile>
+						</configuration>
+						<goals>
+							<goal>export-jpa-schema</goal>
+						</goals>
+					</execution>
+					<execution>
+						<id>generate-ddl-category</id>
+						<phase>process-classes</phase>
+						<configuration>
+							<jpaUnit>category</jpaUnit>
+							<outputFile>${project.basedir}/src/main/resources/postgresql/category/ddl.sql</outputFile>
+							<verifyFile>${project.basedir}/src/main/resources/postgresql/category/ddl.sql</verifyFile>
+						</configuration>
+						<goals>
+							<goal>export-jpa-schema</goal>
+						</goals>
+					</execution>
+				</executions>
 			</plugin>
 			<plugin>
 				<groupId>org.hibernate.orm.tooling</groupId>

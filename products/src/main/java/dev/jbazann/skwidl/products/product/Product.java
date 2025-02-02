@@ -20,7 +20,7 @@ import java.util.UUID;
 @Getter
 @Accessors(chain = true, fluent = true)
 @Entity
-@Table(name = "product",schema = "products")
+@Table(name = "product",schema = "product")
 public class Product {
 
     @Id
