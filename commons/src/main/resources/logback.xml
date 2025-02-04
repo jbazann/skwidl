@@ -1,0 +1,17 @@
+<configuration>
+    <include resource="org/springframework/boot/logging/logback/defaults.xml"/>
+<!--    <include resource="org/springframework/boot/logging/logback/console-appender.xml" />-->
+    <appender name="GRAYLOG" class="de.siegmar.logbackgelf.GelfTcpAppender">
+        <host>graylog.graylog</host>
+        <port>12012</port>
+<!--  TODO      &lt;!&ndash; Add metadata fields &ndash;&gt;-->
+<!--        <additionalField>_service=my-microservice</additionalField>-->
+<!--        <additionalField>_instance=${HOSTNAME}</additionalField>-->
+<!--        <additionalField>_environment=production</additionalField>-->
+    </appender>
+
+    <root level="INFO">
+        <appender-ref ref="GRAYLOG"/>
+<!--        <appender-ref ref="CONSOLE" />-->
+    </root>
+</configuration>
