@@ -8,9 +8,16 @@ data:
     # Bind to all interfaces because we don't know what IP address Docker will assign to us.
     network.host: 0.0.0.0
     http.port: 12012
+    http.compression: true
+    http.max_content_length: 50mb
+    http.max_initial_line_length: 2kb    
+
+    transport.tcp.compress: true
 
     # Setting network.host to a non-loopback address enables the annoying bootstrap checks. "Single-node" mode disables them again.
     discovery.type: single-node
 
     plugins.security.disabled: true
     ######## End OpenSearch Security Demo Configuration ########
+    bootstrap.memory_lock: true
+    cluster.routing.allocation.disk.threshold_enabled: false

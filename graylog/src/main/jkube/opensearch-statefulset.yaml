@@ -25,7 +25,7 @@ spec:
             - name: OPENSEARCH_INITIAL_ADMIN_PASSWORD
               value: J_Bazann12
             - name: OPENSEARCH_JAVA_OPTS
-              value: -Xms512m -Xmx512m
+              value: -Xms128m -Xmx512m
           volumeMounts:
             - name: opensearch-cfg
               mountPath: /usr/share/opensearch/config/opensearch.yml
