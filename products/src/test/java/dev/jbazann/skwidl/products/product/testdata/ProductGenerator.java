@@ -32,6 +32,7 @@ public class ProductGenerator {
     public Product newlyCreatedProduct() {
         Product p = this.genericProduct();
         p.currentStock(0);
+        return p;
     }
 
     private String nextName() {
