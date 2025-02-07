@@ -42,7 +42,7 @@ public class Product {
     private UUID category;
 
     public ProductDTO toDto() {
-        return new ProductDTO(id, name, description, price, currentStock, minimumStock, category);
+        return new ProductDTO(id, name, description, price, discount, currentStock, minimumStock, category);
     }
 
 }
