@@ -34,7 +34,7 @@ spec:
               service:
                 name: graylog
                 port:
-                  name: app
+                  name: http
     - host: grafana.127.0.0.1.nip.io
       http:
         paths:

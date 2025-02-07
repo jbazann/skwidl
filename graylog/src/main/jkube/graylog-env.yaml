@@ -5,7 +5,10 @@ metadata:
   namespace: graylog
 data:
   GRAYLOG_ELASTICSEARCH_HOSTS: 'http://opensearch:12012'
-  GRAYLOG_HTTP_BIND_ADDRESS: '0.0.0.0:12012'
+  GRAYLOG_HTTP_BIND_ADDRESS: '0.0.0.0:80'
   GRAYLOG_ROOT_PASSWORD_SHA2: '8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918' # admin
   GRAYLOG_PASSWORD_SECRET: 'somepasswordpepper'
   GRAYLOG_MONGODB_URI: 'mongodb://graylog:graylog@mongodb:12012/graylog'
+  GRAYLOG_CONTENT_PACKS_AUTO_INSTALL: 'content-pack-30b6afa7-fcd4-4c7b-b70b-b21b5cf33b7f-1.json'
+  GRAYLOG_CONTENT_PACKS_LOADER_ENABLED: 'true'
+  GRAYLOG_CONTENT_PACKS_DIR: 'data/contentpacks'

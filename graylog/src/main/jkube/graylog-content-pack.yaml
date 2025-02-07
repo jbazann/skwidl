@@ -1,0 +1,72 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: graylog-content-pack
+  namespace: graylog
+data:
+  content-pack-30b6afa7-fcd4-4c7b-b70b-b21b5cf33b7f-1.json: |
+    {
+      "v": 1,
+      "id": "30b6afa7-fcd4-4c7b-b70b-b21b5cf33b7f",
+      "rev": 1,
+      "name": "main_input",
+      "summary": "why are you reading this",
+      "description": "hi",
+      "vendor": "jbazann.dev",
+      "url": "",
+      "parameters": [],
+      "entities": [
+        {
+          "v": "1",
+          "type": {
+            "name": "input",
+            "version": "1"
+          },
+          "id": "0b47541b-7d6b-477e-b49b-99096e683416",
+          "data": {
+            "title": {
+              "@type": "string",
+              "@value": "main"
+            },
+            "configuration": {
+              "port": {
+                "@type": "integer",
+                "@value": 12012
+              },
+              "timezone": {
+                "@type": "string",
+                "@value": "Etc/UTC"
+              },
+              "locale": {
+                "@type": "string",
+                "@value": ""
+              },
+              "bind_address": {
+                "@type": "string",
+                "@value": "0.0.0.0"
+              },
+              "use_full_names": {
+                "@type": "boolean",
+                "@value": false
+              }
+            },
+            "static_fields": {},
+            "type": {
+              "@type": "string",
+              "@value": "org.graylog.plugins.cef.input.CEFUDPInput"
+            },
+            "global": {
+              "@type": "boolean",
+              "@value": true
+            },
+            "extractors": []
+          },
+          "constraints": [
+            {
+              "type": "server-version",
+              "version": ">=6.0.5+3ef5be7"
+            }
+          ]
+        }
+      ]
+    }

@@ -6,6 +6,9 @@ spec:
   type: ExternalName
   externalName: graylog.graylog.svc.cluster.local # TODO do not use external name for this redirection
   ports:
-    - port: 12012
-      name: app
-      protocol: TCP
+    - port: 80
+      name: http
+      appProtocol: HTTP
+    - port: 443
+      name: https
+      appProtocol: HTTPS
