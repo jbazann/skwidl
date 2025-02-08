@@ -2,10 +2,10 @@ CREATE DATABASE product;
 \c product;
 \i /docker-entrypoint-initdb.d/ddl/product.sql;
 
-CREATE USER products;
+CREATE USER product PASSWORD 'product';
 GRANT SELECT, INSERT, UPDATE, DELETE ON ALL TABLES IN SCHEMA product TO products;
 
-CREATE DATABASE category;
+CREATE DATABASE category PASSWORD 'category';
 \c category;
 \i /docker-entrypoint-initdb.d/ddl/category.sql;
 
