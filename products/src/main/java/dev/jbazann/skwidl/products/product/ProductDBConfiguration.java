@@ -40,7 +40,7 @@ public class ProductDBConfiguration {
     }
 
     @Bean
-    public PlatformTransactionManager categoryTransactionManager(
+    public PlatformTransactionManager productTransactionManager(
             @Qualifier("productEntityManagerFactory") LocalContainerEntityManagerFactoryBean productEntityManagerFactory) {
         return new JpaTransactionManager(Objects.requireNonNull(productEntityManagerFactory.getObject()));
     }
