@@ -1,17 +1,34 @@
 <configuration>
     <include resource="org/springframework/boot/logging/logback/defaults.xml"/>
-<!--    <include resource="org/springframework/boot/logging/logback/console-appender.xml" />-->
-    <appender name="GRAYLOG" class="de.siegmar.logbackgelf.GelfTcpAppender">
-        <host>graylog.graylog</host>
+    <include resource="org/springframework/boot/logging/logback/console-appender.xml" />
+    <appender name="GRAYLOG" class="biz.paluch.logging.gelf.logback.GelfLogbackAppender">
+        <host>udp:graylog.graylog</host>
         <port>12012</port>
-<!--  TODO      &lt;!&ndash; Add metadata fields &ndash;&gt;-->
-<!--        <additionalField>_service=my-microservice</additionalField>-->
-<!--        <additionalField>_instance=${HOSTNAME}</additionalField>-->
-<!--        <additionalField>_environment=production</additionalField>-->
+        <version>1.1</version>
+        <facility>java-test</facility>
+        <extractStackTrace>true</extractStackTrace>
+        <filterStackTrace>true</filterStackTrace>
+<!--        <mdcProfiling>true</mdcProfiling>-->
+        <timestampPattern>yyyy-MM-dd HH:mm:ss,SSS</timestampPattern>
+        <maximumMessageSize>8192</maximumMessageSize>
+
+<!--        &lt;!&ndash; This are static fields &ndash;&gt;-->
+<!--        <additionalFields>fieldName1=fieldValue1,fieldName2=fieldValue2</additionalFields>-->
+<!--        &lt;!&ndash; Optional: Specify field types &ndash;&gt;-->
+<!--        <additionalFieldTypes>fieldName1=String,fieldName2=Double,fieldName3=Long</additionalFieldTypes>-->
+
+<!--        &lt;!&ndash; This are fields using MDC &ndash;&gt;-->
+<!--        <mdcFields>mdcField1,mdcField2</mdcFields>-->
+<!--        <dynamicMdcFields>mdc.*,(mdc|MDC)fields</dynamicMdcFields>-->
+<!--        <dynamicMdcFieldTypes>my_field.*=String,business\..*\.field=double</dynamicMdcFieldTypes>-->
+<!--        <includeFullMdc>true</includeFullMdc>-->
+        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+            <level>INFO</level>
+        </filter>
     </appender>
 
     <root level="INFO">
         <appender-ref ref="GRAYLOG"/>
-<!--        <appender-ref ref="CONSOLE" />-->
+        <appender-ref ref="CONSOLE" />
     </root>
 </configuration>
