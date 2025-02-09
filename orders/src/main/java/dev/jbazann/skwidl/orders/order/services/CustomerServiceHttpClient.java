@@ -1,6 +1,5 @@
 package dev.jbazann.skwidl.orders.order.services;
 
-import jakarta.validation.constraints.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -32,13 +31,15 @@ public class CustomerServiceHttpClient implements CustomerServiceClient {
         this.webClientBuilder = webClientBuilder;
     }
 
-    public CompletableFuture<BigDecimal> validateCustomerAndFetchBudget(@NotNull UUID id) {
+    @Override
+    public CompletableFuture<BigDecimal> validateCustomerAndFetchBudget(UUID id) {
         return webClientBuilder.baseUrl(CUSTOMERS_BASE).build().get()
                 .uri(CUSTOMERS_BUDGET,id)
                 .retrieve().bodyToMono(BigDecimal.class).toFuture();
     }
 
-    public Boolean billFor(@NotNull UUID id,@NotNull BigDecimal amount) {
+    @Override
+    public Boolean billFor(UUID id, BigDecimal amount) {
         return webClientBuilder.baseUrl(CUSTOMERS_BASE).build().post()
                 .uri(CUSTOMERS_BILL,id,amount)
                 .retrieve().bodyToMono(Boolean.class).block(TIMEOUT);

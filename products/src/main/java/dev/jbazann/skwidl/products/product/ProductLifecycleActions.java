@@ -4,12 +4,14 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import org.springframework.stereotype.Service;
+import org.springframework.validation.annotation.Validated;
 
 import java.util.Collection;
 import java.util.Optional;
 import java.util.UUID;
 
 @Service
+@Validated
 public class ProductLifecycleActions {
 
     private final ProductRepository productRepository;

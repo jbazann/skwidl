@@ -1,8 +1,6 @@
 package dev.jbazann.skwidl.customers.customer;
 
 import dev.jbazann.skwidl.customers.user.UserService;
-import jakarta.validation.Valid;
-import jakarta.validation.constraints.NotNull;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
@@ -18,7 +16,7 @@ public class UserServiceLocalClient implements UserServiceClient {
         this.userService = userService;
     }
 
-    public void addAllowedUser(@Valid @NotNull UUID customerId, @NotNull UUID userId) {
+    public void addAllowedUser(UUID customerId, UUID userId) {
         userService.addAllowedUser(customerId, userId);
     }
 

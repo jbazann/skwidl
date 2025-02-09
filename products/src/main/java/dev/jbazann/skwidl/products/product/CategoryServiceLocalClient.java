@@ -2,7 +2,6 @@ package dev.jbazann.skwidl.products.product;
 
 import dev.jbazann.skwidl.products.category.Category;
 import dev.jbazann.skwidl.products.category.CategoryService;
-import jakarta.validation.constraints.NotNull;
 import org.springframework.stereotype.Service;
 
 import java.util.UUID;
@@ -18,7 +17,7 @@ public class CategoryServiceLocalClient implements CategoryServiceClient {
     }
 
     @Override
-    public CompletableFuture<UUID> findCategoryByName(@NotNull String name) {
+    public CompletableFuture<UUID> findCategoryByName(String name) {
         Category probe = new Category().name(name); // keep id null
         return CompletableFuture.completedFuture(
                 categoryService.find(probe)

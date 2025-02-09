@@ -12,11 +12,13 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import org.springframework.stereotype.Service;
+import org.springframework.validation.annotation.Validated;
 
 import java.math.BigDecimal;
 import java.util.*;
 
 @Service
+@Validated
 public class ProductService {
 
     private final ProductLifecycleActions actions;

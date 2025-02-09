@@ -5,13 +5,17 @@ import dev.jbazann.skwidl.commons.async.transactions.api.locking.EntityLock;
 import dev.jbazann.skwidl.commons.async.transactions.api.locking.Locking;
 import dev.jbazann.skwidl.commons.async.transactions.api.TransactionStage;
 import dev.jbazann.skwidl.commons.exceptions.LockAcquisitionException;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 import org.redisson.api.RLock;
 import org.redisson.api.RedissonClient;
 import org.springframework.retry.annotation.Backoff;
 import org.springframework.retry.annotation.Retryable;
+import org.springframework.validation.annotation.Validated;
 
 import java.util.*;
 
+@Validated
 public class TransactionLockingService {
 
     private final RedissonClient redisson;
@@ -22,7 +26,8 @@ public class TransactionLockingService {
         this.currentLocks = new HashMap<>();
     }
 
-    public void getLocks(TransactionStage stage, DomainEvent event) {
+    public void getLocks(@NotNull @Valid TransactionStage stage,
+                         @NotNull @Valid DomainEvent event) {
         Optional<Locking> optional = getAnnotation(stage, event);
         if( optional.isEmpty() ) return;
         Locking annotation = optional.get();
@@ -30,7 +35,8 @@ public class TransactionLockingService {
             _getLocks(stage, event, annotation);
     }
 
-    public void releaseLocks(TransactionStage stage, DomainEvent event) {
+    public void releaseLocks(@NotNull @Valid TransactionStage stage,
+                             @NotNull @Valid DomainEvent event) {
         Optional<Locking> optional = getAnnotation(stage, event);
         if( optional.isEmpty() ) return;
         Locking annotation = optional.get();
@@ -78,7 +84,7 @@ public class TransactionLockingService {
             data.acquiredLocks().forEach(RLock::unlock);
             data.acquiredLocks(List.of());
             throw new LockAcquisitionException(String.format(
-                    "Failed attempt %d for transaction %s.", data.retries(), data.transactionId()));
+                    "Failed attempt %d for transaction %s.", data.retryCount(), data.transactionId()));
         }
     }
 

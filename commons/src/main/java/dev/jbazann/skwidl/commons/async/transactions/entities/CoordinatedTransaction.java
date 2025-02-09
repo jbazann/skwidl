@@ -3,6 +3,9 @@ package dev.jbazann.skwidl.commons.async.transactions.entities;
 import dev.jbazann.skwidl.commons.async.events.DomainEvent;
 import dev.jbazann.skwidl.commons.identity.ApplicationMember;
 import dev.jbazann.skwidl.commons.utils.TimeProvider;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 import lombok.experimental.Accessors;
 import org.springframework.data.annotation.Id;
@@ -16,15 +19,20 @@ import java.util.*;
 @RedisHash
 public class CoordinatedTransaction {
 
+    @NotNull
     @Id private UUID id;
+    @NotNull @NotEmpty
     private Map<ApplicationMember, CoordinatedTransaction.QuorumStatus> quorumStatus;
+    @NotNull
     private List<ApplicationMember> rollback;
+    @NotNull
     private CoordinatedTransaction.TransactionStatus status;
     private boolean isCommitted;
+    @NotNull
     private LocalDateTime expires;
 
 
-    public static CoordinatedTransaction from(DomainEvent event) {
+    public static @NotNull @Valid CoordinatedTransaction from(@NotNull @Valid DomainEvent event) {
         final Map<ApplicationMember, QuorumStatus> quorumStatus = new HashMap<>();
         event.transaction().quorum().members()
                 .forEach(member -> quorumStatus.put(member, QuorumStatus.UNKNOWN));
@@ -41,22 +49,22 @@ public class CoordinatedTransaction {
         return TimeProvider.localDateTimeNow().isAfter(expires);
     }
 
-    public CoordinatedTransaction addAccept(ApplicationMember member) {
+    public @NotNull @Valid CoordinatedTransaction addAccept(@NotNull @Valid ApplicationMember member) {
         quorumStatus.put(member, QuorumStatus.ACCEPT);
         return this;
     }
 
-    public CoordinatedTransaction addCommit(ApplicationMember member) {
+    public @NotNull @Valid CoordinatedTransaction addCommit(@NotNull @Valid ApplicationMember member) {
         quorumStatus.put(member, QuorumStatus.COMMIT);
         return this;
     }
 
-    public CoordinatedTransaction addReject(ApplicationMember member) {
+    public @NotNull @Valid CoordinatedTransaction addReject(@NotNull @Valid ApplicationMember member) {
         quorumStatus.put(member, QuorumStatus.REJECT);
         return this;
     }
 
-    public CoordinatedTransaction addRollback(ApplicationMember member) {
+    public @NotNull @Valid CoordinatedTransaction addRollback(@NotNull @Valid ApplicationMember member) {
         rollback.add(member);
         return this;
     }

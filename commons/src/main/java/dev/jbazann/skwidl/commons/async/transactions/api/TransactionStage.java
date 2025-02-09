@@ -6,16 +6,18 @@ import dev.jbazann.skwidl.commons.async.transactions.api.locking.EntityLock;
 import dev.jbazann.skwidl.commons.async.transactions.entities.Transaction;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
+import org.springframework.validation.annotation.Validated;
 
 import java.util.List;
 
+@Validated
 public interface TransactionStage {
 
-    default List<EntityLock> getRequiredLocks(@NotNull @Valid DomainEvent domainEvent) {
+    default @NotNull List<@NotNull @Valid EntityLock> getRequiredLocks(@NotNull @Valid DomainEvent domainEvent) {
         throw new UnsupportedOperationException("Unimplemented method.");
     }
 
-    TransactionResult runStage(@NotNull @Valid DomainEvent domainEvent,
+    @NotNull @Valid TransactionResult runStage(@NotNull @Valid DomainEvent domainEvent,
                                @NotNull @Valid Transaction transaction);
 
 }

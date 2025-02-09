@@ -21,7 +21,7 @@ public class Transaction {
     @Id
     @NotNull @Valid
     private UUID id;
-    @NotNull @Valid
+    @NotNull
     private LocalDateTime expires;
     @NotNull
     private TransactionStatus status;
@@ -38,7 +38,7 @@ public class Transaction {
     }
 
     public static Transaction from(@NotNull @Valid DomainEvent event) {
-        return new Transaction()
+        return new Transaction() // TODO quorum? return validation=?
                 .id(event.transaction().id())
                 .expires(event.transaction().expires())
                 .status(event.transaction().status());

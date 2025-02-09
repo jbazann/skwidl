@@ -1,8 +1,6 @@
 package dev.jbazann.skwidl.customers.customer;
 
 import dev.jbazann.skwidl.customers.site.SiteService;
-import jakarta.validation.Valid;
-import jakarta.validation.constraints.NotNull;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
@@ -25,7 +23,7 @@ public class SiteServiceLocalClient implements SiteServiceClient {
      * @param customerId the customer ID to match sites for.
      */
     @Async
-    public void signalActivatePendingSites(@NotNull UUID customerId) {
+    public void signalActivatePendingSites(UUID customerId) {
         siteService.activatePendingSites(customerId);
     }
 

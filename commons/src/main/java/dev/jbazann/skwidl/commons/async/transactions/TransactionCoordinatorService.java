@@ -6,7 +6,11 @@ import dev.jbazann.skwidl.commons.async.events.EventAnswerPublisher;
 import dev.jbazann.skwidl.commons.async.transactions.entities.CoordinatedTransaction;
 import dev.jbazann.skwidl.commons.async.transactions.entities.CoordinatedTransactionRepository;
 import dev.jbazann.skwidl.commons.identity.ApplicationMember;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
+import org.springframework.validation.annotation.Validated;
 
+@Validated
 public class TransactionCoordinatorService {
 
     private final ApplicationMember member;
@@ -21,7 +25,7 @@ public class TransactionCoordinatorService {
         this.builder = builder;
     }
 
-    public void handleEvent(DomainEvent event) {
+    public void handleEvent(@NotNull @Valid DomainEvent event) {
         if(!member.equals(event.transaction().quorum().coordinator())) return;
 
         CoordinatedTransaction transaction = getForEvent(event);

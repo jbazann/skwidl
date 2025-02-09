@@ -1,6 +1,9 @@
 package dev.jbazann.skwidl.commons.async.events.specialized;
 
 import dev.jbazann.skwidl.commons.async.events.DomainEvent;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
@@ -14,10 +17,14 @@ import java.util.UUID;
 @EqualsAndHashCode(callSuper = true)
 public class CancelPreparedOrderEvent extends DomainEvent {
 
+    @NotNull
     private UUID orderId;
+    @NotNull
     private UUID customerId;
+    @NotNull @Min(0)
     private BigDecimal returnedFunds;
-    private Map<UUID, Integer> returnedStock;
+    @NotNull @NotEmpty
+    private Map<@NotNull UUID, @NotNull @Min(0) Integer> returnedStock;
 
     @Override
     protected DomainEvent copy() {

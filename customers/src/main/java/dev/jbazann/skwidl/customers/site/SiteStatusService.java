@@ -5,8 +5,10 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.validation.annotation.Validated;
 
 @Service
+@Validated
 public class SiteStatusService {
 
     private final CustomerServiceClient customerServiceLocalClient;
@@ -47,10 +49,10 @@ public class SiteStatusService {
     private void validateTransition(@NotNull Site site, @NotNull Site.SiteStatus newStatus) {
         if(!site.canTransitionTo(newStatus)) {
             throw new InvalidSiteStatusChangeException("Site status transition cannot be performed now.");
-        }
+        }// TODO ???¡
     }
 
-    @Transactional
+    @Transactional //TODO transactional on protected method?
     protected void transitionFromActive(Site site, Site.SiteStatus newStatus) {
         switch(newStatus) {
             case FINISHED -> customerServiceLocalClient.finishSite(site.customer(),site.id());

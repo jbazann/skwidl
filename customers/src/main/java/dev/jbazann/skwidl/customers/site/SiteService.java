@@ -8,12 +8,14 @@ import org.springframework.data.domain.Example;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.validation.annotation.Validated;
 
 import java.util.Iterator;
 import java.util.List;
 import java.util.UUID;
 
 @Service
+@Validated
 public class SiteService {
 
     private final SiteRepository siteRepository;
@@ -38,7 +40,7 @@ public class SiteService {
      * @param site a site with an ID that is not already used.
      * @return the persisted instance.
      */
-    public Site newSite(@Valid @NotNull Site site) {
+    public @NotNull @Valid Site newSite(@Valid @NotNull Site site) {
         if (siteRepository.existsById(site.id())) {
             throw new InvalidSiteException("Site with id " + site.id() + " already exists.");
         }
@@ -65,7 +67,7 @@ public class SiteService {
      * @param site an example site with null fields, except for those intended to be matched against.
      * @return a size-limited list of matching results.
      */
-    public List<Site> findSitesByExample(@NotNull Site site) {
+    public @NotNull List<@NotNull @Valid Site> findSitesByExample(@NotNull Site site) { //TODO DTOs
         return siteRepository.findAll(Example.of(site), Pageable.ofSize(5)).toList();
     }
 
@@ -92,7 +94,7 @@ public class SiteService {
         }
     }
 
-    private Site fetchSite(@NotNull UUID id) {
+    private Site fetchSite(UUID id) {
         return siteRepository.findById(id).orElseThrow(
                 () -> new InvalidSiteException("Site "+ id +" not found.")
         );

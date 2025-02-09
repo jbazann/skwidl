@@ -1,19 +1,21 @@
 package dev.jbazann.skwidl.customers.site;
 
 import jakarta.validation.constraints.NotNull;
+import org.springframework.validation.annotation.Validated;
 
 import java.util.UUID;
 
+@Validated
 public interface CustomerServiceClient {
 
-    public void finishSite(@NotNull UUID customer,@NotNull UUID id);
+    void finishSite(@NotNull UUID customer,@NotNull UUID id);
 
-    public void deactivateSite(@NotNull UUID customer,@NotNull  UUID id);
+    void deactivateSite(@NotNull UUID customer,@NotNull  UUID id);
 
-    public void activatePendingSite(@NotNull UUID customer,@NotNull  UUID id);
+    void activatePendingSite(@NotNull UUID customer,@NotNull  UUID id);
 
-    public void addPendingSite(@NotNull UUID customer);
+    void addPendingSite(@NotNull UUID customer);
 
-    public boolean activateSite(@NotNull UUID customer,@NotNull  UUID id);
+    boolean activateSite(@NotNull UUID customer,@NotNull  UUID id);
 
 }

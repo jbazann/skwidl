@@ -1,6 +1,9 @@
 package dev.jbazann.skwidl.commons.async.transactions;
 
 import dev.jbazann.skwidl.commons.async.transactions.api.locking.Locking;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -18,10 +21,15 @@ import java.util.UUID;
 @AllArgsConstructor
 public class TransactionLockingServiceData {
 
+    @NotNull
     private UUID transactionId;
+    @NotNull
     private List<RLock> locks;
+    @NotNull
     private List<RLock> acquiredLocks;
+    @NotNull @Valid
     private Locking metadata;
-    private int retries = 1; // this is a counter
+    @Min(0)
+    private int retryCount = 1;
 
 }

@@ -38,14 +38,14 @@ public class Rollback implements TransactionStage {
 
 
     @Override
-    public List<EntityLock> getRequiredLocks(@NotNull @Valid DomainEvent domainEvent) {
+    public List<EntityLock> getRequiredLocks(DomainEvent domainEvent) {
         return TransactionStage.super.getRequiredLocks(domainEvent);
     }
 
     @Override
     @Transactional
-    public TransactionResult runStage(@NotNull @Valid DomainEvent domainEvent,
-                                      @NotNull @Valid Transaction transaction) {
+    public TransactionResult runStage(DomainEvent domainEvent,
+                                      Transaction transaction) {
         if (!(domainEvent instanceof DeliverOrderEvent event))
             throw new IllegalArgumentException("Wrong DomainEvent type.");
 

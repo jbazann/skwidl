@@ -2,14 +2,18 @@ package dev.jbazann.skwidl.commons.async.transactions;
 
 import dev.jbazann.skwidl.commons.async.events.DomainEvent;
 import dev.jbazann.skwidl.commons.async.transactions.api.*;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 import org.springframework.aop.framework.AopProxyUtils;
 import org.springframework.aop.support.AopUtils;
 import org.springframework.context.ApplicationContext;
+import org.springframework.validation.annotation.Validated;
 
 import java.util.Map;
 import java.util.stream.Collectors;
 
-public final class TransactionStageRegistrarService {
+@Validated
+public class TransactionStageRegistrarService {
 
     public record StageKey(Class<? extends DomainEvent> eventClass, DomainEvent.Type eventType) {}
 
@@ -21,7 +25,7 @@ public final class TransactionStageRegistrarService {
         stages = mapStages(applicationContext.getBeansWithAnnotation(TransactionStageBean.class));
     }
 
-    public TransactionStage getStageForEvent(DomainEvent event) {
+    public @NotNull @Valid TransactionStage getStageForEvent(@NotNull @Valid DomainEvent event) {
         StageKey key = new StageKey(event.getClass(), event.type());
         if (!stages.containsKey(key)) throw new IllegalStateException(String.format(
                 "No TransactionStage registered for event ID %s of type %s.", event.id(), event.type()));

@@ -4,8 +4,12 @@ import dev.jbazann.skwidl.commons.async.events.DomainEvent;
 import dev.jbazann.skwidl.commons.async.transactions.api.TransactionLifecycleActions;
 import dev.jbazann.skwidl.commons.async.transactions.api.TransactionStage;
 import dev.jbazann.skwidl.commons.async.transactions.entities.Transaction;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
+import org.springframework.validation.annotation.Validated;
 
-public final class TransactionStageExecutorService {
+@Validated
+public class TransactionStageExecutorService {
 
     private final TransactionStageRegistrarService registrar;
     private final TransactionLifecycleActions transactionActions;
@@ -17,7 +21,7 @@ public final class TransactionStageExecutorService {
         this.lockingService = lockingService;
     }
 
-    public TransactionResult runStageFor(DomainEvent event) {
+    public @NotNull @Valid TransactionResult runStageFor(@NotNull @Valid DomainEvent event) {
         TransactionStage stage = registrar.getStageForEvent(event);
         Transaction transaction = transactionActions.fetchOrCreateForEvent(event);
         lockingService.getLocks(stage, event);

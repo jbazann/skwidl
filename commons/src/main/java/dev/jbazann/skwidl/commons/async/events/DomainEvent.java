@@ -4,6 +4,8 @@ import dev.jbazann.skwidl.commons.async.transactions.TransactionQuorum;
 import dev.jbazann.skwidl.commons.async.transactions.entities.Transaction;
 import dev.jbazann.skwidl.commons.identity.ApplicationMember;
 import dev.jbazann.skwidl.commons.utils.TimeProvider;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -18,11 +20,17 @@ import java.util.UUID;
 @EqualsAndHashCode
 public abstract class DomainEvent {
 
+    @NotNull
     private UUID id;
+    @NotNull
     private LocalDateTime timestamp;
+    @NotNull
     private ApplicationMember sentBy;
+    @NotNull @Valid
     private Transaction transaction;
+    @NotNull
     private Type type;
+    @NotNull
     private String context;
 
     public static DomainEvent init(final DomainEvent event) {
@@ -46,7 +54,7 @@ public abstract class DomainEvent {
      * @param event the event to copy.
      * @return a new event with a different identity, but same data as the argument.
      */
-    public static DomainEvent copyOf(DomainEvent event) {
+    public static @NotNull @Valid DomainEvent copyOf(DomainEvent event) {
         return event.copy()
                 .id(UUID.randomUUID()) // TODO replace with safe alternative
                 .transaction(event.transaction())

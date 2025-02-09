@@ -9,6 +9,7 @@ import org.springframework.data.domain.Example;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.validation.annotation.Validated;
 
 import java.util.List;
 import java.util.UUID;
@@ -18,6 +19,7 @@ import java.util.concurrent.CompletionException;
 
 
 @Service
+@Validated
 public class CustomerService {
 
     private final CustomerRepository customerRepository;
@@ -44,7 +46,7 @@ public class CustomerService {
      * @param customer a customer with an ID that is not already used.
      * @return the persisted instance.
      */
-    public Customer newCustomer(@Valid @NotNull Customer customer) {
+    public @NotNull @Valid Customer newCustomer(@Valid @NotNull Customer customer) {//TODO this should receive a DTO
         if (customerRepository.existsById(customer.id())) {
             throw new InvalidCustomerException("Customer with id " + customer.id() + " already exists.");
         }
@@ -72,7 +74,7 @@ public class CustomerService {
      * @param customer an example customer with null fields, except for those intended to be matched against.
      * @return a size-limited list of matching results.
      */
-    public List<Customer> findCustomersByExample(@NotNull Customer customer) {
+    public @NotNull List<@NotNull @Valid Customer> findCustomersByExample(@NotNull Customer customer) { //TODO this should probably receive a DTO
         return customerRepository.findAll(Example.of(customer), Pageable.ofSize(5)).toList();
     }
 
@@ -180,7 +182,7 @@ public class CustomerService {
         customerRepository.save(customer);
     }
 
-    private Customer fetchCustomer(@NotNull UUID customerId) {
+    private Customer fetchCustomer(UUID customerId) {
         return customerRepository.findById(customerId).orElseThrow(
                 () -> new InvalidCustomerException("Customer "+ customerId +" not found.")
         );

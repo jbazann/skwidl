@@ -3,11 +3,15 @@ package dev.jbazann.skwidl.commons.async.transactions;
 import dev.jbazann.skwidl.commons.async.events.DomainEvent;
 import dev.jbazann.skwidl.commons.async.events.EventAnswerPublisher;
 import dev.jbazann.skwidl.commons.identity.ApplicationMember;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
+import org.springframework.validation.annotation.Validated;
 
 import java.util.List;
 
 import static dev.jbazann.skwidl.commons.async.events.DomainEvent.Type.*;
 
+@Validated
 public class TransactionMemberService {
 
     private final ApplicationMember member;
@@ -23,7 +27,7 @@ public class TransactionMemberService {
         this.publisher = publisher;
     }
 
-    public void handleEvent(DomainEvent event) {
+    public void handleEvent(@NotNull @Valid DomainEvent event) {
         if (handleNotAMember(event)) return;
         if (handleNotRelevantEventType(event)) return;
 

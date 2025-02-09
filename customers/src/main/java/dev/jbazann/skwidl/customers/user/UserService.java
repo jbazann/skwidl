@@ -7,11 +7,13 @@ import org.springframework.data.domain.Example;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.validation.annotation.Validated;
 
 import java.util.List;
 import java.util.UUID;
 
 @Service
+@Validated
 public class UserService {
 
     private final UserRepository userRepository;
@@ -34,7 +36,7 @@ public class UserService {
      * @param user a user with an ID that is not already used.
      * @return the persisted instance.
      */
-    public User newUser(@Valid @NotNull User user) {
+    public @NotNull @Valid User newUser(@Valid @NotNull User user) {
         if (userRepository.existsById(user.id())) {
             throw new InvalidUserException("User with id " + user.id() + " already exists.");
         }
@@ -49,7 +51,7 @@ public class UserService {
      * @return the updated {@link User} instance.
      */
     @Transactional// TODO
-    public User addAllowedUser(@NotNull UUID customerId, @NotNull UUID userId) {
+    public @NotNull @Valid User addAllowedUser(@NotNull UUID customerId, @NotNull UUID userId) {
         User user = fetchUser(userId);
         if(isEnabledFor(user, customerId)) {
             /* do not throw exception until decoupled from CustomerService
@@ -67,17 +69,17 @@ public class UserService {
      * @param user an example user with null fields, except for those intended to be matched against.
      * @return a size-limited list of matching results.
      */
-    public List<User> findUsersByExample(@NotNull User user) {
+    public @NotNull List<@NotNull @Valid User> findUsersByExample(@NotNull User user) {
         return userRepository.findAll(Example.of(user), Pageable.ofSize(5)).toList();
     }
 
-    private User fetchUser(@NotNull UUID userId) {
+    private User fetchUser(UUID userId) {
         return userRepository.findById(userId).orElseThrow(
                 () -> new InvalidUserException("User " + userId + " not found.")
         );
     }
 
-    private boolean isEnabledFor(@NotNull User user,@NotNull UUID customerId) {
+    private boolean isEnabledFor(User user, UUID customerId) {
         return user.enabledForCustomerId(customerId);
     }
 

@@ -2,7 +2,11 @@ package dev.jbazann.skwidl.commons.async.transactions;
 
 import dev.jbazann.skwidl.commons.async.events.DomainEvent;
 import dev.jbazann.skwidl.commons.async.events.EventAnswerPublisher;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
+import org.springframework.validation.annotation.Validated;
 
+@Validated
 public class TransactionResponseService {
 
     private final EventAnswerPublisher publisher;
@@ -11,7 +15,8 @@ public class TransactionResponseService {
         this.publisher = publisher;
     }
 
-    public void sendResponse(DomainEvent event, TransactionResult result) {
+    public void sendResponse(@NotNull @Valid DomainEvent event,
+                             @NotNull @Valid TransactionResult result) {
         switch (event.type()) {
             case ROLLBACK -> responseForRollback(event, result);
             case COMMIT -> responseForCommit(event, result);

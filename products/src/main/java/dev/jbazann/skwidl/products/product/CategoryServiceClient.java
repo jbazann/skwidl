@@ -1,10 +1,12 @@
 package dev.jbazann.skwidl.products.product;
 
 import jakarta.validation.constraints.NotNull;
+import org.springframework.validation.annotation.Validated;
 
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
+@Validated
 public interface CategoryServiceClient {
 
     /**

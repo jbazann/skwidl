@@ -4,13 +4,11 @@ import dev.jbazann.skwidl.commons.exceptions.UnexpectedResponseException;
 import dev.jbazann.skwidl.orders.order.Sin;
 import dev.jbazann.skwidl.orders.order.dto.ProductAmountDTO;
 import dev.jbazann.skwidl.orders.order.exceptions.ReserveFailureException;
-import jakarta.validation.constraints.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.reactive.function.client.WebClient;
 
 import java.math.BigDecimal;
@@ -20,7 +18,6 @@ import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
 @Service
-@Validated
 public class ProductServiceHttpClient implements ProductServiceClient {
 
     // Map<> keys expected by the external service
@@ -69,7 +66,7 @@ public class ProductServiceHttpClient implements ProductServiceClient {
      * {{@link UUID}: {@link BigDecimal}} per product ID in the list received as argument.
      */
     @Async
-    public CompletableFuture<Map<String, Object>> validateProductAndFetchCost(@NotNull List<Map<String, Object>> batch) {
+    public CompletableFuture<Map<String, Object>> validateProductAndFetchCost(List<Map<String, Object>> batch) {
         // verify input is well-formed
         if (!batch.stream().allMatch(m -> m.get(PRODUCT_ID) instanceof UUID && m.size() == 1))
             throw new IllegalArgumentException();// TODO exception messages
@@ -86,7 +83,7 @@ public class ProductServiceHttpClient implements ProductServiceClient {
         });
     }
 
-    private Map<String, Object> sanitizeValidatedProducts(@NotNull Map<String, Object> response) {
+    private Map<String, Object> sanitizeValidatedProducts(Map<String, Object> response) {
         if( response.get(PRODUCTS_EXIST) instanceof Boolean productsExist ) {
             if(!productsExist) {
                 // Return only the flag to prevent stupidity.
@@ -117,7 +114,7 @@ public class ProductServiceHttpClient implements ProductServiceClient {
     }
 
 
-    public Boolean reserveProducts(@NotNull Map<UUID, ProductAmountDTO> products) {
+    public Boolean reserveProducts(Map<UUID, ProductAmountDTO> products) {
         return webClientBuilder.baseUrl(PRODUCTS).build()
                 .post().uri(builder -> builder.path(PRODUCTS_COLLECTION)
                         .queryParam(PRODUCTS_PARAMS_OPERATION, PRODUCTS_OPERATION_RESERVE)

@@ -14,6 +14,7 @@ import dev.jbazann.skwidl.commons.async.events.DomainEventBuilder;
 import dev.jbazann.skwidl.commons.identity.KnownMembers;
 import dev.jbazann.skwidl.orders.order.dto.NewOrderDTO;
 import dev.jbazann.skwidl.orders.order.exceptions.ReserveFailureException;
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Example;
@@ -100,7 +101,7 @@ public class OrderService {
         };
     }
 
-    public Order newOrder(@NotNull NewOrderDTO orderDto) {
+    public @NotNull @Valid Order newOrder(@NotNull NewOrderDTO orderDto) {
         StringBuilder message = validate(orderDto);
         if(!message.isEmpty()) throw new MalformedArgumentException(message.toString());
         Order order = orderDto.toEntity()
@@ -189,9 +190,9 @@ public class OrderService {
      * @param amounts the amounts requested in the {@link Order}
      * @return the total cost of all products, or -1 if the provided data is inconsistent.
      */
-    private BigDecimal costsMatch(@NotNull BigDecimal expected,
-                                  @NotNull Map<UUID, ProductUnitCostDTO> costs,
-                                  @NotNull Map<UUID, ProductAmountDTO> amounts) {
+    private BigDecimal costsMatch(BigDecimal expected,
+                                  Map<UUID, ProductUnitCostDTO> costs,
+                                  Map<UUID, ProductAmountDTO> amounts) {
         if( costs.size() != amounts.size() || !costs.keySet().stream().allMatch(amounts::containsKey) )
             return BigDecimal.valueOf(-1);//
 
@@ -204,43 +205,43 @@ public class OrderService {
         return totalCost;
     }
 
-    private Order reject(@NotNull Order order, @NotNull String detail) {
+    private Order reject(Order order, String detail) {
         return orderRepository.save(order.setStatus(new StatusHistory()
                 .id(UUID.randomUUID()) // TODO safe ids
                 .status(StatusHistory.Status.REJECTED)
                 .detail(detail.isEmpty() ? "Rejected." : detail)));
     }
 
-    private Order accept(@NotNull Order order, @NotNull String detail) {
+    private Order accept(Order order, String detail) {
         return orderRepository.save(order.setStatus(new StatusHistory()
                 .id(UUID.randomUUID())// TODO safe ids
                 .status(StatusHistory.Status.ACCEPTED)
                 .detail(detail.isEmpty() ? "Accepted." : detail)));
     }
 
-    private Order prepare(@NotNull Order order, @NotNull String detail) {
+    private Order prepare(Order order, String detail) {
         return orderRepository.save(order.setStatus(new StatusHistory()
                 .id(UUID.randomUUID())// TODO safe ids
                 .status(StatusHistory.Status.IN_PREPARATION)
                 .detail(detail.isEmpty() ? "Products reserved." : detail)));
     }
 
-    private Order deliver(@NotNull Order order, @NotNull String detail) {
+    private Order deliver(Order order, String detail) {
         return orderRepository.save(order.setStatus(new StatusHistory()
                 .id(UUID.randomUUID())// TODO safe ids
                 .status(StatusHistory.Status.DELIVERED)
                 .detail(detail.isEmpty() ? "Products delivered." : detail)));
     }
 
-    public Order getOrder(@NotNull UUID id) {
+    public @NotNull @Valid Order getOrder(@NotNull UUID id) {
         return orderRepository.findOne(Example.of(new Order().id(id))).orElseThrow();
     }
 
-    public List<Order> getCustomerOrders(@NotNull UUID customer) {
+    public @NotNull List<@NotNull @Valid Order> getCustomerOrders(@NotNull UUID customer) {
         return orderRepository.findAll(Example.of(new Order().customer(customer)));
     }
 
-    public StringBuilder validate(@NotNull NewOrderDTO o) {
+    private StringBuilder validate(NewOrderDTO o) {
         final StringBuilder order = new StringBuilder();
         final StringBuilder detail = new StringBuilder();
         final StringBuilder message = new StringBuilder();

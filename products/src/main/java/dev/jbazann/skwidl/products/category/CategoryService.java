@@ -4,11 +4,13 @@ import dev.jbazann.skwidl.products.category.dto.CategoryDTO;
 import jakarta.validation.constraints.NotNull;
 import org.springframework.data.domain.Example;
 import org.springframework.stereotype.Service;
+import org.springframework.validation.annotation.Validated;
 
 import java.util.Collection;
 import java.util.UUID;
 
 @Service
+@Validated
 public class CategoryService {
 
     private final CategoryRepository repository;

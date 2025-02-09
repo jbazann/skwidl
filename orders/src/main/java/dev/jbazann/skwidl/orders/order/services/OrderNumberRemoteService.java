@@ -10,7 +10,7 @@ import org.springframework.stereotype.Service;
  * database layers. Possibly but not necessarily with a centralized
  * singleton service that provides an atomic "nextRange" endpoint.
  */
-@Service
+@Service //TODO wtf are these classes
 public class OrderNumberRemoteService implements OrderNumberServiceClient {
 
     @Override
