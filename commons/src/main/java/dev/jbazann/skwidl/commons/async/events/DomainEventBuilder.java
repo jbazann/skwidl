@@ -20,7 +20,7 @@ import java.util.Map;
 import java.util.UUID;
 
 @Validated
-public final class DomainEventBuilder {
+public class DomainEventBuilder {
 
     private @NotNull @Valid DomainEvent event;
     private final @NotNull ApplicationMember thisApplication;

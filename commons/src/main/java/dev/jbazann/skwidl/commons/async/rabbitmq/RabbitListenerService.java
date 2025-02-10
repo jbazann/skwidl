@@ -9,7 +9,7 @@ import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.validation.annotation.Validated;
 
 @Validated
-public final class RabbitListenerService {
+public class RabbitListenerService {
 
     private final TransactionCoordinatorService coordinator;
     private final TransactionMemberService member;
