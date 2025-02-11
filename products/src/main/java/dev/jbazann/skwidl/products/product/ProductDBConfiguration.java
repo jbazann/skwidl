@@ -1,6 +1,5 @@
 package dev.jbazann.skwidl.products.product;
 
-import jakarta.validation.constraints.NotNull;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.jdbc.DataSourceBuilder;
@@ -31,11 +30,11 @@ public class ProductDBConfiguration {
 
     @Bean
     public LocalContainerEntityManagerFactoryBean productEntityManagerFactory(
-            EntityManagerFactoryBuilder builder, @Qualifier("productDataSource") @NotNull DataSource productDataSource) {
+            EntityManagerFactoryBuilder builder, @Qualifier("productDataSource") DataSource productDataSource) {
         return builder
                 .dataSource(productDataSource)
                 .packages("dev.jbazann.skwidl.products.product")
-                .persistenceUnit("productPU")//TODO
+                .persistenceUnit("product")
                 .build();
     }
 

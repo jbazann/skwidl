@@ -1,6 +1,5 @@
 package dev.jbazann.skwidl.products.category;
 
-import jakarta.validation.constraints.NotNull;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.jdbc.DataSourceBuilder;
@@ -31,11 +30,11 @@ public class CategoryDBConfiguration {
 
     @Bean
     public LocalContainerEntityManagerFactoryBean categoryEntityManagerFactory(
-            EntityManagerFactoryBuilder builder, @Qualifier("categoryDataSource") @NotNull DataSource categoryDataSource) {
+            EntityManagerFactoryBuilder builder, @Qualifier("categoryDataSource") DataSource categoryDataSource) {
         return builder
                 .dataSource(categoryDataSource)
                 .packages("dev.jbazann.skwidl.products.category")
-                .persistenceUnit("categoryPU")//TODO
+                .persistenceUnit("category")
                 .build();
     }
 

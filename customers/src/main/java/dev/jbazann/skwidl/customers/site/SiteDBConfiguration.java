@@ -1,6 +1,5 @@
 package dev.jbazann.skwidl.customers.site;
 
-import jakarta.validation.constraints.NotNull;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.jdbc.DataSourceBuilder;
@@ -31,11 +30,11 @@ public class SiteDBConfiguration {
 
     @Bean
     public LocalContainerEntityManagerFactoryBean siteEntityManagerFactory(
-            EntityManagerFactoryBuilder builder, @Qualifier("siteDataSource") @NotNull DataSource siteDataSource) {
+            EntityManagerFactoryBuilder builder, @Qualifier("siteDataSource") DataSource siteDataSource) {
         return builder
                 .dataSource(siteDataSource)
                 .packages("dev.jbazann.skwidl.customers.site")
-                .persistenceUnit("customerPU")
+                .persistenceUnit("site")
                 .build();
     }
 

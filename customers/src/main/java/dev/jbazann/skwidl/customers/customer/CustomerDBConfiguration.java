@@ -1,6 +1,5 @@
 package dev.jbazann.skwidl.customers.customer;
 
-import jakarta.validation.constraints.NotNull;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.jdbc.DataSourceBuilder;
@@ -34,11 +33,11 @@ public class CustomerDBConfiguration {
     @Primary
     @Bean("customerEntityManagerFactory")
     public LocalContainerEntityManagerFactoryBean customerEntityManagerFactory(
-            EntityManagerFactoryBuilder builder, @Qualifier("customerDataSource") @NotNull DataSource customerDataSource) {
+            EntityManagerFactoryBuilder builder, @Qualifier("customerDataSource") DataSource customerDataSource) {
         return builder
                 .dataSource(customerDataSource)
                 .packages("dev.jbazann.skwidl.customers.customer")
-                .persistenceUnit("customerPU")
+                .persistenceUnit("customer")
                 .build();
     }
 
