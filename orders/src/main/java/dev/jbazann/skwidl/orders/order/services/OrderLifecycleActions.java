@@ -11,6 +11,7 @@ import org.springframework.validation.annotation.Validated;
 import java.util.Optional;
 import java.util.UUID;
 
+@SuppressWarnings("UnusedReturnValue")
 @Service
 @Validated
 public class OrderLifecycleActions {

@@ -32,6 +32,7 @@ public class ProductLifecycleActions {
         return productRepository.save(product);
     }
 
+    @SuppressWarnings("UnusedReturnValue")
     public Collection<Product> saveAll(@NotNull @NotEmpty Collection<@Valid Product> products) {
         return productRepository.saveAll(products);
     }

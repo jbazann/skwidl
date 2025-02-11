@@ -39,6 +39,7 @@ public class Reserve implements TransactionStage {
         return TransactionStage.super.getRequiredLocks(domainEvent);
     }
 
+    @SuppressWarnings("DuplicatedCode")
     @Override
     @Transactional
     public TransactionResult runStage(DomainEvent domainEvent,

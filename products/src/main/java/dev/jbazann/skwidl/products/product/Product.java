@@ -14,6 +14,7 @@ import lombok.experimental.Accessors;
 import java.math.BigDecimal;
 import java.util.UUID;
 
+@SuppressWarnings("JpaDataSourceORMInspection")
 @NoArgsConstructor
 @AllArgsConstructor
 @Setter

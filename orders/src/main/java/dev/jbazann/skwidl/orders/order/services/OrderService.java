@@ -66,7 +66,7 @@ public class OrderService {
                     "Deliver order with id: " + order.id()
             );
             default -> throw new IllegalStateException("Cannot deliver Order in status: " + order.getStatus());
-        };
+        }
     }
 
     public void cancelOrder(@NotNull UUID id,
@@ -99,7 +99,7 @@ public class OrderService {
                     "Cancel order with id: " + order.id()
             );
             default -> throw new IllegalStateException("Cannot deliver Order in status: " + order.getStatus());
-        };
+        }
     }
 
     public @NotNull @Valid Order newOrder(@NotNull NewOrderDTO orderDto) {
@@ -213,14 +213,14 @@ public class OrderService {
                 .detail(detail.isEmpty() ? "Rejected." : detail)));
     }
 
-    private Order accept(Order order, String detail) {
+    private Order accept(Order order, @SuppressWarnings("SameParameterValue") String detail) {
         return orderRepository.save(order.setStatus(new StatusHistory()
                 .id(UUID.randomUUID())// TODO safe ids
                 .status(StatusHistory.Status.ACCEPTED)
                 .detail(detail.isEmpty() ? "Accepted." : detail)));
     }
 
-    private Order prepare(Order order, String detail) {
+    private Order prepare(Order order, @SuppressWarnings("SameParameterValue") String detail) {
         return orderRepository.save(order.setStatus(new StatusHistory()
                 .id(UUID.randomUUID())// TODO safe ids
                 .status(StatusHistory.Status.IN_PREPARATION)

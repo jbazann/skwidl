@@ -54,7 +54,7 @@ public class OrderController {
             case StatusHistory.Status.CANCELED -> orderService.cancelOrder(id, update);
             default -> throw new BadRequestException("Status must be one of: " +
                         StatusHistory.Status.DELIVERED + ", " + StatusHistory.Status.CANCELED + '.');
-        };
+        }
     }
 
     @ExceptionHandler

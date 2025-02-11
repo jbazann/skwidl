@@ -20,7 +20,7 @@ public @interface Locking {
     LockingActions action() default LockingActions.GET;
 
     enum LockingActions {
-        GET, RELEASE;
+        GET, RELEASE
     }
 
 }

@@ -106,9 +106,7 @@ public class ProductServiceHttpClient implements ProductServiceClient {
                     "%s attribute missing or malformed in Products service response.", TOTAL_COST
             ));
 
-        unitCost.keySet().forEach(k -> {
-            response.put((String) k, unitCost.get(k));
-        });
+        unitCost.keySet().forEach(k -> response.put((String) k, unitCost.get(k)));
 
         return response;
     }

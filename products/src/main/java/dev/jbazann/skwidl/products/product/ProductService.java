@@ -78,9 +78,7 @@ public class ProductService {
 
         if (!entries.isEmpty()) {
             response.missingProducts(new ArrayList<>());
-            entries.forEach(e -> {
-                response.missingProducts().add(e.productId());
-            });
+            entries.forEach(e -> response.missingProducts().add(e.productId()));
         }
 
         response.totalCost(

@@ -23,7 +23,7 @@ public class TransactionResponseService {
             case REQUEST -> responseForRequest(event, result);
             default -> throw new IllegalArgumentException(
                     "Attempted to evaluate TransactionResult for a non-transactional event.");
-        };
+        }
     }
 
     private void responseForRequest(DomainEvent event, TransactionResult result) {
@@ -34,7 +34,7 @@ public class TransactionResponseService {
                 publisher.error(event, result.context());
                 publisher.reject(event, result.context());// TODO this should publish only once, to both routes
             }
-        };
+        }
     }
 
     private void responseForCommit(DomainEvent event, TransactionResult result) {
@@ -50,7 +50,7 @@ public class TransactionResponseService {
         switch (result.simpleResult()) {
             case SUCCESS -> publisher.acknowledge(event, result.context());
             case FAILURE,  CRITICAL_FAILURE, REGISTRY_FAILURE  -> publisher.error(event, result.context());
-        };
+        }
     }
 
 

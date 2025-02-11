@@ -11,5 +11,5 @@ public enum LockingStrategies {
      * only released when expired or upon finishing
      * the execution of a later stage.
      */
-    MULTISTAGE;
+    MULTISTAGE
 }

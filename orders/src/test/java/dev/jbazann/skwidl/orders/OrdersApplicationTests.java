@@ -114,15 +114,13 @@ class OrdersApplicationTests {
 				StandardDataset.NO_USER
 		);
 		assertTrue(cases.stream().allMatch(StandardDataset::hasOrder));
-		cases.stream().map(StandardDataset::asNewOrderDTO).forEach(order -> {
-			webClient.post().uri("/order")
-					.contentType(MediaType.APPLICATION_JSON)
-					.bodyValue(order)
-					.accept(MediaType.APPLICATION_JSON)
-					.exchange()
-					.expectStatus().is4xxClientError()
-					.expectBody(String.class);
-		});
+		cases.stream().map(StandardDataset::asNewOrderDTO).forEach(order -> webClient.post().uri("/order")
+                .contentType(MediaType.APPLICATION_JSON)
+                .bodyValue(order)
+                .accept(MediaType.APPLICATION_JSON)
+                .exchange()
+                .expectStatus().is4xxClientError()
+                .expectBody(String.class));
 	}
 
 	@Test
@@ -140,11 +138,9 @@ class OrdersApplicationTests {
 					assertEquals(NEW_ORDER.site(), response.site());
 					assertEquals(NEW_ORDER.user(), response.user());
 					assertEquals(NEW_ORDER.note(), response.note());
-					NEW_ORDER.detail().forEach(detail -> {
-						assertTrue(response.detail().stream()
-								.anyMatch(d -> Objects.equals(d.product(), detail.product()) &&
-										Objects.equals(d.amount(), detail.amount())));
-					});
+					NEW_ORDER.detail().forEach(detail -> assertTrue(response.detail().stream()
+                            .anyMatch(d -> Objects.equals(d.product(), detail.product()) &&
+                                    Objects.equals(d.amount(), detail.amount()))));
 					response.detail().forEach(detail -> {
 						assertNotNull(detail.id());
 						assertNotNull(detail.totalCost());

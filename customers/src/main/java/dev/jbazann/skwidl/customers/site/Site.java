@@ -11,6 +11,7 @@ import lombok.experimental.Accessors;
 import java.math.BigDecimal;
 import java.util.UUID;
 
+@SuppressWarnings("JpaDataSourceORMInspection")
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
@@ -44,7 +45,7 @@ public class Site {
     }
 
     public enum SiteStatus{
-        ACTIVE, PENDING, FINISHED;
+        ACTIVE, PENDING, FINISHED
     }
 
     public SiteDTO toDto() {

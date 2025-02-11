@@ -3,8 +3,6 @@ package dev.jbazann.skwidl.products.category.dto;
 import lombok.*;
 import lombok.experimental.Accessors;
 
-import java.util.UUID;
-
 @Getter
 @Setter
 @NoArgsConstructor

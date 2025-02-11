@@ -12,6 +12,7 @@ import lombok.experimental.Accessors;
 
 import java.util.UUID;
 
+@SuppressWarnings("JpaDataSourceORMInspection")
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter

@@ -1,9 +1,6 @@
 package dev.jbazann.skwidl.products.product.dto;
 
 import dev.jbazann.skwidl.products.product.Product;
-import jakarta.persistence.Column;
-import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import lombok.experimental.Accessors;
 

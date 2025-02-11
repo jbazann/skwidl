@@ -42,6 +42,7 @@ public class CancelPreparedOrderRollback implements TransactionStage {
                 .toList();
     }
 
+    @SuppressWarnings("DuplicatedCode")
     @Override
     public TransactionResult runStage(@NotNull @Valid DomainEvent domainEvent,
                                       @NotNull @Valid Transaction transaction) {

@@ -48,7 +48,7 @@ public class TransactionLockingService {
         switch (annotation.strategy()) {
             case EPHEMERAL -> getEphemeralLocks(stage, event, annotation);
             case MULTISTAGE -> throw new UnsupportedOperationException("Multi-stage locks unavailable.");
-        };
+        }
     }
 
     private void _releaseLocks(UUID transactionId) {

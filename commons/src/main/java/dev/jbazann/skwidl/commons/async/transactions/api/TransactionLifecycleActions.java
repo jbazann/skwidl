@@ -31,6 +31,7 @@ public class TransactionLifecycleActions {
         return repository.save(transaction);
     }
 
+    @SuppressWarnings("UnusedReturnValue")
     public @NotNull @Valid Transaction rollback(@NotNull @Valid Transaction transaction) {
         transaction.status(Transaction.TransactionStatus.ROLLED_BACK);
         return repository.save(transaction);

@@ -50,6 +50,7 @@ public class UserService {
      * @param userId a valid user ID.
      * @return the updated {@link User} instance.
      */
+    @SuppressWarnings("UnusedReturnValue")
     @Transactional// TODO
     public @NotNull @Valid User addAllowedUser(@NotNull UUID customerId, @NotNull UUID userId) {
         User user = fetchUser(userId);
