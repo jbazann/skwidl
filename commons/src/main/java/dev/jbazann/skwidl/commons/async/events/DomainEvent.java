@@ -50,9 +50,9 @@ public abstract class DomainEvent {
     }
 
     /**
-     * Constructs a copy of an event, preserving subclass data.
+     * Constructs a shallow copy of an event, preserving subclass data.
      * @param event the event to copy.
-     * @return a new event with a different identity, but same data as the argument.
+     * @return a new event with a different identity, but the same data as the argument.
      */
     public static @NotNull @Valid DomainEvent copyOf(DomainEvent event) {
         return event.copy()
@@ -71,7 +71,6 @@ public abstract class DomainEvent {
      * but with copies of the rest. <br>
      * Overriding implementations don't need to set the values of inherited attributes.
      * @return a copy of the event this method was called on.
-     * // TODO evaluate the need for deep copies.
      */
     protected abstract DomainEvent copy();
 
