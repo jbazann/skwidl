@@ -20,7 +20,7 @@ public class TransactionsConfiguration {
     }
 
     @Bean
-    TransactionLockingService transactionLockingService(RedissonClient client) {
+    public TransactionLockingService transactionLockingService(RedissonClient client) {
         return new TransactionLockingService(client);
     }
 
