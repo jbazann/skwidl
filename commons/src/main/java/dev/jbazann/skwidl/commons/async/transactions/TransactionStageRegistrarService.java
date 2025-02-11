@@ -36,7 +36,7 @@ public class TransactionStageRegistrarService {
         return beans.values().stream()
                 .filter(TransactionStageRegistrarService::isTransactionStageOrProxy)
                 .map(TransactionStage.class::cast)
-                .collect(Collectors.toMap(
+                .collect(Collectors.toUnmodifiableMap(
                         stage -> new StageKey(getAnnotatedEventClass(stage),getAnnotatedStage(stage).trigger),
                         stage -> stage
                 ));

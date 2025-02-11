@@ -14,16 +14,18 @@ import org.springframework.retry.annotation.Retryable;
 import org.springframework.validation.annotation.Validated;
 
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 
 @Validated
 public class TransactionLockingService {
 
     private final RedissonClient redisson;
-    private final Map<UUID, TransactionLockingServiceData> currentLocks;// TODO concurrent data structures
+    private final ConcurrentMap<UUID, TransactionLockingServiceData> currentLocks;
 
     public TransactionLockingService(RedissonClient redisson) {
         this.redisson = redisson;
-        this.currentLocks = new HashMap<>();
+        this.currentLocks = new ConcurrentHashMap<>();
     }
 
     public void getLocks(@NotNull @Valid TransactionStage stage,
@@ -75,7 +77,8 @@ public class TransactionLockingService {
                     .map(EntityLock::toString)
                     .map(redisson::getLock)
                     .toList());
-            currentLocks.put(event.transaction().id(), data);
+            currentLocks.put(event.transaction(
+            ).id(), data);
         }
 
         data.acquiredLocks(data.locks().stream().filter(RLock::tryLock).toList());
