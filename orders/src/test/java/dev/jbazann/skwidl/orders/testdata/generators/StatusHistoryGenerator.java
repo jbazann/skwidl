@@ -62,6 +62,7 @@ public class StatusHistoryGenerator {
 
     protected Order initDelivered(Order order) {
         final DateCarrier date = new DateCarrier(order.ordered());
+        //noinspection SwitchStatementWithTooFewBranches
         final List<StatusHistory> beforeDelivered = switch (random.nextInt(2)) {
             case 0 -> List.of(
                     stdHistory(date.next()).status(StatusHistory.Status.ACCEPTED),

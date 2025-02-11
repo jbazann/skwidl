@@ -63,6 +63,7 @@ public class SiteStatusService {
 
     @Transactional
     protected void transitionFromPending(Site site, Site.SiteStatus newStatus) {
+        //noinspection SwitchStatementWithTooFewBranches
         switch(newStatus) {
             case ACTIVE -> customerServiceLocalClient.activatePendingSite(site.customer(),site.id());
         }

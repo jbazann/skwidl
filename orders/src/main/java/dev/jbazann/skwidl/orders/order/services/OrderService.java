@@ -57,6 +57,7 @@ public class OrderService {
             throw new IllegalArgumentException("Expected delivered status but received: " + update.status());
 
         Order order = getOrder(id);
+        //noinspection SwitchStatementWithTooFewBranches
         switch (order.getStatus().status()) {
             case IN_PREPARATION -> publisher.request(
                     builder.create()
