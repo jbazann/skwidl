@@ -294,33 +294,6 @@
                     </executions>
                 </plugin>
 
-                <!-- Import routes.yml into each module -->
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-resources-plugin</artifactId>
-                    <version>3.2.0</version>
-                    <executions>
-                        <execution>
-                            <id>copy-routes-file</id>
-                            <phase>generate-resources</phase>
-                            <goals>
-                                <goal>copy-resources</goal>
-                            </goals>
-                            <configuration>
-                                <outputDirectory>${project.build.outputDirectory}</outputDirectory>
-                                <resources>
-                                    <resource>
-                                        <directory>${project.basedir}/../</directory>
-                                        <includes>
-                                            <include>routes.yml</include>
-                                        </includes>
-                                    </resource>
-                                </resources>
-                            </configuration>
-                        </execution>
-                    </executions>
-                </plugin>
-
                 <!-- Exclude Lombok from final artifact -->
                 <plugin>
                     <groupId>org.springframework.boot</groupId>
