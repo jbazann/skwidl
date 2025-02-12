@@ -35,6 +35,8 @@
         <!-- AMQP Credentials -->
         <jbazann.amqp.username>${env.JBAZANN_AMQP_USR}</jbazann.amqp.username>
         <jbazann.amqp.password>${env.JBAZANN_AMQP_PWD}</jbazann.amqp.password>
+        <jbazann.amqp.host>amqp-0.messaging</jbazann.amqp.host>
+        <jbazann.amqp.port>5671</jbazann.amqp.port>
         <!-- RabbitMQ message routing -->
         <!-- TODO routing keys for better scoping -->
         <jbazann.rabbit.exchanges.event>SKWIDL_EVENT</jbazann.rabbit.exchanges.event>
@@ -52,6 +54,8 @@
         <jbazann.jarname>${project.artifactId}-${project.version}.jar</jbazann.jarname>
         <jbazann.dirname>jbazann</jbazann.dirname>
         <jbazann.volname>${jbazann.dirname}/mounted</jbazann.volname>
+        <!-- Eureka server -->
+        <jbazann.eureka.defaultZone>http://eureka.eureka:${jbazann.kube.main-port}/eureka/</jbazann.eureka.defaultZone>
 
         <!-- To be used in programmatic sync requests, see ISO-8601 Duration -->
         <jbazann.timeout.standard>PT5S</jbazann.timeout.standard>

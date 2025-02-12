@@ -28,7 +28,7 @@ eureka:
   client:
     region: santa-fe-1
     serviceUrl:
-      defaultZone: http://eureka:@jbazann.kube.main-port@/eureka/
+      defaultZone: @jbazann.eureka.defaultZone@
 
 management:
   server:

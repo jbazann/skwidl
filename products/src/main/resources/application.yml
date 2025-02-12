@@ -2,8 +2,8 @@ spring:
   application:
     name: products
   rabbitmq:
-    host: amqp-0
-    port: 5671
+    host: @jbazann.amqp.host@
+    port: @jbazann.amqp.port@
     username: @jbazann.amqp.username@
     password: @jbazann.amqp.password@
     virtual-host: @jbazann.amqp.username@
@@ -17,7 +17,7 @@ server:
 eureka:
   client:
     serviceUrl:
-      defaultZone: http://eureka:@jbazann.kube.main-port@/eureka/
+      defaultZone: @jbazann.eureka.defaultZone@
     fetch-registry: false
 
 management:
