@@ -15,20 +15,17 @@ spring:
       jdbc-url: jdbc:mysql://mysql:12012/customer
       username: customers
       password: customers
-      jpa:
-        hibernate:
-          dialect: org.hibernate.dialect.MySQLDialect
+      driver-class-name: com.mysql.cj.jdbc.Driver
     site:
       jdbc-url: jdbc:mysql://mysql:12012/site
       username: customers
       password: customers
-      jpa:
-        hibernate:
-          dialect: org.hibernate.dialect.MySQLDialect
+      driver-class-name: com.mysql.cj.jdbc.Driver
     user:
       jdbc-url: jdbc:mysql://mysql:12012/user
       username: customers
       password: customers
+      driver-class-name: com.mysql.cj.jdbc.Driver
 
 server:
   port: @jbazann.kube.main-port@
@@ -48,11 +45,12 @@ management:
         include: httpexchanges,health
 
 jbazann:
+  timeout:
+    standard: @jbazann.timeout.standard@
   rabbit:
     exchanges:
-      customers: @jbazann.rabbit.exchanges.customers@
-      orders: @jbazann.rabbit.exchanges.orders@
-      users: @jbazann.rabbit.exchanges.users@
+      event: @jbazann.rabbit.exchanges.event@
     queues:
-      saga: @jbazann.rabbit.queues.saga@
-      operation: @jbazann.rabbit.queues.operation@
+      event: @jbazann.rabbit.queues.customers.event@
+    routing: # [escape].operation.queue.[source].[target]
+      event: @jbazann.rabbit.routing.customers.event@

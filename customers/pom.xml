@@ -216,22 +216,22 @@
 													<files>
 														<file>
 															<source>${project.basedir}/src/main/resources/mysql/master.sql</source>
-															<outputDirectory>${project.build.directory}/docker/jbazann/customersdb/latest/build/mysql/docker-entrypoint-initdb.d/</outputDirectory>
+															<outputDirectory>${project.build.directory}/docker/skwidl/customersdb/latest/build/mysql/docker-entrypoint-initdb.d/</outputDirectory>
 															<destName>0.sql</destName>
 														</file>
 														<file>
 															<source>${project.basedir}/src/main/resources/mysql/customer/ddl.sql</source>
-															<outputDirectory>${project.build.directory}/docker/jbazann/customersdb/latest/build/mysql/docker-entrypoint-initdb.d/ddl/</outputDirectory>
+															<outputDirectory>${project.build.directory}/docker/skwidl/customersdb/latest/build/mysql/docker-entrypoint-initdb.d/ddl/</outputDirectory>
 															<destName>customer.sql</destName>
 														</file>
 														<file>
 															<source>${project.basedir}/src/main/resources/mysql/site/ddl.sql</source>
-															<outputDirectory>${project.build.directory}/docker/jbazann/customersdb/latest/build/mysql/docker-entrypoint-initdb.d/ddl/</outputDirectory>
+															<outputDirectory>${project.build.directory}/docker/skwidl/customersdb/latest/build/mysql/docker-entrypoint-initdb.d/ddl/</outputDirectory>
 															<destName>site.sql</destName>
 														</file>
 														<file>
 															<source>${project.basedir}/src/main/resources/mysql/user/ddl.sql</source>
-															<outputDirectory>${project.build.directory}/docker/jbazann/customersdb/latest/build/mysql/docker-entrypoint-initdb.d/ddl/</outputDirectory>
+															<outputDirectory>${project.build.directory}/docker/skwidl/customersdb/latest/build/mysql/docker-entrypoint-initdb.d/ddl/</outputDirectory>
 															<destName>user.sql</destName>
 														</file>
 													</files>

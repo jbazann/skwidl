@@ -19,7 +19,7 @@ spec:
     spec:
       containers:
         - name: db
-          image: postgres:17.2
+          image: skwidl/productsdb:latest
           imagePullPolicy: IfNotPresent
           env:
             - name: POSTGRES_DB
@@ -28,6 +28,9 @@ spec:
               value: jbazann
             - name : POSTGRES_PASSWORD
               value: jbazann
+          args:
+            - "-c"
+            - "config_file=/etc/postgresql/postgresql.cnf"
           ports:
             - containerPort: 12012
               protocol: TCP
@@ -40,5 +43,4 @@ spec:
           configMap:
             name: postgresql-cfg
         - name: init-ddl
-
       restartPolicy: Always

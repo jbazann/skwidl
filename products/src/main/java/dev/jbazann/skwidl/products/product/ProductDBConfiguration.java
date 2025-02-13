@@ -6,6 +6,7 @@ import org.springframework.boot.jdbc.DataSourceBuilder;
 import org.springframework.boot.orm.jpa.EntityManagerFactoryBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
@@ -22,13 +23,15 @@ import java.util.Objects;
 )
 public class ProductDBConfiguration {
 
-    @Bean
+    @Primary
+    @Bean("productDataSource")
     @ConfigurationProperties("spring.datasource.product")
     public DataSource productDataSource() {
         return DataSourceBuilder.create().build();
     }
 
-    @Bean
+    @Primary
+    @Bean("productEntityManagerFactory")
     public LocalContainerEntityManagerFactoryBean productEntityManagerFactory(
             EntityManagerFactoryBuilder builder, @Qualifier("productDataSource") DataSource productDataSource) {
         return builder
@@ -38,7 +41,8 @@ public class ProductDBConfiguration {
                 .build();
     }
 
-    @Bean
+    @Primary
+    @Bean("productTransactionManager")
     public PlatformTransactionManager productTransactionManager(
             @Qualifier("productEntityManagerFactory") LocalContainerEntityManagerFactoryBean productEntityManagerFactory) {
         return new JpaTransactionManager(Objects.requireNonNull(productEntityManagerFactory.getObject()));

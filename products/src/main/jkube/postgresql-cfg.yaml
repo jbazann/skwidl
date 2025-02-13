@@ -6,3 +6,4 @@ metadata:
 data:
   postgresql.cnf: |
     port = 12012
+    listen_addresses = '*'

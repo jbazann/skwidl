@@ -120,6 +120,52 @@
 			<plugin>
 				<groupId>org.eclipse.jkube</groupId>
 				<artifactId>kubernetes-maven-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>k8s-images-db</id>
+						<phase>install</phase>
+						<goals>
+							<goal>build</goal>
+						</goals>
+						<configuration>
+							<images>
+								<image>
+									<name>%g/productsdb:%l</name>
+									<build>
+										<from>postgres:17.2</from>
+										<assembly>
+											<excludeFinalOutputArtifact>true</excludeFinalOutputArtifact>
+											<targetDir>/docker-entrypoint-initdb.d</targetDir>
+											<layers>
+												<layer>
+													<id>postgresql</id>
+													<baseDirectory>${project.build.directory}</baseDirectory>
+													<files>
+														<file>
+															<source>${project.basedir}/src/main/resources/postgresql/master.sql</source>
+															<outputDirectory>${project.build.directory}/docker/skwidl/productsdb/latest/build/postgresql/docker-entrypoint-initdb.d/</outputDirectory>
+															<destName>0.sql</destName>
+														</file>
+														<file>
+															<source>${project.basedir}/src/main/resources/postgresql/product/ddl.sql</source>
+															<outputDirectory>${project.build.directory}/docker/skwidl/productsdb/latest/build/postgresql/docker-entrypoint-initdb.d/ddl/</outputDirectory>
+															<destName>product.sql</destName>
+														</file>
+														<file>
+															<source>${project.basedir}/src/main/resources/postgresql/category/ddl.sql</source>
+															<outputDirectory>${project.build.directory}/docker/skwidl/productsdb/latest/build/postgresql/docker-entrypoint-initdb.d/ddl/</outputDirectory>
+															<destName>category.sql</destName>
+														</file>
+													</files>
+												</layer>
+											</layers>
+										</assembly>
+									</build>
+								</image>
+							</images>
+						</configuration>
+					</execution>
+				</executions>
 			</plugin>
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
@@ -175,6 +221,7 @@
 					</execution>
 				</executions>
 			</plugin>
+
 		</plugins>
 	</build>
 </project>

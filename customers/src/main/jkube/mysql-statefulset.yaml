@@ -19,7 +19,7 @@ spec:
     spec:
       containers:
         - name: db
-          image: jbazann/customersdb:latest
+          image: skwidl/customersdb:latest
           imagePullPolicy: IfNotPresent
           env:
             - name: MYSQL_ROOT_PASSWORD

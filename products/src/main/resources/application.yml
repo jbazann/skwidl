@@ -10,6 +10,17 @@ spring:
     ssl:
       enabled: true
       verify-hostname: false
+  datasource:
+    product:
+      jdbc-url: jdbc:postgresql://postgresql:12012/product
+      username: product
+      password: product
+      driver-class-name: org.postgresql.Driver
+    category:
+      jdbc-url: jdbc:postgresql://postgresql:12012/category
+      username: category
+      password: category
+      driver-class-name: org.postgresql.Driver
 
 server:
   port: @jbazann.kube.main-port@

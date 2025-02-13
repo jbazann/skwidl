@@ -22,13 +22,13 @@ import java.util.Objects;
 )
 public class CategoryDBConfiguration {
 
-    @Bean
+    @Bean("categoryDataSource")
     @ConfigurationProperties("spring.datasource.category")
     public DataSource categoryDataSource() {
         return DataSourceBuilder.create().build();
     }
 
-    @Bean
+    @Bean("categoryEntityManagerFactory")
     public LocalContainerEntityManagerFactoryBean categoryEntityManagerFactory(
             EntityManagerFactoryBuilder builder, @Qualifier("categoryDataSource") DataSource categoryDataSource) {
         return builder
@@ -38,7 +38,7 @@ public class CategoryDBConfiguration {
                 .build();
     }
 
-    @Bean
+    @Bean("categoryTransactionManager")
     public PlatformTransactionManager categoryTransactionManager(
             @Qualifier("categoryEntityManagerFactory") LocalContainerEntityManagerFactoryBean categoryEntityManagerFactory) {
         return new JpaTransactionManager(Objects.requireNonNull(categoryEntityManagerFactory.getObject()));

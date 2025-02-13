@@ -41,6 +41,7 @@ public class CustomerDBConfiguration {
                 .build();
     }
 
+    @Primary
     @Bean("customerTransactionManager")
     public PlatformTransactionManager customerTransactionManager(
             @Qualifier("customerEntityManagerFactory") LocalContainerEntityManagerFactoryBean customerEntityManagerFactory) {
