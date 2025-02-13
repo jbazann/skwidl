@@ -19,7 +19,7 @@ import lombok.experimental.Accessors;
 @Data
 @Accessors(fluent = true)
 @EqualsAndHashCode
-public final class ApplicationMember {
+public class ApplicationMember {
 
     /**
      * A unique ID for each different service. The same for
