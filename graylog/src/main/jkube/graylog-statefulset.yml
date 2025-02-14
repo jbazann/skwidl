@@ -20,10 +20,13 @@ spec:
           ports:
             - name: app
               containerPort: 12012
+              protocol: UDP
             - name: http
               containerPort: 80
+              protocol: TCP
             - name: https
               containerPort: 443
+              protocol: TCP
           env:
             - name: POD_NAME # graylog picks this up to set pod-0 as master node
               valueFrom:
@@ -35,8 +38,8 @@ spec:
           securityContext:
             privileged: false
           volumeMounts:
-            - mountPath: /usr/share/graylog/data/contentpacks/content-pack-30b6afa7-fcd4-4c7b-b70b-b21b5cf33b7f-1.json
-              subPath: content-pack-30b6afa7-fcd4-4c7b-b70b-b21b5cf33b7f-1.json
+            - mountPath: /usr/share/graylog/data/contentpacks/content-pack-2942753d-93b6-4875-9496-c7b0ae66ffed-1.json
+              subPath: content-pack-2942753d-93b6-4875-9496-c7b0ae66ffed-1.json
               name: graylog-content-pack
       volumes:
         - name: graylog-content-pack

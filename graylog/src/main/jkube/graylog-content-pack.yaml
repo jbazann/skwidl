@@ -4,14 +4,14 @@ metadata:
   name: graylog-content-pack
   namespace: graylog
 data:
-  content-pack-30b6afa7-fcd4-4c7b-b70b-b21b5cf33b7f-1.json: |
+  content-pack-2942753d-93b6-4875-9496-c7b0ae66ffed-1.json: |
     {
       "v": 1,
-      "id": "30b6afa7-fcd4-4c7b-b70b-b21b5cf33b7f",
+      "id": "2942753d-93b6-4875-9496-c7b0ae66ffed",
       "rev": 1,
-      "name": "main_input",
+      "name": "main_udp_input",
       "summary": "why are you reading this",
-      "description": "hi",
+      "description": "",
       "vendor": "jbazann.dev",
       "url": "",
       "parameters": [],
@@ -22,42 +22,38 @@ data:
             "name": "input",
             "version": "1"
           },
-          "id": "0b47541b-7d6b-477e-b49b-99096e683416",
+          "id": "2fe53755-8b0d-4263-83bf-ff89fb90e542",
           "data": {
             "title": {
               "@type": "string",
-              "@value": "main"
+              "@value": "main_udp"
             },
             "configuration": {
               "port": {
                 "@type": "integer",
                 "@value": 12012
               },
-              "timezone": {
-                "@type": "string",
-                "@value": "Etc/UTC"
+              "number_worker_threads": {
+                "@type": "integer",
+                "@value": 4
               },
-              "locale": {
+              "charset_name": {
                 "@type": "string",
-                "@value": ""
+                "@value": "UTF-8"
               },
               "bind_address": {
                 "@type": "string",
                 "@value": "0.0.0.0"
-              },
-              "use_full_names": {
-                "@type": "boolean",
-                "@value": false
               }
             },
             "static_fields": {},
             "type": {
               "@type": "string",
-              "@value": "org.graylog.plugins.cef.input.CEFUDPInput"
+              "@value": "org.graylog2.inputs.gelf.udp.GELFUDPInput"
             },
             "global": {
               "@type": "boolean",
-              "@value": true
+              "@value": false
             },
             "extractors": []
           },

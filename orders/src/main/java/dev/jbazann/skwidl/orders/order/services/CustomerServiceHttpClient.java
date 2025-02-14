@@ -16,15 +16,17 @@ public class CustomerServiceHttpClient implements CustomerServiceClient {
     private final WebClient.Builder webClientBuilder;
 
     @Value("${jbazann.timeout.standard}")
-    private final Duration TIMEOUT = Duration.ofMillis(5000);
-    @Value("${jbazann.gateway.customers.base}")
-    private final String CUSTOMERS_BASE = "";
-    @Value("${jbazann.gateway.customers.budget}")
-    private final String CUSTOMERS_BUDGET = "";
-    @Value("${jbazann.gateway.customers.bill}")
-    private final String CUSTOMERS_BILL = "";
-    @Value("${jbazann.gateway.customers.credit}")
-    private final String CUSTOMERS_CREDIT = "";
+    private Duration TIMEOUT = Duration.ofMillis(5000);
+    @Value("${jbazann.routes.gateway.customers}")
+    private String CUSTOMERS_ROOT = "NIL";
+    @Value("${jbazann.routes.customers.v1.wallet.path}")
+    private String CUSTOMERS_WALLET = "NIL";
+    @Value("${jbazann.routes.customers.v1.wallet.params.operation.param}")
+    private String OPERATION = "NIL";
+    @Value("${jbazann.routes.customers.v1.wallet.params.operation.bill}")
+    private String BILL = "NIL";
+    @Value("${jbazann.routes.customers.v1.wallet.params.operation.credit}")
+    private String CREDIT = "NIL";
 
     @Autowired
     public CustomerServiceHttpClient(WebClient.Builder webClientBuilder) {
@@ -33,15 +35,17 @@ public class CustomerServiceHttpClient implements CustomerServiceClient {
 
     @Override
     public CompletableFuture<BigDecimal> validateCustomerAndFetchBudget(UUID id) {
-        return webClientBuilder.baseUrl(CUSTOMERS_BASE).build().get()
-                .uri(CUSTOMERS_BUDGET,id)
+        return webClientBuilder.baseUrl(CUSTOMERS_ROOT).build().get()
+                .uri(CUSTOMERS_WALLET,id)
                 .retrieve().bodyToMono(BigDecimal.class).toFuture();
     }
 
     @Override
     public Boolean billFor(UUID id, BigDecimal amount) {
-        return webClientBuilder.baseUrl(CUSTOMERS_BASE).build().post()
-                .uri(CUSTOMERS_BILL,id,amount)
+        return webClientBuilder.baseUrl(CUSTOMERS_ROOT).build().post()
+                .uri(CUSTOMERS_WALLET,id)
+                .attribute(OPERATION, BILL)
+                .bodyValue(amount)
                 .retrieve().bodyToMono(Boolean.class).block(TIMEOUT);
     }
 
