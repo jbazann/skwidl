@@ -40,6 +40,7 @@
         <!-- RabbitMQ message routing -->
         <!-- TODO routing keys for better scoping -->
         <jbazann.rabbit.exchanges.event>SKWIDL_EVENT</jbazann.rabbit.exchanges.event>
+        <jbazann.rabbit.queues.coordination.event>SKWIDL_COORDINATION_EVENT</jbazann.rabbit.queues.coordination.event>
         <jbazann.rabbit.queues.orders.event>SKWIDL_ORDERS_EVENT</jbazann.rabbit.queues.orders.event>
         <jbazann.rabbit.routing.orders.event>"*.event.#"</jbazann.rabbit.routing.orders.event>
         <jbazann.rabbit.queues.customers.event>SKWIDL_CUSTOMERS_EVENT</jbazann.rabbit.queues.customers.event>

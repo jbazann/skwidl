@@ -44,6 +44,8 @@ jbazann:
     exchanges:
       event: @jbazann.rabbit.exchanges.event@
     queues:
+      coordination:
+        event: @jbazann.rabbit.queues.coordination.event@
       event: @jbazann.rabbit.queues.orders.event@
     routing: # [escape].operation.queue.[source].[target]
       event: @jbazann.rabbit.routing.orders.event@
