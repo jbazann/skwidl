@@ -42,7 +42,7 @@ public class ProductController {
         return productService.updateProduct(update.productId(id)).toDto();
     }
 
-    @PutMapping("/products/{id}")
+    @PutMapping("/products/{id}/discount")
     public ProductDTO discountProduct(@PathVariable UUID id, @RequestBody DiscountDTO discount) {
         return productService.discountProduct(discount.productId(id)).toDto();
     }
