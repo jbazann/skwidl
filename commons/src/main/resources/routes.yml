@@ -1,7 +1,7 @@
 jbazann:
   routes:
     gateway:
-      base: http://gateway:@jbazann.kube.main-port@
+      root: http://gateway:@jbazann.kube.main-port@
       products: http://gateway:@jbazann.kube.main-port@/products
       customers: http://gateway:@jbazann.kube.main-port@/customers
     products:
