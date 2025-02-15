@@ -12,8 +12,9 @@ data:
         static_configs:
           - targets: [localhost:12012]
       - job_name: eureka
+        metrics_path: '/actuator/prometheus'
         eureka_sd_configs:
-          - server: http://eureka:12012/eureka
+          - server: http://eureka.eureka:12012/eureka
         relabel_configs:
           - source_labels: [__meta_eureka_app_instance_ip_addr]
             target_label: __address__
