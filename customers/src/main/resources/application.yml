@@ -42,7 +42,7 @@ management:
   endpoints:
     web:
       exposure:
-        include: httpexchanges,health
+        include: httpexchanges,health,prometheus
 
 jbazann:
   timeout:
