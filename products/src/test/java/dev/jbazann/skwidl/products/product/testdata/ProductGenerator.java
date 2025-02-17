@@ -17,7 +17,7 @@ public class ProductGenerator {
     }
 
     public Product genericProduct() {
-        final int GENERIC_CURRENT_STOCK = 50; // TODO random
+        final int GENERIC_CURRENT_STOCK = 50;
         final int GENERIC_MIN_STOCK = 20;
         final BigDecimal GENERIC_PRICE = new BigDecimal("25.5");
         return new Product()
