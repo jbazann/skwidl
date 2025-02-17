@@ -11,13 +11,6 @@ spec:
     - host: localhost
       http:
         paths:
-          - path: /api/
-            pathType: Prefix
-            backend:
-              service:
-                name: gateway
-                port:
-                  name: app
           - path: /
             pathType: Prefix
             backend:
@@ -25,7 +18,27 @@ spec:
                 name: nodejs
                 port:
                   name: app
-    - host: graylog.127.0.0.1.nip.io
+    - host: skwidl.jbazann.dev
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: nodejs
+                port:
+                  name: app
+    - host: api.skwidl.jbazann.dev
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: gateway
+                port:
+                  name: app
+    - host: graylog.skwidl.jbazann.dev
       http:
         paths:
           - path: /
@@ -35,7 +48,7 @@ spec:
                 name: graylog
                 port:
                   name: http
-    - host: grafana.127.0.0.1.nip.io
+    - host: grafana.skwidl.jbazann.dev
       http:
         paths:
           - path: /
