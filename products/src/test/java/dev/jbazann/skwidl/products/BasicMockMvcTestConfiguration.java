@@ -11,19 +11,19 @@ import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.containers.RabbitMQContainer;
 import org.testcontainers.utility.DockerImageName;
 
-@TestConfiguration//(proxyBeanMethods = false) TODO check this
+@TestConfiguration
 @EnableDiscoveryClient(autoRegister = false) // Current config does not fetch registry, so this effectively disables Discovery to reduce log noise.
 public class BasicMockMvcTestConfiguration {
 
 	@Bean
 	@ServiceConnection
 	PostgreSQLContainer<?> postgresContainer() {
-		return new PostgreSQLContainer<>(DockerImageName.parse("postgres:latest"));// TODO postgres version
+		return new PostgreSQLContainer<>(DockerImageName.parse("skwidl/productsdb:latest"));
 	}
 
 	@Bean // Prevents unknown host Exceptions caused by WebApplicationContext attempting to connect before the container exists.
 	@ServiceConnection
-	RabbitMQContainer rabbitContainer() {
+	RabbitMQContainer rabbitContainer() { // TODO local RabbitMQ deployment
 		return new RabbitMQContainer(DockerImageName.parse("rabbitmq:4.0.3-alpine"));
 	}
 
