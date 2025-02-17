@@ -89,8 +89,8 @@ public abstract class DomainEvent {
          */
         ACK("ack.event"),
         /**
-         * For when a rollback should ensue. I will not implement rollbacks.
-         * TODO: maybe look into this.
+         * For logging purposes only, signals an unrecoverable state that
+         * should never have been possible.
          */
         ERROR("error.error.error"),
         /**
