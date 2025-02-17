@@ -6,6 +6,6 @@ spec:
   type: ExternalName
   externalName: grafana.metrics.svc.cluster.local # TODO do not use external name for this redirection
   ports:
-    - port: 12012
-      name: app
-      protocol: TCP
+    - port: 80
+      name: http
+      appProtocol: HTTP
