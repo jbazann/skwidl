@@ -16,6 +16,8 @@ import org.springframework.validation.annotation.Validated;
 
 import java.math.BigDecimal;
 import java.util.*;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 @Service
 @Validated
@@ -65,20 +67,22 @@ public class ProductService {
     }
 
     public AvailabilityResponse checkAvailability(@NotNull @NotEmpty List<@NotNull @Valid StockRequest> entries) {
-        Collection<Product> products = actions.fetchAll(entries.stream().map(StockRequest::productId).toList());
+        Map<UUID, StockRequest> idMap = entries.stream().collect(Collectors.toMap(StockRequest::productId, Function.identity()));
+        Collection<Product> products = actions.fetchAll(idMap.keySet());
         AvailabilityResponse response = new AvailabilityResponse();
 
         response.productsExist(products.size() == entries.size());
 
         response.unitCost(new HashMap<>());
         products.forEach(p -> {
-            response.unitCost().put(p.id(), p.price().subtract(p.price().multiply(p.discount())));
-            entries.removeIf(e -> e.productId().equals(p.id())); // TODO optimize
+            BigDecimal discountedPrice = p.price().subtract(p.price().multiply(p.discount()));
+            response.unitCost().put(p.id(), discountedPrice);
+            idMap.remove(p.id());
         });
 
-        if (!entries.isEmpty()) {
+        if (!idMap.isEmpty()) {
             response.missingProducts(new ArrayList<>());
-            entries.forEach(e -> response.missingProducts().add(e.productId()));
+            idMap.keySet().forEach(id -> response.missingProducts().add(id));
         }
 
         response.totalCost(
