@@ -67,22 +67,30 @@ public class ProductService {
     }
 
     public AvailabilityResponse checkAvailability(@NotNull @NotEmpty List<@NotNull @Valid StockRequest> entries) {
-        Map<UUID, StockRequest> idMap = entries.stream().collect(Collectors.toMap(StockRequest::productId, Function.identity()));
-        Collection<Product> products = actions.fetchAll(idMap.keySet());
+        List<UUID> ids = entries.stream().map(StockRequest::productId).toList();
+        Map<UUID, Product> productMap = actions.fetchAll(ids).stream()
+                .collect(Collectors.toMap(Product::id, Function.identity()));
         AvailabilityResponse response = new AvailabilityResponse();
 
-        response.productsExist(products.size() == entries.size());
+        final int amountNotFound = entries.size() - productMap.size();
+        response.productsExist(amountNotFound == 0);
 
+        // Calculate unit costs
         response.unitCost(new HashMap<>());
-        products.forEach(p -> {
-            BigDecimal discountedPrice = p.price().subtract(p.price().multiply(p.discount()));
-            response.unitCost().put(p.id(), discountedPrice);
-            idMap.remove(p.id());
+        List<UUID> notFoundIds = new ArrayList<>(amountNotFound);
+        entries.forEach(e -> {
+            Product p;
+            if ((p = productMap.get(e.productId())) == null) {
+                notFoundIds.add(e.productId());
+            } else {
+                BigDecimal discountedPrice = p.price().subtract(p.price().multiply(p.discount()));
+                response.unitCost().put(p.id(), discountedPrice);
+            }
         });
 
-        if (!idMap.isEmpty()) {
+        if (!notFoundIds.isEmpty()) {
             response.missingProducts(new ArrayList<>());
-            idMap.keySet().forEach(id -> response.missingProducts().add(id));
+            notFoundIds.forEach(id -> response.missingProducts().add(id));
         }
 
         response.totalCost(
