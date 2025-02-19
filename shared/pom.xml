@@ -7,7 +7,7 @@
     <groupId>dev.jbazann.skwidl</groupId>
     <artifactId>shared</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>locks</name>
+    <name>shared</name>
     <description>protector de las bombas de papa</description>
 
     <build>
