@@ -33,6 +33,7 @@ public class Category {
     private String name;
 
     public CategoryDTO toDto() {
-        return null;
+        return new CategoryDTO(id, name);
     }
+
 }

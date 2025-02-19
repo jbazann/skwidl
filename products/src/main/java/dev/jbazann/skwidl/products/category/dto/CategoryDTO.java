@@ -18,6 +18,6 @@ public class CategoryDTO {
     private String name;
 
     public Category toEntity() {
-        return null;
+        return new Category(id, name);
     }
 }

@@ -1,5 +1,6 @@
 package dev.jbazann.skwidl.products.category.dto;
 
+import dev.jbazann.skwidl.products.category.Category;
 import lombok.*;
 import lombok.experimental.Accessors;
 
@@ -12,5 +13,9 @@ import lombok.experimental.Accessors;
 public class NewCategoryDTO {
 
     private String name;
+
+    public Category toEntity() {
+        return new Category().name(name);
+    }
 
 }
