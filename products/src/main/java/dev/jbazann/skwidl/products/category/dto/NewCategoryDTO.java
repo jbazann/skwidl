@@ -12,6 +12,7 @@ import lombok.experimental.Accessors;
 @AllArgsConstructor
 @Accessors(chain = true, fluent = true)
 @EqualsAndHashCode
+@ToString
 public class NewCategoryDTO {
 
     @NotNull @NotEmpty

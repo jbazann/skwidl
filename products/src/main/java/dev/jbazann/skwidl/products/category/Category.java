@@ -21,6 +21,7 @@ import java.util.UUID;
 @Setter
 @Getter
 @Accessors(chain = true, fluent = true)
+@ToString
 @Entity
 @Table(name = "category",schema = "category")
 public class Category {

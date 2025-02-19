@@ -12,6 +12,7 @@ import java.util.UUID;
 @AllArgsConstructor
 @Accessors(chain = true, fluent = true)
 @EqualsAndHashCode
+@ToString
 public class CategoryDTO {
 
     private UUID id;
