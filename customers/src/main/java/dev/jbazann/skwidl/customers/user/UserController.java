@@ -36,7 +36,7 @@ public class UserController {
 
     @PostMapping()
     public ResponseEntity<UserDTO> createUser(@RequestBody UserDTO user) {
-        user.id(userService.generateUserId());
+        user.id(userService.generateUserId()); //TODO logic in controller
         return ResponseEntity.ok(userService.newUser(user.toEntity()).toDto());
     }
 

@@ -36,7 +36,7 @@ public class CustomerController {
 
     @PostMapping()
     public ResponseEntity<CustomerDTO> createCustomer(@RequestBody @NotNull CustomerDTO customer) {
-        customer.id(customerService.generateCustomerId());
+        customer.id(customerService.generateCustomerId()); // TODO logic in controller
         return ResponseEntity.ok(customerService.newCustomer(customer.toEntity()).toDto());
     }
 
