@@ -1,10 +1,7 @@
 package dev.jbazann.skwidl.customers.user.dto;
 
 import dev.jbazann.skwidl.customers.user.User;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import lombok.experimental.Accessors;
 
 import java.util.UUID;
@@ -14,6 +11,7 @@ import java.util.UUID;
 @Getter
 @Setter
 @Accessors(chain = true, fluent = true)
+@ToString
 public class UserDTO {
 
     private UUID id;

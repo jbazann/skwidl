@@ -2,10 +2,7 @@ package dev.jbazann.skwidl.customers.customer.dto;
 
 import dev.jbazann.skwidl.customers.customer.Customer;
 import jakarta.validation.constraints.NotNull;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import lombok.experimental.Accessors;
 
 @NoArgsConstructor
@@ -13,6 +10,7 @@ import lombok.experimental.Accessors;
 @Getter
 @Setter
 @Accessors(chain = true, fluent = true)
+@ToString
 public class EditableFieldsDTO {
 
     private String name;
