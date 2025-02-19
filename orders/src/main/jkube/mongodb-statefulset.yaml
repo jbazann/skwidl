@@ -21,17 +21,19 @@ spec:
         - name: db
           image: mongodb/mongodb-community-server:7.0.9-ubuntu2204
           imagePullPolicy: IfNotPresent
+          args:
+            - mongod
+            - --config
+            - /etc/mongod.conf
           ports:
             - name: app
               containerPort: 12012
           volumeMounts:
             - mountPath: /etc/mongod.conf
+              subPath: mongod.conf
               name: mongodb-cfg
       restartPolicy: Always
       volumes:
         - name: mongodb-cfg
           configMap:
             name: mongodb-cfg
-            items:
-              - key: mongod.conf
-                path: mongod.conf

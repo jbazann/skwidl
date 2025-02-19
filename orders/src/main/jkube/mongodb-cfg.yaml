@@ -7,5 +7,6 @@ data:
   mongod.conf: |
     net:
       port: 12012
+      bindIpAll: true
     security:
       authorization: disabled

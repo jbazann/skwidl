@@ -5,9 +5,8 @@ spring:
     import: routes.yml
   data:
     mongodb:
-      username: orders
-      password: orders
-      uri: mongodb://mongodb:12012/orders
+      uri: mongodb://mongodb:12012
+      database: orders
       uuid-representation: standard
   rabbitmq:
     host: @jbazann.amqp.host@
