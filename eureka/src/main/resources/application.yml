@@ -10,7 +10,7 @@ server:
 
 eureka:
   instance:
-    hostname: ${HOSTNAME}.eureka
+    hostname: eureka.eureka
     metadata-map:
       region: santa-fe-1
   client:

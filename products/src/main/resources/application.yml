@@ -26,6 +26,8 @@ server:
   port: @jbazann.kube.main-port@
 
 eureka:
+  instance:
+    hostname: products.products
   client:
     serviceUrl:
       defaultZone: @jbazann.eureka.defaultZone@
