@@ -12,4 +12,3 @@ spec:
     - name: app
       port: 12012
       targetPort: 12012
-      appProtocol: http
