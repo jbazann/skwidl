@@ -1,6 +1,8 @@
 package dev.jbazann.skwidl.products.category.dto;
 
 import dev.jbazann.skwidl.products.category.Category;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import lombok.experimental.Accessors;
 
@@ -12,6 +14,7 @@ import lombok.experimental.Accessors;
 @EqualsAndHashCode
 public class NewCategoryDTO {
 
+    @NotNull @NotEmpty
     private String name;
 
     public Category toEntity() {
