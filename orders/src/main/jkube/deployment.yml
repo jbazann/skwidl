@@ -26,14 +26,18 @@ spec:
               path: /actuator/health
               port: 12112
               scheme: HTTP
-            initialDelaySeconds: 5000
+            initialDelaySeconds: 60
             timeoutSeconds: 15
+            failureThreshold: 5
+            periodSeconds: 20
           readinessProbe:
             httpGet:
               path: /actuator/health
               port: 12112
               scheme: HTTP
-            initialDelaySeconds: 5000
+            initialDelaySeconds: 60
             timeoutSeconds: 15
+            failureThreshold: 5
+            periodSeconds: 20
           securityContext:
             privileged: false

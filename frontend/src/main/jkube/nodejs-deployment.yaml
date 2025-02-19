@@ -28,8 +28,10 @@ spec:
               path: /health
               port: 12012
               scheme: HTTP
-            initialDelaySeconds: 180
+            initialDelaySeconds: 60
             timeoutSeconds: 15
+            failureThreshold: 5
+            periodSeconds: 20
           readinessProbe:
             httpGet:
               path: /health
@@ -37,5 +39,7 @@ spec:
               scheme: HTTP
             initialDelaySeconds: 60
             timeoutSeconds: 15
+            failureThreshold: 5
+            periodSeconds: 20
       restartPolicy: Always
       
