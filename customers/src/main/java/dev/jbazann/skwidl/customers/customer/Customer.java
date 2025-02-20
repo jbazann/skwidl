@@ -37,9 +37,9 @@ public class Customer {
     private String email;
     @NotNull
     private String cuit;
-    @NotNull @Min(0) @Value("${jbazann.customers.maxDebt}")
+    @NotNull @Min(0)
     private BigDecimal maxDebt;
-    @NotNull @Min(0) @Value("${jbazann.customers.maxActiveSites}")
+    @NotNull @Min(0)
     private Integer maxActiveSites;
     @ElementCollection
     @NotNull
@@ -49,6 +49,17 @@ public class Customer {
     private List<@NotNull UUID> activeSites;
     @NotNull @Min(0)
     private Integer pendingSites;
+
+    @Getter
+    @Setter
+    @Accessors(chain = true, fluent = true)
+    @ToString
+    public static class DefaultValues {
+        @Value("${jbazann.customers.maxDebt}")
+        private BigDecimal maxDebt;
+        @Value("${jbazann.customers.maxActiveSites}")
+        private Integer maxActiveSites;
+    }
 
     public CustomerDTO toDto() {
         return new CustomerDTO(id, name, email, cuit, maxDebt, maxActiveSites, allowedUsers, activeSites, pendingSites);

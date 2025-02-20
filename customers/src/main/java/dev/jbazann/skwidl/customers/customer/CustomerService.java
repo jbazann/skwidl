@@ -2,15 +2,18 @@ package dev.jbazann.skwidl.customers.customer;
 
 import dev.jbazann.skwidl.commons.exceptions.DistributedTransactionException;
 import dev.jbazann.skwidl.customers.customer.dto.EditableFieldsDTO;
+import dev.jbazann.skwidl.customers.customer.dto.NewCustomerDTO;
 import dev.jbazann.skwidl.customers.customer.exceptions.InvalidCustomerException;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.CancellationException;
@@ -22,14 +25,18 @@ import java.util.concurrent.CompletionException;
 @Validated
 public class CustomerService {
 
+    private final CustomerService self;
+    private final Customer.DefaultValues defaults;
     private final CustomerRepository customerRepository;
     private final SiteServiceClient siteService;
     private final UserServiceClient userService;
 
-    public CustomerService(CustomerRepository customerRepository, SiteServiceClient siteService, UserServiceClient userService) {
+    public CustomerService(CustomerRepository customerRepository, @Lazy CustomerService self, SiteServiceClient siteService, UserServiceClient userService, Customer.DefaultValues defaults) {
         this.customerRepository = customerRepository;
+        this.self = self;
         this.siteService = siteService;
         this.userService = userService;
+        this.defaults = defaults;
     }
 
     /**
@@ -38,18 +45,20 @@ public class CustomerService {
      * @return a unique customer entity identifier.
      */
     public UUID generateCustomerId() {
-        return UUID.randomUUID(); // TODO replace with safe alternative
+        UUID id;
+        // TODO this is still terrible
+        while (!customerRepository.existsById(id = UUID.randomUUID()));
+        return id;
     }
 
-    /**
-     * Persist a new valid customer on the database.
-     * @param customer a customer with an ID that is not already used.
-     * @return the persisted instance.
-     */
-    public @NotNull @Valid Customer newCustomer(@Valid @NotNull Customer customer) {//TODO this should receive a DTO
-        if (customerRepository.existsById(customer.id())) {
-            throw new InvalidCustomerException("Customer with id " + customer.id() + " already exists.");
-        }
+    public @NotNull @Valid Customer newCustomer(@NotNull @Valid NewCustomerDTO dto) {
+        dto.id(self.generateCustomerId());
+        dto.maxDebt(defaults.maxDebt());
+        dto.maxActiveSites(defaults.maxActiveSites());
+        dto.enabledSites(dto.enabledSites() == null ? new ArrayList<>() : dto.enabledSites());
+        dto.enabledUsers(dto.enabledUsers() == null ? new ArrayList<>() : dto.enabledUsers());
+        dto.pendingSites(0);
+        @Valid Customer customer = dto.toEntity();
         return customerRepository.save(customer);
     }
 

@@ -2,6 +2,7 @@ package dev.jbazann.skwidl.customers.customer;
 
 import dev.jbazann.skwidl.customers.customer.dto.CustomerDTO;
 import dev.jbazann.skwidl.customers.customer.dto.EditableFieldsDTO;
+import dev.jbazann.skwidl.customers.customer.dto.NewCustomerDTO;
 import jakarta.validation.constraints.NotNull;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -35,9 +36,8 @@ public class CustomerController {
     }
 
     @PostMapping()
-    public ResponseEntity<CustomerDTO> createCustomer(@RequestBody @NotNull CustomerDTO customer) {
-        customer.id(customerService.generateCustomerId()); // TODO logic in controller
-        return ResponseEntity.ok(customerService.newCustomer(customer.toEntity()).toDto());
+    public ResponseEntity<CustomerDTO> createCustomer(@RequestBody @NotNull NewCustomerDTO customer) {
+        return ResponseEntity.ok(customerService.newCustomer(customer).toDto());
     }
 
     @PostMapping("/{id}")
