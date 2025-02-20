@@ -32,8 +32,7 @@ public class SiteController {
     }
 
     @PostMapping()
-    public ResponseEntity<SiteDTO> createSite(@RequestBody final SiteDTO site) {
-        site.id(siteService.generateSiteId()); // TODO logic in controller
+    public ResponseEntity<SiteDTO> createSite(@RequestBody final SiteDTO site) { // TODO wrong dto
         return ResponseEntity.ok(siteService.newSite(site.toEntity()).toDto());
     }
 
