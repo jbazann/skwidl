@@ -1,10 +1,12 @@
 package dev.jbazann.skwidl.commons.identity;
 
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import dev.jbazann.skwidl.commons.async.transactions.TransactionQuorum;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.ToString;
 import lombok.experimental.Accessors;
 
 /**
@@ -17,7 +19,9 @@ import lombok.experimental.Accessors;
  * as seen in {@link TransactionQuorum}.
  */
 @Data
+@JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
 @Accessors(fluent = true)
+@ToString
 @EqualsAndHashCode
 public class ApplicationMember {
 

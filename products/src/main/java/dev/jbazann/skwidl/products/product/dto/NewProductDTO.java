@@ -1,5 +1,6 @@
 package dev.jbazann.skwidl.products.product.dto;
 
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import dev.jbazann.skwidl.products.product.Product;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotEmpty;
@@ -13,8 +14,10 @@ import java.math.BigDecimal;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
 @Accessors(chain = true, fluent = true)
 @EqualsAndHashCode
+@ToString
 public class NewProductDTO {
 
     @NotNull @NotEmpty

@@ -1,14 +1,12 @@
 package dev.jbazann.skwidl.products.product;
 
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import dev.jbazann.skwidl.products.product.dto.ProductDTO;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import lombok.experimental.Accessors;
 
 import java.math.BigDecimal;
@@ -19,6 +17,8 @@ import java.util.UUID;
 @AllArgsConstructor
 @Setter
 @Getter
+@JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
+@ToString
 @Accessors(chain = true, fluent = true)
 @Entity
 @Table(name = "product",schema = "product")

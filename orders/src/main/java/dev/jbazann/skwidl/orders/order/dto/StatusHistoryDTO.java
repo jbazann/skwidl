@@ -15,6 +15,7 @@ import java.util.UUID;
 @EqualsAndHashCode
 @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
 @Accessors(chain = true, fluent = true)
+@ToString
 public class StatusHistoryDTO {
 
     private UUID id;

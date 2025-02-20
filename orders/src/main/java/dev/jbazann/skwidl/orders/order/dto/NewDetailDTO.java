@@ -2,10 +2,7 @@ package dev.jbazann.skwidl.orders.order.dto;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import dev.jbazann.skwidl.orders.order.entities.Detail;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import lombok.experimental.Accessors;
 
 import java.math.BigDecimal;
@@ -16,6 +13,7 @@ import java.util.UUID;
 @Getter
 @Setter
 @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
+@ToString
 @Accessors(chain = true, fluent = true)
 public class NewDetailDTO {
 

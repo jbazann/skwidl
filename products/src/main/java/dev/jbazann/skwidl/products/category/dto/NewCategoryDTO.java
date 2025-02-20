@@ -1,5 +1,6 @@
 package dev.jbazann.skwidl.products.category.dto;
 
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import dev.jbazann.skwidl.products.category.Category;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
@@ -10,7 +11,8 @@ import lombok.experimental.Accessors;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Accessors(chain = true)
+@JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
+@Accessors(chain = true, fluent = true)
 @EqualsAndHashCode
 @ToString
 public class NewCategoryDTO {

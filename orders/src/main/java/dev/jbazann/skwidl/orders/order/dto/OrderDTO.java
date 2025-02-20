@@ -15,6 +15,7 @@ import java.util.UUID;
 @Setter
 @EqualsAndHashCode
 @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
+@ToString
 @Accessors(chain = true, fluent = true)
 public class OrderDTO {
 
