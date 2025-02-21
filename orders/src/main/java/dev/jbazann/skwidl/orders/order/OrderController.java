@@ -10,7 +10,6 @@ import dev.jbazann.skwidl.orders.order.exceptions.CustomerNotFoundException;
 import dev.jbazann.skwidl.commons.exceptions.MalformedArgumentException;
 import dev.jbazann.skwidl.orders.order.exceptions.OrderNotFoundException;
 import dev.jbazann.skwidl.orders.order.services.OrderService;
-import jakarta.validation.constraints.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -29,25 +28,25 @@ public class OrderController {
     }
 
     @GetMapping("/order/{id}")
-    public OrderDTO getOrder(@NotNull @PathVariable UUID id) {
+    public OrderDTO getOrder(@PathVariable UUID id) {
         return orderService.getOrder(id).toDto();
     }
 
     @GetMapping("/customer/{id}")
-    public List<OrderDTO> getCustomerOrders(@NotNull @PathVariable UUID id) {
+    public List<OrderDTO> getCustomerOrders(@PathVariable UUID id) {
         return orderService.getCustomerOrders(id).stream().map(Order::toDto).toList();
     }
 
     @PostMapping("/order")
     @ResponseStatus(HttpStatus.CREATED)
-    public OrderDTO newOrder(@NotNull @RequestBody NewOrderDTO order) {
+    public OrderDTO newOrder(@RequestBody NewOrderDTO order) {
         return orderService.newOrder(order).toDto();
     }
 
     @PutMapping("/order/{id}")
     @ResponseStatus(HttpStatus.ACCEPTED)
     public void updateOrder(@PathVariable UUID id,
-                                @NotNull @RequestBody StatusUpdateDTO update) {
+                                @RequestBody StatusUpdateDTO update) {
         if (!orderService.orderExists(id)) throw new OrderNotFoundException("No Order found with id: " + id +'.');
         switch(update.status()) {
             case StatusHistory.Status.DELIVERED -> orderService.deliverOrder(id, update);
