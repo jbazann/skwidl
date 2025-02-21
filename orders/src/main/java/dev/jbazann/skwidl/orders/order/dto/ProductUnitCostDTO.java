@@ -4,13 +4,10 @@ import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
-import java.util.function.Predicate;
-import java.util.regex.Pattern;
+
+import static dev.jbazann.skwidl.commons.utils.Patterns.UUIDPattern;
 
 public record ProductUnitCostDTO(UUID id, BigDecimal unitCost) {
-    private static final Predicate<String> UUIDPattern = Pattern
-            .compile("[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$") // perdón
-            .asMatchPredicate();
 
     public static Map<UUID,ProductUnitCostDTO> fromValidatedBatch(Map<String, Object> map) {
         HashMap<UUID,ProductUnitCostDTO> fixed = new HashMap<>();
