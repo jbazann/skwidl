@@ -37,7 +37,7 @@ public class UserService {
         UUID id;
         // TODO this is still terrible
         // be ffr though it's never going to collide, this is optimal
-        while (!userRepository.existsById(id = UUID.randomUUID()));
+        while (userRepository.existsById(id = UUID.randomUUID()));
         return id;
     }
 

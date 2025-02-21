@@ -39,7 +39,8 @@ public class SiteService {
     public UUID generateSiteId() {
         UUID id;
         // TODO this is still terrible
-        while (!siteRepository.existsById(id = UUID.randomUUID()));
+        // be ffr though it's never going to collide, this is optimal
+        while (siteRepository.existsById(id = UUID.randomUUID()));
         return id;
     }
 
