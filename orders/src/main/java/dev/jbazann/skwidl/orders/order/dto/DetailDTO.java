@@ -1,6 +1,7 @@
 package dev.jbazann.skwidl.orders.order.dto;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
+import dev.jbazann.skwidl.orders.order.entities.Detail;
 import lombok.*;
 import lombok.experimental.Accessors;
 
@@ -23,5 +24,9 @@ public class DetailDTO {
     private BigDecimal discount;
     private BigDecimal unitCost;
     private BigDecimal totalCost;
+
+    public Detail toEntity() {
+        return new Detail(id, product, amount, discount, unitCost, totalCost);
+    }
 
 }

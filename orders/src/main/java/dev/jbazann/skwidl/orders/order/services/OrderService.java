@@ -3,20 +3,18 @@ package dev.jbazann.skwidl.orders.order.services;
 import dev.jbazann.skwidl.commons.async.events.EventRequestPublisher;
 import dev.jbazann.skwidl.commons.utils.TimeProvider;
 import dev.jbazann.skwidl.orders.order.OrderRepository;
-import dev.jbazann.skwidl.orders.order.dto.ProductAmountDTO;
-import dev.jbazann.skwidl.orders.order.dto.ProductUnitCostDTO;
-import dev.jbazann.skwidl.orders.order.dto.StatusUpdateDTO;
+import dev.jbazann.skwidl.orders.order.dto.*;
 import dev.jbazann.skwidl.orders.order.entities.Detail;
 import dev.jbazann.skwidl.orders.order.entities.Order;
 import dev.jbazann.skwidl.orders.order.entities.StatusHistory;
 import dev.jbazann.skwidl.commons.exceptions.MalformedArgumentException;
 import dev.jbazann.skwidl.commons.async.events.DomainEventBuilder;
 import dev.jbazann.skwidl.commons.identity.KnownMembers;
-import dev.jbazann.skwidl.orders.order.dto.NewOrderDTO;
 import dev.jbazann.skwidl.orders.order.exceptions.ReserveFailureException;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.data.domain.Example;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
@@ -30,6 +28,7 @@ import java.util.stream.Collectors;
 @Validated
 public class OrderService {
 
+    private final OrderService self;
     private final ProductServiceClient productsRemoteService;
     private final CustomerServiceClient customersRemoteService;
     private final OrderNumberServiceLocalClient orderNumberServiceLocalClient;
@@ -38,13 +37,26 @@ public class OrderService {
     private final EventRequestPublisher publisher;
 
     @Autowired
-    public OrderService(ProductServiceClient productsRemoteService, CustomerServiceClient customersRemoteService, OrderNumberServiceLocalClient orderNumberServiceLocalClient, OrderRepository orderRepository, DomainEventBuilder builder, EventRequestPublisher publisher) {
+    public OrderService(@Lazy OrderService self, ProductServiceClient productsRemoteService, CustomerServiceClient customersRemoteService, OrderNumberServiceLocalClient orderNumberServiceLocalClient, OrderRepository orderRepository, DomainEventBuilder builder, EventRequestPublisher publisher) {
+        this.self = self;
         this.productsRemoteService = productsRemoteService;
         this.customersRemoteService = customersRemoteService;
         this.orderNumberServiceLocalClient = orderNumberServiceLocalClient;
         this.orderRepository = orderRepository;
         this.builder = builder;
         this.publisher = publisher;
+    }
+
+    public UUID generateOrderId() {
+        UUID id;
+        while (orderRepository.existsById((id = UUID.randomUUID()).toString()));
+        return id;
+    }
+
+    public UUID generateDetailId() {
+        UUID id = UUID.randomUUID();
+        // TODO implement a way to check existsById for detail entities
+        return id;
     }
 
     public boolean orderExists(@NotNull UUID id) {
@@ -102,19 +114,19 @@ public class OrderService {
         }
     }
 
-    public @NotNull @Valid Order newOrder(@NotNull NewOrderDTO orderDto) {
-        StringBuilder message = validate(orderDto);
+    public @NotNull @Valid Order newOrder(@Valid @NotNull NewOrderDTO input) {
+        StringBuilder message = validate(input);
         if(!message.isEmpty()) throw new MalformedArgumentException(message.toString());
-        Order order = orderDto.toEntity()
-                .id(UUID.randomUUID())// TODO safe ids
+        OrderDTO dto = input.toDto();
+        dto.id(self.generateOrderId())
                 .orderNumber(orderNumberServiceLocalClient.next())
                 .ordered(TimeProvider.localDateTimeNow())
                 .totalCost(BigDecimal.valueOf(-1));
-        order.detail().forEach(d -> d.id(UUID.randomUUID()));// TODO safe ids
+        dto.detail().forEach(d -> d.id(self.generateDetailId()));
 
         // Request validation and unit cost for all the products in the order.
         List<Map<String, Object>> batchToValidate = new LinkedList<>();
-        order.detail().forEach(detail -> {
+        dto.detail().forEach(detail -> {
             Map<String, Object> entryToValidate = new HashMap<>();
             entryToValidate.put(ProductServiceHttpClient.PRODUCT_ID, detail.product());
             entryToValidate.put(ProductServiceHttpClient.REQUESTED_STOCK, detail.amount());
@@ -123,27 +135,27 @@ public class OrderService {
         CompletableFuture<Map<String, Object>> detailValidationResponse = productsRemoteService.validateProductAndFetchCost(batchToValidate);
 
         // Request validation that customer exists, as well as their available budget.
-        CompletableFuture<BigDecimal> budgetResponse = customersRemoteService.validateCustomerAndFetchBudget(order.customer());
+        CompletableFuture<BigDecimal> budgetResponse = customersRemoteService.validateCustomerAndFetchBudget(dto.customer());
 
         // Wait for response from Products service.
         Map<String, Object> validatedBatch = detailValidationResponse.join();
         if ( !(validatedBatch.get(ProductServiceHttpClient.PRODUCTS_EXIST) instanceof final Boolean exist) ) {
-            order.totalCost(BigDecimal.valueOf(-1));
-            return reject(order,"Internal communication error.");
+            dto.totalCost(BigDecimal.valueOf(-1));
+            return self.reject(dto.toEntity(),"Internal communication error.");
         }
         if( !exist ) {
-            order.totalCost(BigDecimal.valueOf(-1));
-            return reject(order,"Products did not exist.");
+            dto.totalCost(BigDecimal.valueOf(-1));
+            return self.reject(dto.toEntity(),"Products did not exist.");
         }
 
         // Double-check the retrieved total cost; because I must justify using CompletableFuture.
             // Type check.
         if( !(validatedBatch.get(ProductServiceHttpClient.TOTAL_COST) instanceof final BigDecimal expectedValue) ) {
-            order.totalCost(BigDecimal.valueOf(-1));
-            return reject(order,"Internal communication error.");
+            dto.totalCost(BigDecimal.valueOf(-1));
+            return self.reject(dto.toEntity(),"Internal communication error.");
         }
             // Build the data structures that simplify the calculations.
-        Map<UUID, ProductAmountDTO> products = ProductAmountDTO.fromOrder(order);
+        Map<UUID, ProductAmountDTO> products = ProductAmountDTO.fromOrder(dto.toEntity()); // TODO it's a bit awkward to use toEntity here
         Map<UUID, ProductUnitCostDTO> costs = ProductUnitCostDTO.fromValidatedBatch(validatedBatch);
         BigDecimal verifiedCost;
             // Verify, and add the correct value to the order.
@@ -151,20 +163,21 @@ public class OrderService {
                 .compareTo(BigDecimal.valueOf(-1)) == 0 ) {// if (verifiedCost == -1).
             //TODO exceptions
         }
-        order.totalCost(verifiedCost);
+        dto.totalCost(verifiedCost);
 
         // Check that budget is enough.
         BigDecimal budget = budgetResponse.join();
         if( budget.compareTo(verifiedCost) < 0 ) {
-            return reject(order, "Insufficient funds.");
+            return self.reject(dto.toEntity(), "Insufficient funds.");
         }
 
         // Reserve customer funds.
-        Boolean success = customersRemoteService.billFor(order.customer(),order.totalCost());
+        Boolean success = customersRemoteService.billFor(dto.customer(),dto.totalCost());
+        @Valid Order order;
         if ( success != null && success ) {
-            order = accept(order,"");
+            order = self.accept(dto.toEntity(),"");
         } else {
-            return reject(order, success == null ? "Null billing response." : "Insufficient funds.");
+            return self.reject(dto.toEntity(), success == null ? "Null billing response." : "Insufficient funds.");
         }
 
         // Attempt to reserve stock.// TODO yuck
@@ -175,7 +188,7 @@ public class OrderService {
             productsReserved = false;
         }
         if( productsReserved != null && productsReserved ) {
-            order = prepare(order, "");
+            order = self.prepare(order, "");
         }
 
         return order;
@@ -206,28 +219,28 @@ public class OrderService {
         return totalCost;
     }
 
-    private Order reject(Order order, String detail) {
+    private Order reject(@NotNull @Valid Order order, @NotNull String detail) {
         return orderRepository.save(order.setStatus(new StatusHistory()
                 .id(UUID.randomUUID()) // TODO safe ids
                 .status(StatusHistory.Status.REJECTED)
                 .detail(detail.isEmpty() ? "Rejected." : detail)));
     }
 
-    private Order accept(Order order, @SuppressWarnings("SameParameterValue") String detail) {
+    private Order accept(@NotNull @Valid Order order, @SuppressWarnings("SameParameterValue") @NotNull String detail) {
         return orderRepository.save(order.setStatus(new StatusHistory()
                 .id(UUID.randomUUID())// TODO safe ids
                 .status(StatusHistory.Status.ACCEPTED)
                 .detail(detail.isEmpty() ? "Accepted." : detail)));
     }
 
-    private Order prepare(Order order, @SuppressWarnings("SameParameterValue") String detail) {
+    private Order prepare(@NotNull @Valid Order order, @SuppressWarnings("SameParameterValue") @NotNull String detail) {
         return orderRepository.save(order.setStatus(new StatusHistory()
                 .id(UUID.randomUUID())// TODO safe ids
                 .status(StatusHistory.Status.IN_PREPARATION)
                 .detail(detail.isEmpty() ? "Products reserved." : detail)));
     }
 
-    private Order deliver(Order order, String detail) {
+    private Order deliver(@NotNull @Valid Order order, @NotNull String detail) {
         return orderRepository.save(order.setStatus(new StatusHistory()
                 .id(UUID.randomUUID())// TODO safe ids
                 .status(StatusHistory.Status.DELIVERED)
@@ -242,7 +255,7 @@ public class OrderService {
         return orderRepository.findAll(Example.of(new Order().customer(customer)));
     }
 
-    private StringBuilder validate(NewOrderDTO o) {
+    private StringBuilder validate(NewOrderDTO o) { //TODO wtf is this
         final StringBuilder order = new StringBuilder();
         final StringBuilder detail = new StringBuilder();
         final StringBuilder message = new StringBuilder();

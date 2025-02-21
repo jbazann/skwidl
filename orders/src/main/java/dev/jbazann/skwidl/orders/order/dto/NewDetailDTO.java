@@ -1,7 +1,8 @@
 package dev.jbazann.skwidl.orders.order.dto;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
-import dev.jbazann.skwidl.orders.order.entities.Detail;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import lombok.experimental.Accessors;
 
@@ -17,19 +18,19 @@ import java.util.UUID;
 @Accessors(chain = true, fluent = true)
 public class NewDetailDTO {
 
+    @NotNull
     private UUID product;
+    @NotNull @Min(0)
     private Integer amount;
     private BigDecimal discount;
     private BigDecimal unitCost;
-    private BigDecimal totalCost;
 
-    public Detail toEntity() {
-        return new Detail()
+    public DetailDTO toDto() {
+        return new DetailDTO()
                 .product(product)
                 .amount(amount)
                 .discount(discount)
-                .unitCost(unitCost)
-                .totalCost(Detail.calculateTotalCost(amount, discount, unitCost));
+                .unitCost(unitCost);
     }
 
 }

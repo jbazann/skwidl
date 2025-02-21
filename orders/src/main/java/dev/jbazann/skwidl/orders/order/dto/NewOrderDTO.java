@@ -2,6 +2,9 @@ package dev.jbazann.skwidl.orders.order.dto;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import dev.jbazann.skwidl.orders.order.entities.Order;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import lombok.experimental.Accessors;
 
@@ -17,19 +20,24 @@ import java.util.UUID;
 @Accessors(chain = true, fluent = true)
 public class NewOrderDTO {
 
+    @NotNull
     private UUID user;
+    @NotNull
     private UUID customer;
+    @NotNull
     private UUID site;
+    @NotEmpty
     private String note;
-    private List<NewDetailDTO> detail;
+    @NotNull @NotEmpty
+    private List<@NotNull @Valid NewDetailDTO> detail;
 
-    public Order toEntity() {
-        return new Order()
+    public OrderDTO toDto() {
+        return new OrderDTO()
                 .user(user)
                 .customer(customer)
                 .site(site)
                 .note(note)
-                .detail(detail.stream().map(NewDetailDTO::toEntity).toList());
+                .detail(detail.stream().map(NewDetailDTO::toDto).toList());
     }
 
 }

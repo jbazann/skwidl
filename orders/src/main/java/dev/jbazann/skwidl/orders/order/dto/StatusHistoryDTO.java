@@ -23,4 +23,8 @@ public class StatusHistoryDTO {
     private StatusHistory.Status status;
     private String detail;
 
+    public StatusHistory toEntity() {
+        return new StatusHistory(id, date, status, detail);
+    }
+
 }
