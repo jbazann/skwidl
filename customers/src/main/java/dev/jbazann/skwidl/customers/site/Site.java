@@ -30,9 +30,9 @@ public class Site {
     private UUID id;
     @NotNull @NotEmpty
     private String address;
-    @NotNull @NotEmpty
+    @NotEmpty
     private String coordinates;
-    @NotNull @Min(0)
+    @Min(0)
     private BigDecimal budget;
     @Enumerated(EnumType.STRING)
     @NotNull

@@ -4,10 +4,12 @@ import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import dev.jbazann.skwidl.customers.user.dto.UserDTO;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import lombok.experimental.Accessors;
 
+import java.util.List;
 import java.util.UUID;
 
 @SuppressWarnings("JpaDataSourceORMInspection")
@@ -25,23 +27,24 @@ public class User {
     @Id
     @NotNull
     private UUID id;
-    @NotNull
+    @NotNull @NotEmpty
     private String name;
-    @NotNull
+    @NotNull @NotEmpty
     private String lastname;
-    @NotNull @Email
+    @NotNull @NotEmpty @Email
     private String email;
-    @NotNull
+    @NotNull @NotEmpty
     private String dni;
+    @ElementCollection
     @NotNull
-    private UUID customer;
+    private List<@NotNull UUID> customers;
 
     public UserDTO toDto() {
-        return new UserDTO(id, name, lastname, email, dni, customer);
+        return new UserDTO(id, name, lastname, email, dni, customers);
     }
 
     public boolean enabledForCustomerId(@NotNull UUID id) {
-        return customer.equals(id);
+        return customers.contains(id);
     }
 
 }
