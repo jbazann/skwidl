@@ -28,7 +28,6 @@ import java.util.UUID;
 public class Customer {
 
     @Id
-    @GeneratedValue
     @NotNull
     private UUID id;
     @NotNull

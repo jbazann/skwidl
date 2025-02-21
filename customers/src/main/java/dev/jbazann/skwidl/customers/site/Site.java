@@ -26,7 +26,6 @@ import java.util.UUID;
 public class Site {
 
     @Id
-    @GeneratedValue
     @NotNull
     private UUID id;
     @NotNull @NotEmpty
