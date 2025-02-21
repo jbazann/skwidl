@@ -6,6 +6,7 @@ import dev.jbazann.skwidl.products.product.api.AvailabilityResponse;
 import dev.jbazann.skwidl.products.product.api.StockRequest;
 import dev.jbazann.skwidl.products.product.dto.DiscountDTO;
 import dev.jbazann.skwidl.products.product.dto.NewProductDTO;
+import dev.jbazann.skwidl.products.product.dto.ProductDTO;
 import dev.jbazann.skwidl.products.product.dto.ProvisioningDTO;
 import dev.jbazann.skwidl.products.product.exceptions.InsufficientStockException;
 import jakarta.validation.Valid;
@@ -31,15 +32,16 @@ public class ProductService {
         this.request = request;
     }
 
-    public Product newProduct(@NotNull @Valid NewProductDTO dto) {
-        Product product = dto.toEntity();
-        UUID categoryId = request.findCategoryByName(dto.categoryName()).join();
+    public Product newProduct(@NotNull @Valid NewProductDTO input) {
+        ProductDTO dto = input.toDto();
+        UUID categoryId = request.findCategoryByName(input.categoryName()).join();
         if (categoryId == null) throw new EntityNotFoundException(String.format(
-                "No category found with name %s.", dto.categoryName()
+                "No category found with name %s.", input.categoryName()
         ));
-        product.category(categoryId);
-        product.id(UUID.randomUUID());//TODO ids
-        product.currentStock(0);
+        dto.category(categoryId);
+        dto.id(actions.generateProductId());
+        dto.currentStock(0);
+        @Valid Product product = dto.toEntity();
         return actions.save(product);
     }
 

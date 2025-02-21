@@ -36,4 +36,11 @@ public class ProductLifecycleActions {
     public Collection<Product> saveAll(@NotNull @NotEmpty Collection<@Valid Product> products) {
         return productRepository.saveAll(products);
     }
+
+    public UUID generateProductId() {
+        UUID id;
+        while (productRepository.existsById(id = UUID.randomUUID()));
+        return id;
+    }
+
 }

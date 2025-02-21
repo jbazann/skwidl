@@ -20,8 +20,8 @@ public class NewCategoryDTO {
     @NotNull @NotEmpty
     private String name;
 
-    public Category toEntity() {
-        return new Category().name(name);
+    public CategoryDTO toDto() {
+        return new CategoryDTO().name(name);
     }
 
 }

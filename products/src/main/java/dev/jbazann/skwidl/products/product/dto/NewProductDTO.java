@@ -31,10 +31,10 @@ public class NewProductDTO {
     @NotNull @Min(0)
     private BigDecimal price;
     @NotNull @Min(0)
-    private BigDecimal discount;// TODO
+    private BigDecimal discount;
 
-    public Product toEntity() {
-        return new Product()
+    public ProductDTO toDto() {
+        return new ProductDTO()
                 .name(name)
                 .description(description)
                 .minimumStock(minStock)
