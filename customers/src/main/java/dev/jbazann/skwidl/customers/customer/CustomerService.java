@@ -1,6 +1,7 @@
 package dev.jbazann.skwidl.customers.customer;
 
 import dev.jbazann.skwidl.commons.exceptions.DistributedTransactionException;
+import dev.jbazann.skwidl.customers.customer.dto.CustomerDTO;
 import dev.jbazann.skwidl.customers.customer.dto.EditableFieldsDTO;
 import dev.jbazann.skwidl.customers.customer.dto.NewCustomerDTO;
 import dev.jbazann.skwidl.customers.customer.exceptions.InvalidCustomerException;
@@ -51,7 +52,8 @@ public class CustomerService {
         return id;
     }
 
-    public @NotNull @Valid Customer newCustomer(@NotNull @Valid NewCustomerDTO dto) {
+    public @NotNull @Valid Customer newCustomer(@NotNull @Valid NewCustomerDTO input) {
+        CustomerDTO dto = input.toDto();
         dto.id(self.generateCustomerId());
         dto.maxDebt(defaults.maxDebt());
         dto.maxActiveSites(defaults.maxActiveSites());

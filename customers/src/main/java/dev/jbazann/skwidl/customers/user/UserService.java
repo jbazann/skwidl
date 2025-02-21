@@ -1,5 +1,7 @@
 package dev.jbazann.skwidl.customers.user;
 
+import dev.jbazann.skwidl.customers.user.dto.NewUserDTO;
+import dev.jbazann.skwidl.customers.user.dto.UserDTO;
 import dev.jbazann.skwidl.customers.user.exceptions.InvalidUserException;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
@@ -10,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -33,17 +36,16 @@ public class UserService {
     public UUID generateUserId() {
         UUID id;
         // TODO this is still terrible
+        // be ffr though it's never going to collide, this is optimal
         while (!userRepository.existsById(id = UUID.randomUUID()));
         return id;
     }
 
-    /**
-     * Persist a new valid user on the database.
-     * @param user a user with an ID that is not already used.
-     * @return the persisted instance.
-     */
-    public @NotNull @Valid User newUser(@Valid @NotNull User user) {
-        user.id(self.generateUserId());
+    public @NotNull @Valid User newUser(@Valid @NotNull NewUserDTO input) {
+        UserDTO dto = input.toDto();
+        dto.id(self.generateUserId());
+        dto.customers(new ArrayList<>());
+        @Valid User user = dto.toEntity();
         return userRepository.save(user);
     }
 
@@ -64,7 +66,8 @@ public class UserService {
             TODO log
              */
         }
-        return userRepository.save(user.customer(customerId));
+        user.customers().add(customerId);
+        return userRepository.save(user);
     }
 
     /**

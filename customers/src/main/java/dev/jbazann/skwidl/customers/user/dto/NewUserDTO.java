@@ -1,12 +1,11 @@
 package dev.jbazann.skwidl.customers.user.dto;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
-import dev.jbazann.skwidl.customers.user.User;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import lombok.experimental.Accessors;
-
-import java.util.List;
-import java.util.UUID;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -15,17 +14,23 @@ import java.util.UUID;
 @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
 @Accessors(chain = true, fluent = true)
 @ToString
-public class UserDTO {
+public class NewUserDTO {
 
-    private UUID id;
+    @NotNull @NotEmpty
     private String name;
+    @NotNull @NotEmpty
     private String lastname;
+    @NotNull @NotEmpty @Email
     private String email;
+    @NotNull @NotEmpty
     private String dni;
-    private List<UUID> customers;
 
-    public User toEntity() {
-        return new User(id, name, lastname, email, dni, customers);
+    public UserDTO toDto() {
+        return new UserDTO()
+                .name(name)
+                .lastname(lastname)
+                .email(email)
+                .dni(dni);
     }
 
 }

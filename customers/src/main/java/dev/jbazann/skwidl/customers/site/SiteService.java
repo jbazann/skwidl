@@ -1,6 +1,8 @@
 package dev.jbazann.skwidl.customers.site;
 
 import dev.jbazann.skwidl.customers.customer.CustomerService;
+import dev.jbazann.skwidl.customers.site.dto.NewSiteDTO;
+import dev.jbazann.skwidl.customers.site.dto.SiteDTO;
 import dev.jbazann.skwidl.customers.site.exceptions.InvalidSiteException;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
@@ -41,13 +43,11 @@ public class SiteService {
         return id;
     }
 
-    /**
-     * Persist a new valid site on the database.
-     * @param site a site with an ID that is not already used.
-     * @return the persisted instance.
-     */
-    public @NotNull @Valid Site newSite(@Valid @NotNull Site site) {
-        site.id(self.generateSiteId());
+    public @NotNull @Valid Site newSite(@Valid @NotNull NewSiteDTO input) {
+        SiteDTO dto = input.toDto();
+        dto.id(self.generateSiteId());
+        dto.status(Site.SiteStatus.UNSET);
+        @Valid Site site = dto.toEntity();
         siteStatusService.setInitialStatus(site);
         return siteRepository.save(site);
     }

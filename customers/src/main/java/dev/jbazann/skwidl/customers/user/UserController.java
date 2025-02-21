@@ -1,5 +1,6 @@
 package dev.jbazann.skwidl.customers.user;
 
+import dev.jbazann.skwidl.customers.user.dto.NewUserDTO;
 import dev.jbazann.skwidl.customers.user.dto.UserDTO;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -29,14 +30,15 @@ public class UserController {
         }
         return ResponseEntity.ok(
                 userService.findUsersByExample(
-                        new User().id(id).name(name).lastname(lastname).email(email).dni(dni).customer(customerId)
+                        new User().id(id).name(name).lastname(lastname).email(email).dni(dni)
+                                .customers(customerId == null ? null : List.of(customerId))
                 ).stream().map(User::toDto).toList()
         );
     }
 
     @PostMapping()
-    public ResponseEntity<UserDTO> createUser(@RequestBody UserDTO user) {//TODO wrong dto
-        return ResponseEntity.ok(userService.newUser(user.toEntity()).toDto());
+    public ResponseEntity<UserDTO> createUser(@RequestBody NewUserDTO user) {
+        return ResponseEntity.ok(userService.newUser(user).toDto());
     }
 
 

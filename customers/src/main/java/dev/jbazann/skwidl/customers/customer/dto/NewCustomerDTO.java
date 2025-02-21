@@ -1,13 +1,13 @@
 package dev.jbazann.skwidl.customers.customer.dto;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
-import dev.jbazann.skwidl.customers.customer.Customer;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import lombok.experimental.Accessors;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -27,14 +27,15 @@ public class NewCustomerDTO {
     private String email;
     @NotNull @Valid
     private String cuit;
-    private BigDecimal maxDebt;
-    private Integer maxActiveSites;
     private List<UUID> enabledUsers;
-    private List<UUID> enabledSites;
-    private Integer pendingSites;
 
-    public Customer toEntity() {
-        return new Customer(id, name, email, cuit, maxDebt, maxActiveSites, enabledUsers, enabledSites, pendingSites);
+    public CustomerDTO toDto() {
+        return new CustomerDTO()
+                .id(id)
+                .name(name)
+                .email(email)
+                .cuit(cuit)
+                .enabledUsers(enabledUsers == null ? new ArrayList<>() : enabledUsers);
     }
 
 }

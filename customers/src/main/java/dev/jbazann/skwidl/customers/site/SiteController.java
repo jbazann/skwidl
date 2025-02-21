@@ -1,5 +1,6 @@
 package dev.jbazann.skwidl.customers.site;
 
+import dev.jbazann.skwidl.customers.site.dto.NewSiteDTO;
 import dev.jbazann.skwidl.customers.site.dto.SiteDTO;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -32,8 +33,8 @@ public class SiteController {
     }
 
     @PostMapping()
-    public ResponseEntity<SiteDTO> createSite(@RequestBody final SiteDTO site) { // TODO wrong dto
-        return ResponseEntity.ok(siteService.newSite(site.toEntity()).toDto());
+    public ResponseEntity<SiteDTO> createSite(@RequestBody final NewSiteDTO site) {
+        return ResponseEntity.ok(siteService.newSite(site).toDto());
     }
 
     @PostMapping("/{id}")

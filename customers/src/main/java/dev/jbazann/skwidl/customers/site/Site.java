@@ -47,7 +47,7 @@ public class Site {
     }
 
     public enum SiteStatus{
-        ACTIVE, PENDING, FINISHED
+        UNSET, ACTIVE, PENDING, FINISHED
     }
 
     public SiteDTO toDto() {
