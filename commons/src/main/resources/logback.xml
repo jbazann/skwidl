@@ -8,7 +8,7 @@
             <level>INFO</level>
         </filter>
     </appender>
-
+<!-- TODO optional -->
     <root level="INFO">
         <appender-ref ref="GRAYLOG"/>
         <appender-ref ref="CONSOLE" />
