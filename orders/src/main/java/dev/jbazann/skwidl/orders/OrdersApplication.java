@@ -1,5 +1,6 @@
 package dev.jbazann.skwidl.orders;
 
+import dev.jbazann.skwidl.commons.aspect.api.EnableLogging;
 import dev.jbazann.skwidl.commons.async.api.DistributedTransactionCoordinator;
 import dev.jbazann.skwidl.commons.async.api.DistributedTransactionMember;
 import dev.jbazann.skwidl.commons.async.api.DistributedTransactionStarter;
@@ -13,6 +14,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 @SpringBootApplication()
 @EnableMongoRepositories("dev.jbazann.skwidl.orders.order")
+@EnableLogging
 @EnableTransactionManagement
 @DistributedTransactionCoordinator
 @DistributedTransactionMember

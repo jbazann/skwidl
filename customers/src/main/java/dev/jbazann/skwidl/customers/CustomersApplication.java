@@ -1,5 +1,6 @@
 package dev.jbazann.skwidl.customers;
 
+import dev.jbazann.skwidl.commons.aspect.api.EnableLogging;
 import dev.jbazann.skwidl.commons.async.api.DistributedTransactionMember;
 import dev.jbazann.skwidl.customers.customer.Customer;
 import org.springframework.boot.SpringApplication;
@@ -12,6 +13,7 @@ import org.springframework.scheduling.annotation.EnableAsync;
 
 @SpringBootApplication()
 @EnableAsync
+@EnableLogging
 @PropertySource("/defaults.yml")
 @DistributedTransactionMember
 public class CustomersApplication {
