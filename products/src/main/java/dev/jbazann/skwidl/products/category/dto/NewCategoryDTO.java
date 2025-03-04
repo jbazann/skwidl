@@ -1,7 +1,6 @@
 package dev.jbazann.skwidl.products.category.dto;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
-import dev.jbazann.skwidl.products.category.Category;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;

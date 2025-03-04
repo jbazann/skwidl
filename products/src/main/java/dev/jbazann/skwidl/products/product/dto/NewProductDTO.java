@@ -1,7 +1,6 @@
 package dev.jbazann.skwidl.products.product.dto;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
-import dev.jbazann.skwidl.products.product.Product;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
