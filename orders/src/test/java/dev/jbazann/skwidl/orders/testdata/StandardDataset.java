@@ -91,8 +91,7 @@ public enum StandardDataset {
                                     .amount(d.amount())
                                     .unitCost(d.unitCost())
                                     .discount(d.discount())
-                                    .product(d.product())
-                                    .totalCost(d.totalCost()))
+                                    .product(d.product()))
                             .toList()
                 );
     }
