@@ -63,12 +63,6 @@ public class OrderController {
     }
 
     @ExceptionHandler
-    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    public String exception(Exception exception) { // TODO proper exception handling
-        return exception.getMessage();
-    }
-
-    @ExceptionHandler
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public String badRequestException(BadRequestException exception) {
         return exception.getMessage();
