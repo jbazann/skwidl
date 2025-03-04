@@ -19,7 +19,9 @@ public class ExceptionMaskingAdvice {
     public String handleRuntimeException(RuntimeException e) {
         UUID id = UUID.randomUUID();
         String message = String.format(
-                "Uncaught exception of type %s, ID: %s, message: %s", e.getClass().getName(), id, e.getMessage());
+                "CAUGHT: Uncaught exception of type %s, ID: %s, message: %s",
+                e.getClass().getName(), id, e.getMessage());
+        // TODO use the id and the stack trace to make the logs actually useful
         logger.log(Level.WARNING, message, e);
         return "An unexpected error occurred: " + id;
     }
