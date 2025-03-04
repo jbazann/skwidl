@@ -1,6 +1,8 @@
 spring:
   application:
     name: customers
+  config:
+    import: defaults.yml
   rabbitmq:
     host: @jbazann.amqp.host@
     port: @jbazann.amqp.port@
