@@ -103,7 +103,7 @@ public class ProductServiceHttpClient implements ProductServiceClient {
             ));
         if( !(response.get(UNIT_COST) instanceof Map<?,?> unitCost) )
             throw new UnexpectedResponseException(String.format(
-                    "%s attribute missing or malformed in Products service response.", TOTAL_COST
+                    "%s attribute missing or malformed in Products service response.", UNIT_COST
             ));
 
         unitCost.keySet().forEach(k -> response.put((String) k, unitCost.get(k)));
