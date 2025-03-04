@@ -1,6 +1,6 @@
 /**/target/
 !.mvn/wrapper/maven-wrapper.jar
-.log
+*.log
 
 ### Nodejs ###
 node_modules/
