@@ -16,8 +16,9 @@ public class BasicLoggingAspect {
         this.logger = logger;
     }
 
-    @Before("dev.jbazann.skwidl.commons.aspect.BasicPointcuts.serviceExecutions()")
-    public void beforeServiceExecutions(JoinPoint joinPoint) {
+    @Before("dev.jbazann.skwidl.commons.aspect.BasicPointcuts.serviceExecutions() || " +
+            "dev.jbazann.skwidl.commons.aspect.BasicPointcuts.controllerExecutions()")
+    public void logMethodExecutions(JoinPoint joinPoint) {
         logger.info(String.format(
                 "CALLING %s WITH PARAMETERS %s",
                 joinPoint.getSignature().toShortString(),

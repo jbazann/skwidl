@@ -9,6 +9,9 @@ public class BasicPointcuts {
     @Pointcut("anyMethod() && inProjectPackages() && inAnnotatedService()")
     public void serviceExecutions() {}
 
+    @Pointcut("anyMethod() && inProjectPackages() && inAnnotatedController()")
+    public void controllerExecutions() {}
+
     @Pointcut("execution(* *(..))")
     private void anyMethod() {}
 
@@ -17,5 +20,8 @@ public class BasicPointcuts {
 
     @Pointcut("@target(org.springframework.stereotype.Service)")
     private void inAnnotatedService() {}
+
+    @Pointcut("@target(org.springframework.stereotype.Controller)")
+    private void inAnnotatedController() {}
 
 }
