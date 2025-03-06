@@ -3,6 +3,7 @@ package dev.jbazann.skwidl.products.category;
 import dev.jbazann.skwidl.commons.exceptions.BadRequestException;
 import dev.jbazann.skwidl.products.category.dto.CategoryDTO;
 import dev.jbazann.skwidl.products.category.dto.NewCategoryDTO;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -29,6 +30,7 @@ public class CategoryController {
     }
 
     @PostMapping("/category")
+    @ResponseStatus(HttpStatus.CREATED)
     public CategoryDTO createCategory(@RequestBody NewCategoryDTO category) {
         return categoryService.newCategory(category).toDto();
     }

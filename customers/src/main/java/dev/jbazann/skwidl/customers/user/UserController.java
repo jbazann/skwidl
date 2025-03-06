@@ -2,6 +2,7 @@ package dev.jbazann.skwidl.customers.user;
 
 import dev.jbazann.skwidl.customers.user.dto.NewUserDTO;
 import dev.jbazann.skwidl.customers.user.dto.UserDTO;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -37,6 +38,7 @@ public class UserController {
     }
 
     @PostMapping()
+    @ResponseStatus(HttpStatus.CREATED)
     public ResponseEntity<UserDTO> createUser(@RequestBody NewUserDTO user) {
         return ResponseEntity.ok(userService.newUser(user).toDto());
     }

@@ -4,6 +4,7 @@ import dev.jbazann.skwidl.customers.customer.dto.CustomerDTO;
 import dev.jbazann.skwidl.customers.customer.dto.EditableFieldsDTO;
 import dev.jbazann.skwidl.customers.customer.dto.NewCustomerDTO;
 import jakarta.validation.constraints.NotNull;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -36,6 +37,7 @@ public class CustomerController {
     }
 
     @PostMapping()
+    @ResponseStatus(HttpStatus.CREATED)
     public ResponseEntity<CustomerDTO> createCustomer(@RequestBody @NotNull NewCustomerDTO customer) {
         return ResponseEntity.ok(customerService.newCustomer(customer).toDto());
     }
