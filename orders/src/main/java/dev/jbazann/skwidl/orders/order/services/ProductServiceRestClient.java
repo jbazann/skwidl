@@ -74,8 +74,14 @@ public class ProductServiceRestClient implements ProductServiceClient {
                             .queryParam(PRODUCTS_PARAMS_OPERATION, PRODUCTS_OPERATION_AVAILABILITY)
                             .build())
                     .body(batch)
-                    .retrieve()
-                    .body(new Sin());
+                    .exchange((req, resp) -> {
+                        if (!resp.getStatusCode().is2xxSuccessful()) {
+                            throw new UnexpectedResponseException(
+                                    "Product validation failed with response code: " + resp.getStatusCode()
+                            );
+                        }
+                        return resp.bodyTo(new Sin());
+                    });
             return sanitizeValidatedProducts(Objects.requireNonNull(response));
         });
     }
@@ -115,9 +121,6 @@ public class ProductServiceRestClient implements ProductServiceClient {
                         .queryParam(PRODUCTS_PARAMS_OPERATION, PRODUCTS_OPERATION_RESERVE)
                         .build())
                 .body(products.values().stream().collect(Collectors.toMap(ProductAmountDTO::id, ProductAmountDTO::amount)))
-                .retrieve().onStatus(HttpStatusCode::is4xxClientError, (req,resp) -> {
-                    throw new ReserveFailureException();// TODO exception message and stuff
-                }).toBodilessEntity().getStatusCode()
-                .is2xxSuccessful();
+                .exchange((req, resp) -> resp.getStatusCode().is2xxSuccessful());
     }
 }

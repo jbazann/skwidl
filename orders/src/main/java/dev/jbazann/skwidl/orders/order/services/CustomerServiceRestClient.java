@@ -1,7 +1,11 @@
 package dev.jbazann.skwidl.orders.order.services;
 
+import dev.jbazann.skwidl.commons.exceptions.EntityNotFoundException;
+import dev.jbazann.skwidl.commons.exceptions.UnexpectedResponseException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClient;
 
@@ -35,8 +39,19 @@ public class CustomerServiceRestClient implements CustomerServiceClient {
         return CompletableFuture.supplyAsync(() ->
                 restClientBuilder.baseUrl(CUSTOMERS_ROOT).build().get()
                         .uri(CUSTOMERS_WALLET,id)
-                        .retrieve()
-                        .body(BigDecimal.class));
+                        .exchange((req, resp) -> {
+                            if (resp.getStatusCode().equals(HttpStatus.NOT_FOUND)) {
+                                throw new EntityNotFoundException(String.format(
+                                        "Customer with id %s not found.", id
+                                ));
+                            }
+                            if (!resp.getStatusCode().is2xxSuccessful()) {
+                                throw new UnexpectedResponseException(
+                                        "Validation failed with response code: " + resp.getStatusCode()
+                                );
+                            }
+                            return resp.bodyTo(BigDecimal.class);
+                        }));
     }
 
     @Override
@@ -45,8 +60,19 @@ public class CustomerServiceRestClient implements CustomerServiceClient {
                 .uri(CUSTOMERS_WALLET, id)
                 .attribute(OPERATION, BILL)
                 .body(amount)
-                .retrieve()
-                .body(Boolean.class);
+                .exchange((req, resp) -> {
+                    if (resp.getStatusCode().equals(HttpStatus.NOT_FOUND)) {
+                        throw new EntityNotFoundException(String.format(
+                                "Customer with id %s not found.", id
+                        ));
+                    }
+                    if (!resp.getStatusCode().is2xxSuccessful()) {
+                        throw new UnexpectedResponseException(
+                                "Billing failed with response code: " + resp.getStatusCode()
+                        );
+                    }
+                    return resp.bodyTo(Boolean.class);
+                });
     }
 
 }
