@@ -128,8 +128,8 @@ public class OrderService {
         List<Map<String, Object>> batchToValidate = new LinkedList<>();
         dto.detail().forEach(detail -> {
             Map<String, Object> entryToValidate = new HashMap<>();
-            entryToValidate.put(ProductServiceHttpClient.PRODUCT_ID, detail.product());
-            entryToValidate.put(ProductServiceHttpClient.REQUESTED_STOCK, detail.amount());
+            entryToValidate.put(ProductServiceRestClient.PRODUCT_ID, detail.product());
+            entryToValidate.put(ProductServiceRestClient.REQUESTED_STOCK, detail.amount());
             batchToValidate.add(entryToValidate);
         });
         CompletableFuture<Map<String, Object>> detailValidationResponse = productsRemoteService.validateProductAndFetchCost(batchToValidate);
@@ -139,7 +139,7 @@ public class OrderService {
 
         // Wait for response from Products service.
         Map<String, Object> validatedBatch = detailValidationResponse.join();
-        if ( !(validatedBatch.get(ProductServiceHttpClient.PRODUCTS_EXIST) instanceof final Boolean exist) ) {
+        if ( !(validatedBatch.get(ProductServiceRestClient.PRODUCTS_EXIST) instanceof final Boolean exist) ) {
             dto.totalCost(BigDecimal.valueOf(-1));
             return self.reject(dto.toEntity(),"Internal communication error.");
         }
@@ -150,7 +150,7 @@ public class OrderService {
 
         // Double-check the retrieved total cost; because I must justify using CompletableFuture.
             // Type check.
-        if( !(validatedBatch.get(ProductServiceHttpClient.TOTAL_COST) instanceof final BigDecimal expectedValue) ) {
+        if( !(validatedBatch.get(ProductServiceRestClient.TOTAL_COST) instanceof final BigDecimal expectedValue) ) {
             dto.totalCost(BigDecimal.valueOf(-1));
             return self.reject(dto.toEntity(),"Internal communication error.");
         }

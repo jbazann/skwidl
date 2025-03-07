@@ -2,7 +2,7 @@ package dev.jbazann.skwidl.orders.mocks;
 
 import dev.jbazann.skwidl.orders.order.dto.OrderDTO;
 import dev.jbazann.skwidl.orders.order.dto.ProductAmountDTO;
-import dev.jbazann.skwidl.orders.order.services.ProductServiceHttpClient;
+import dev.jbazann.skwidl.orders.order.services.ProductServiceRestClient;
 import dev.jbazann.skwidl.orders.order.services.ProductServiceClient;
 import dev.jbazann.skwidl.orders.testdata.StandardDataset;
 import dev.jbazann.skwidl.orders.order.entities.Detail;
@@ -31,14 +31,14 @@ public class ProductServiceMockClient implements ProductServiceClient {
                 .thenAnswer((Answer<CompletableFuture<Map<String, Object>>>) (invocationOnMock) -> {
                     final List<Map<String, Object>> batch = invocationOnMock.getArgument(0);
                     final Map<String, Object> response = new HashMap<>();
-                    response.put(ProductServiceHttpClient.PRODUCTS_EXIST, Boolean.TRUE);
-                    response.put(ProductServiceHttpClient.TOTAL_COST,
-                            batch.stream().map(element -> element.get(ProductServiceHttpClient.PRODUCT_ID))
+                    response.put(ProductServiceRestClient.PRODUCTS_EXIST, Boolean.TRUE);
+                    response.put(ProductServiceRestClient.TOTAL_COST,
+                            batch.stream().map(element -> element.get(ProductServiceRestClient.PRODUCT_ID))
                                     .map(id -> (UUID) id)
                                     .map(getTotalCost)
                                     .reduce(BigDecimal::add)
                     );
-                    batch.stream().map(element -> element.get(ProductServiceHttpClient.PRODUCT_ID))
+                    batch.stream().map(element -> element.get(ProductServiceRestClient.PRODUCT_ID))
                             .map(id -> (UUID) id)
                             .forEach(product -> response.put(product.toString(), getUnitCost.apply(product)));
                     return CompletableFuture.completedFuture(response);

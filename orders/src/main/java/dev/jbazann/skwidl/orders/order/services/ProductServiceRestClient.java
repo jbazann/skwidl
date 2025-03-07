@@ -9,16 +9,15 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
-import org.springframework.web.reactive.function.client.WebClient;
+import org.springframework.web.client.RestClient;
 
 import java.math.BigDecimal;
-import java.time.Duration;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
 @Service
-public class ProductServiceHttpClient implements ProductServiceClient {
+public class ProductServiceRestClient implements ProductServiceClient {
 
     // Map<> keys expected by the external service
     // to be used when other classes must construct maps for batch operations
@@ -28,10 +27,7 @@ public class ProductServiceHttpClient implements ProductServiceClient {
     public static final String PRODUCTS_EXIST = "productsExist";
     public static final String UNIT_COST = "unitCost";
 
-    private final WebClient.Builder webClientBuilder;
-
-    @Value("${jbazann.timeout.standard}")
-    private final Duration TIMEOUT = Duration.ofMillis(5000);
+    private final RestClient.Builder restClientBuilder;
 
     @Value("${jbazann.routes.gateway.products}")
     private final String PRODUCTS = "";
@@ -49,8 +45,8 @@ public class ProductServiceHttpClient implements ProductServiceClient {
     private final String PRODUCTS_OPERATION_RESERVE = "";
 
     @Autowired
-    public ProductServiceHttpClient(WebClient.Builder webClientBuilder) {
-        this.webClientBuilder = webClientBuilder;
+    public ProductServiceRestClient(RestClient.Builder restClientBuilder) {
+        this.restClientBuilder = restClientBuilder;
     }
 
     /**
@@ -58,11 +54,11 @@ public class ProductServiceHttpClient implements ProductServiceClient {
      * fetch the unit cost of each product, and whether enough stock is available.
      * @param batch a list of {@link Map} instances where each item is equivalent to the JSON <p>
      * {
-     *              {@link ProductServiceHttpClient#PRODUCT_ID}: {@link UUID},
-     *              {@link ProductServiceHttpClient#REQUESTED_STOCK}: {@link Integer}
+     *              {@link ProductServiceRestClient#PRODUCT_ID}: {@link UUID},
+     *              {@link ProductServiceRestClient#REQUESTED_STOCK}: {@link Integer}
      * }
-     * @return a {@link Map} containing at least the key {@link ProductServiceHttpClient#PRODUCTS_EXIST},
-     * and potentially {@link ProductServiceHttpClient#TOTAL_COST} plus one entry in the form
+     * @return a {@link Map} containing at least the key {@link ProductServiceRestClient#PRODUCTS_EXIST},
+     * and potentially {@link ProductServiceRestClient#TOTAL_COST} plus one entry in the form
      * {{@link UUID}: {@link BigDecimal}} per product ID in the list received as argument.
      */
     @Async
@@ -71,14 +67,15 @@ public class ProductServiceHttpClient implements ProductServiceClient {
         if (!batch.stream().allMatch(m -> m.get(PRODUCT_ID) instanceof UUID && m.size() == 1))
             throw new IllegalArgumentException();// TODO exception messages
         // send request, sanitize response
-        final WebClient webClient = webClientBuilder.baseUrl(PRODUCTS).build();
+        final RestClient restClient = restClientBuilder.baseUrl(PRODUCTS).build();
         return CompletableFuture.supplyAsync( () -> {
-            final Map<String, Object> response = webClient.post()
+            final Map<String, Object> response = restClient.post()
                     .uri(builder -> builder.path(PRODUCTS_COLLECTION)
                             .queryParam(PRODUCTS_PARAMS_OPERATION, PRODUCTS_OPERATION_AVAILABILITY)
                             .build())
-                    .bodyValue(batch)
-                    .retrieve().bodyToMono(new Sin()).block(TIMEOUT);
+                    .body(batch)
+                    .retrieve()
+                    .body(new Sin());
             return sanitizeValidatedProducts(Objects.requireNonNull(response));
         });
     }
@@ -113,14 +110,14 @@ public class ProductServiceHttpClient implements ProductServiceClient {
 
 
     public Boolean reserveProducts(Map<UUID, ProductAmountDTO> products) {
-        return webClientBuilder.baseUrl(PRODUCTS).build()
+        return restClientBuilder.baseUrl(PRODUCTS).build()
                 .post().uri(builder -> builder.path(PRODUCTS_COLLECTION)
                         .queryParam(PRODUCTS_PARAMS_OPERATION, PRODUCTS_OPERATION_RESERVE)
                         .build())
-                .bodyValue(products.values().stream().collect(Collectors.toMap(ProductAmountDTO::id, ProductAmountDTO::amount)))
-                .retrieve().onStatus(HttpStatusCode::is4xxClientError, (p) -> {
-                    throw new ReserveFailureException();
-                })
-                .toBodilessEntity().thenReturn(true).block(TIMEOUT);
+                .body(products.values().stream().collect(Collectors.toMap(ProductAmountDTO::id, ProductAmountDTO::amount)))
+                .retrieve().onStatus(HttpStatusCode::is4xxClientError, (req,resp) -> {
+                    throw new ReserveFailureException();// TODO exception message and stuff
+                }).toBodilessEntity().getStatusCode()
+                .is2xxSuccessful();
     }
 }
