@@ -20,7 +20,7 @@ public class BasicLoggingAspect {
             "dev.jbazann.skwidl.commons.aspect.BasicPointcuts.controllerExecutions()")
     public void logMethodExecutions(JoinPoint joinPoint) {
         logger.info(String.format(
-                "CALLING %s WITH PARAMETERS %s",
+                "CALL %s WITH PARAMETERS %s",
                 joinPoint.getSignature().toShortString(),
                 Arrays.toString(joinPoint.getArgs()) // TODO this won't work unless args implement toString but icba right now
         ));
