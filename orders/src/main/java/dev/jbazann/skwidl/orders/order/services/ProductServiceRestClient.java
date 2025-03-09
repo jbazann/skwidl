@@ -62,8 +62,10 @@ public class ProductServiceRestClient implements ProductServiceClient {
     @Async
     public CompletableFuture<Map<String, Object>> validateProductAndFetchCost(List<Map<String, Object>> batch) {
         // verify input is well-formed
-        if (!batch.stream().allMatch(m -> m.get(PRODUCT_ID) instanceof UUID && m.size() == 1))
-            throw new IllegalArgumentException();// TODO exception messages
+        if (!batch.stream().allMatch(m -> m.get(PRODUCT_ID) instanceof UUID &&
+                m.get(REQUESTED_STOCK) instanceof Integer &&
+                m.size() == 2))
+            throw new IllegalArgumentException(batch.stream().map(Map::toString).reduce("",(a,b) -> a +" ;; "+b));// TODO exception messages
         // send request, sanitize response
         final RestClient restClient = restClientBuilder.baseUrl(PRODUCTS).build();
         return CompletableFuture.supplyAsync( () -> {
