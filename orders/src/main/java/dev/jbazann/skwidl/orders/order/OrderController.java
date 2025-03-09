@@ -75,12 +75,6 @@ public class OrderController {
     }
 
     @ExceptionHandler
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public String illegalArgumentException(IllegalArgumentException exception) {
-        return exception.getMessage();
-    }
-
-    @ExceptionHandler
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public String orderNotFoundException(OrderNotFoundException exception) {
         return exception.getMessage();
