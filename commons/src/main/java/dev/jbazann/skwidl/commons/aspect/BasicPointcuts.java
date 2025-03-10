@@ -13,11 +13,17 @@ public class BasicPointcuts {
     @Pointcut("anyMethod() && inProjectPackages() && inAnnotatedController()")
     public void controllerExecutions() {}
 
+    @Pointcut("projectRepositoryMethod()")
+    public void repositoryExecutions() {}
+
     @Pointcut(value = "restClientExchange(handler) && inProjectPackages()", argNames = "handler")
     public void restClientRequest(RestClient.RequestHeadersSpec.ExchangeFunction<?> handler) {}
 
     @Pointcut("execution(* *(..))")
     private void anyMethod() {}
+
+    @Pointcut("execution(* dev.jbazann.skwidl..*.*Repository.*(..))")
+    private void projectRepositoryMethod() {}
 
     @Pointcut("within(dev.jbazann.skwidl..*)")
     private void inProjectPackages() {}

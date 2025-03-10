@@ -20,13 +20,14 @@ public class BasicLoggingAspect {
     }
 
     @Before("dev.jbazann.skwidl.commons.aspect.BasicPointcuts.serviceExecutions() || " +
-            "dev.jbazann.skwidl.commons.aspect.BasicPointcuts.controllerExecutions()")
+            "dev.jbazann.skwidl.commons.aspect.BasicPointcuts.controllerExecutions() || " +
+            "dev.jbazann.skwidl.commons.aspect.BasicPointcuts.repositoryExecutions()")
     public void logMethodExecutions(JoinPoint joinPoint) {
-        logger.info(String.format(
-                "CALL %s WITH PARAMETERS %s",
-                joinPoint.getSignature().toShortString(),
-                Arrays.toString(joinPoint.getArgs()) // TODO this won't work unless args implement toString but icba right now
-        ));
+        logger.info("Invoking " + joinPoint.getSignature().toShortString() +
+                        (joinPoint.getArgs().length > 0 ?
+                                " with argument(s) " + Arrays.toString(joinPoint.getArgs()) :
+                                "")
+        );
     }
 
     @Around(value = "dev.jbazann.skwidl.commons.aspect.BasicPointcuts.restClientRequest(handler)",
