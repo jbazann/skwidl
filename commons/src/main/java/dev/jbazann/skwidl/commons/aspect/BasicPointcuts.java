@@ -31,7 +31,7 @@ public class BasicPointcuts {
     @Pointcut("@target(org.springframework.stereotype.Service)")
     private void inAnnotatedService() {}
 
-    @Pointcut("@target(org.springframework.stereotype.Controller)")
+    @Pointcut("@target(org.springframework.stereotype.Controller) || @target(org.springframework.web.bind.annotation.RestController)")
     private void inAnnotatedController() {}
 
     @Pointcut("execution(* org.springframework.web.client.RestClient.RequestBodySpec.exchange(..)) && args(handler)")
