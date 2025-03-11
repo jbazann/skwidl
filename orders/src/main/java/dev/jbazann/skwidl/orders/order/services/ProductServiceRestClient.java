@@ -28,19 +28,15 @@ public class ProductServiceRestClient implements ProductServiceClient {
     private final RestClient.Builder restClientBuilder;
 
     @Value("${jbazann.routes.gateway.products}")
-    private final String PRODUCTS = "";
-
+    private String PRODUCTS = "NIL";
     @Value("${jbazann.routes.products.v1.collection.path}")
-    private final String PRODUCTS_COLLECTION = "";
-
+    private String PRODUCTS_COLLECTION = "NIL";
     @Value("${jbazann.routes.products.v1.collection.params.operation.param}")
-    private final String PRODUCTS_PARAMS_OPERATION = "";
-
+    private String PRODUCTS_PARAMS_OPERATION = "NIL";
     @Value("${jbazann.routes.products.v1.collection.params.operation.availability}")
-    private final String PRODUCTS_OPERATION_AVAILABILITY = "";
-
+    private String PRODUCTS_OPERATION_AVAILABILITY = "NIL";
     @Value("${jbazann.routes.products.v1.collection.params.operation.reserve}")
-    private final String PRODUCTS_OPERATION_RESERVE = "";
+    private String PRODUCTS_OPERATION_RESERVE = "NIL";
 
     @Autowired
     public ProductServiceRestClient(RestClient.Builder restClientBuilder) {

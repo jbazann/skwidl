@@ -1,9 +1,9 @@
 jbazann:
   routes:
     gateway:
-      root: http://gateway:@jbazann.kube.main-port@
-      products: http://gateway:@jbazann.kube.main-port@/products
-      customers: http://gateway:@jbazann.kube.main-port@/customers
+      root: http://gateway.gateway:@jbazann.kube.main-port@
+      products: http://gateway.gateway:@jbazann.kube.main-port@/products
+      customers: http://gateway.gateway:@jbazann.kube.main-port@/customers
     products:
       v1:
         collection:

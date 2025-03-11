@@ -78,6 +78,8 @@
 				<directory>${project.basedir}/src/main/resources/</directory>
 				<includes>
 					<include>**.yml</include>
+					<include>**.xml</include>
+					<include>**.properties</include>
 				</includes>
 				<filtering>true</filtering>
 			</resource>
