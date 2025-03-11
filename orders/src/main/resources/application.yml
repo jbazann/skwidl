@@ -2,7 +2,7 @@ spring:
   application:
     name: orders
   config:
-    import: routes.yml
+    import: routes.yml # routes.yml is in commons module.
   data:
     mongodb:
       uri: mongodb://mongodb:12012
