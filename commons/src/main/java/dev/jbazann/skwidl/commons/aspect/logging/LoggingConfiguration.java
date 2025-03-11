@@ -9,7 +9,7 @@ import java.util.logging.Logger;
 public class LoggingConfiguration {
 
     @Bean
-    public InternalLoggingAspect internalLoggingAspect() {
+    public static InternalLoggingAspect internalLoggingAspect() {
         return new InternalLoggingAspect(Logger.getLogger(InternalLoggingAspect.class.getName()));
     }
 
