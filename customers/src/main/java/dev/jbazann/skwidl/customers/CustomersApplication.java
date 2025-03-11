@@ -11,8 +11,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.scheduling.annotation.EnableAsync;
 
 @SpringBootApplication()
-@EnableAsync
 @EnableLogging
+@EnableAsync
 @DistributedTransactionMember
 public class CustomersApplication {
 
