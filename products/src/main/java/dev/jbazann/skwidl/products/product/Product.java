@@ -36,8 +36,10 @@ public class Product {
     @NotNull @Min(0)
     private BigDecimal discount;
     @Min(0)
+    @Column(name = "current_stock")
     private int currentStock;
     @Min(0)
+    @Column(name = "minimum_stock")
     private int minimumStock;
     @NotNull
     private UUID category;
