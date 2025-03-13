@@ -9,3 +9,6 @@ spec:
     - port: 12012
       name: app
       protocol: TCP
+    - port: 12112
+      name: admin
+      protocol: TCP

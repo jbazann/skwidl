@@ -58,3 +58,33 @@ spec:
                 name: grafana
                 port:
                   name: http
+    - host: orders.skwidl.jbazann.dev
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: orders
+                port:
+                  name: admin
+    - host: products.skwidl.jbazann.dev
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: products
+                port:
+                  name: admin
+    - host: customers.skwidl.jbazann.dev
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: customers
+                port:
+                  name: admin
