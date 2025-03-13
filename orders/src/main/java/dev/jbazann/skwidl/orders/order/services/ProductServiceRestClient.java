@@ -4,6 +4,7 @@ import dev.jbazann.skwidl.commons.exceptions.UnexpectedResponseException;
 import dev.jbazann.skwidl.orders.order.Sin;
 import dev.jbazann.skwidl.orders.order.dto.ProductAmountDTO;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
@@ -39,7 +40,7 @@ public class ProductServiceRestClient implements ProductServiceClient {
     private String PRODUCTS_OPERATION_RESERVE = "NIL";
 
     @Autowired
-    public ProductServiceRestClient(RestClient.Builder restClientBuilder) {
+    public ProductServiceRestClient(@Qualifier("loggingRestClientBuilder") RestClient.Builder restClientBuilder) {
         this.restClientBuilder = restClientBuilder;
     }
 

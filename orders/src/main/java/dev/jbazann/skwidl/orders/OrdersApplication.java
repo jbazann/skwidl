@@ -5,6 +5,7 @@ import dev.jbazann.skwidl.commons.aspect.api.EnableLogging;
 import dev.jbazann.skwidl.commons.async.api.DistributedTransactionCoordinator;
 import dev.jbazann.skwidl.commons.async.api.DistributedTransactionMember;
 import dev.jbazann.skwidl.commons.async.api.DistributedTransactionStarter;
+import dev.jbazann.skwidl.commons.rest.api.IncludeRestPackage;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.actuate.web.exchanges.HttpExchangeRepository;
 import org.springframework.boot.actuate.web.exchanges.InMemoryHttpExchangeRepository;
@@ -21,6 +22,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 @DistributedTransactionCoordinator
 @DistributedTransactionMember
 @DistributedTransactionStarter
+@IncludeRestPackage
 //TODO review local transactions, locking
 public class OrdersApplication {
 

@@ -3,6 +3,7 @@ package dev.jbazann.skwidl.orders.order.services;
 import dev.jbazann.skwidl.commons.exceptions.EntityNotFoundException;
 import dev.jbazann.skwidl.commons.exceptions.UnexpectedResponseException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -29,7 +30,7 @@ public class CustomerServiceRestClient implements CustomerServiceClient {
     private String CREDIT = "NIL";
 
     @Autowired
-    public CustomerServiceRestClient(RestClient.Builder restClientBuilder) {
+    public CustomerServiceRestClient(@Qualifier("loggingRestClientBuilder") RestClient.Builder restClientBuilder) {
         this.restClientBuilder = restClientBuilder;
     }
 

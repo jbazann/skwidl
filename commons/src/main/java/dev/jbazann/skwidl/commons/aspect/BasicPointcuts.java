@@ -2,7 +2,6 @@ package dev.jbazann.skwidl.commons.aspect;
 
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
-import org.springframework.web.client.RestClient;
 
 @Aspect
 public class BasicPointcuts {
@@ -15,9 +14,6 @@ public class BasicPointcuts {
 
     @Pointcut("projectRepositoryMethod()")
     public void repositoryExecutions() {}
-
-    @Pointcut(value = "restClientExchange(handler) && inProjectPackages()", argNames = "handler")
-    public void restClientRequest(RestClient.RequestHeadersSpec.ExchangeFunction<?> handler) {}
 
     @Pointcut("execution(* *(..))")
     private void anyMethod() {}
@@ -33,8 +29,5 @@ public class BasicPointcuts {
 
     @Pointcut("@target(org.springframework.stereotype.Controller) || @target(org.springframework.web.bind.annotation.RestController)")
     private void inAnnotatedController() {}
-
-    @Pointcut("execution(* org.springframework.web.client.RestClient.RequestBodySpec.exchange(..)) && args(handler)")
-    private void restClientExchange(RestClient.RequestHeadersSpec.ExchangeFunction<?> handler) {}
 
 }
