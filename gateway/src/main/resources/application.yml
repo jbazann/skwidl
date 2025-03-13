@@ -39,4 +39,4 @@ management:
         include: httpexchanges,health,gateway,prometheus
   endpoint:
     gateway:
-      enabled: true
+      access: read_only
