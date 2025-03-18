@@ -11,6 +11,7 @@ import java.util.Map;
 import java.util.UUID;
 
 @RestController
+@RequestMapping("/v1/categories")
 public class CategoryController {
 
     private final CategoryService categoryService;
@@ -19,7 +20,7 @@ public class CategoryController {
         this.categoryService = categoryService;
     }
 
-    @GetMapping("/category")
+    @GetMapping
     public List<CategoryDTO> findCategory(@RequestParam Map<String, String> params) {
         if (!params.containsKey("name") && !params.containsKey("id"))
             throw new BadRequestException("Query parameter 'name' and/or 'id' required.");
@@ -29,7 +30,7 @@ public class CategoryController {
         ).stream().map(Category::toDto).toList();
     }
 
-    @PostMapping("/category")
+    @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public CategoryDTO createCategory(@RequestBody NewCategoryDTO category) {
         return categoryService.newCategory(category).toDto();

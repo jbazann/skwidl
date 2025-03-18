@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/site")
+@RequestMapping("/v1/sites")
 public class SiteController {
 
     private final SiteService siteService;

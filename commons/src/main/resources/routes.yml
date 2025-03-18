@@ -1,30 +1,30 @@
 jbazann:
   routes:
-    gateway:
+    gateway: # TODO wtf is this fix it
       root: http://gateway.gateway:@jbazann.kube.main-port@
-      products: http://gateway.gateway:@jbazann.kube.main-port@/products
-      customers: http://gateway.gateway:@jbazann.kube.main-port@/customers
+      products: http://gateway.gateway:@jbazann.kube.main-port@/app
+      customers: http://gateway.gateway:@jbazann.kube.main-port@/app
     products:
       v1:
         collection:
-          path: /v1/products
+          path: /products # TODO expose versioning
           params:
             operation:
               param: 'operation'
               availability: 'availability'
               reserve: 'reserve'
         identified:
-          path: /v1/products/{id}
+          path: /products/{id}
         discount:
-          path: /v1/products/{id}/discount
+          path: /products/{id}/discount
     customers:
       v1:
         collection:
-          path: /v1/customers
+          path: /customers
         identified:
-          path: /v1/customers/{id}
+          path: /customers/{id}
         wallet:
-          path: /v1/customers/{id}/wallet
+          path: /customers/{id}/wallet
           params:
             operation:
               param: 'operation'

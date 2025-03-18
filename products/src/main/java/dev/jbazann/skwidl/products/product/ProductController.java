@@ -14,6 +14,7 @@ import java.util.List;
 import java.util.UUID;
 
 @RestController
+@RequestMapping("/v1/products")
 public class ProductController {
 
     private final ProductService productService;
@@ -22,28 +23,28 @@ public class ProductController {
         this.productService = productService;
     }
 
-    @PostMapping("/products")
+    @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public ProductDTO createProduct(@RequestBody NewProductDTO product) {
         return productService.newProduct(product).toDto();
     }
 
-    @PostMapping(value = "/products", params = "operation=availabilty")
+    @PostMapping(params = "operation=availabilty")
     public AvailabilityResponse checkAvailability(@RequestBody List<StockRequest> entries) {
         return productService.checkAvailability(entries);
     }
 
-    @PostMapping(value = "/products", params = "operation=reserve")
+    @PostMapping(params = "operation=reserve")
     public void reserveProducts(@RequestBody List<StockRequest> entries) {
         productService.reserveProducts(entries);
     }
 
-    @PutMapping("/products/{id}")
+    @PutMapping("/{id}")
     public ProductDTO updateProduct(@PathVariable UUID id, @RequestBody ProvisioningDTO update) {
         return productService.updateProduct(update.productId(id)).toDto();
     }
 
-    @PutMapping("/products/{id}/discount")
+    @PutMapping("/{id}/discount")
     public ProductDTO discountProduct(@PathVariable UUID id, @RequestBody DiscountDTO discount) {
         return productService.discountProduct(discount.productId(id)).toDto();
     }

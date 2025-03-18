@@ -18,6 +18,7 @@ import java.util.List;
 import java.util.UUID;
 
 @RestController
+@RequestMapping("/v1/orders")
 public class OrderController {
 
     private final OrderService orderService;
@@ -27,7 +28,7 @@ public class OrderController {
         this.orderService = orderService;
     }
 
-    @GetMapping("/order/{id}")
+    @GetMapping("/{id}")
     public OrderDTO getOrder(@PathVariable UUID id) {
         return orderService.getOrder(id).toDto();
     }
@@ -37,13 +38,13 @@ public class OrderController {
         return orderService.getCustomerOrders(id).stream().map(Order::toDto).toList();
     }
 
-    @PostMapping("/order")
+    @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public OrderDTO newOrder(@RequestBody NewOrderDTO order) {
         return orderService.newOrder(order).toDto();
     }
 
-    @PutMapping("/order/{id}")
+    @PutMapping("/{id}")
     @ResponseStatus(HttpStatus.ACCEPTED)
     public void updateOrder(@PathVariable UUID id,
                                 @RequestBody StatusUpdateDTO update) {

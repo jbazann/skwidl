@@ -12,7 +12,8 @@ import java.util.List;
 import java.util.UUID;
 
 
-@RestController("/customer")
+@RestController
+@RequestMapping("/v1/customers")
 public class CustomerController {
 
     private final CustomerService customerService;
