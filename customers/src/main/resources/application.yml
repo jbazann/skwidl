@@ -35,6 +35,8 @@ server:
 eureka:
   instance:
     hostname: customers.customers
+    metadata-map:
+      collections: "customers,sites,users"
   client:
     serviceUrl:
       defaultZone: @jbazann.eureka.defaultZone@

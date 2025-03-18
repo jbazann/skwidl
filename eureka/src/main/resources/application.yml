@@ -13,6 +13,7 @@ eureka:
     hostname: eureka.eureka
     metadata-map:
       region: santa-fe-1
+      collections: "eureka"
   client:
     region: santa-fe-1
     serviceUrl:

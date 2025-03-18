@@ -28,6 +28,8 @@ server:
 eureka:
   instance:
     hostname: products.products
+    metadata-map:
+      collections: "products,categories"
   client:
     serviceUrl:
       defaultZone: @jbazann.eureka.defaultZone@
