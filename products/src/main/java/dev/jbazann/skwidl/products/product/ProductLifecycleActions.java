@@ -24,7 +24,7 @@ public class ProductLifecycleActions {
         return productRepository.findById(id);
     }
 
-    public Collection<Product> fetchAll(@NotNull @NotEmpty Iterable<@NotNull UUID> ids) {
+    public Collection<Product> fetchAll(@NotNull @NotEmpty Collection<@NotNull UUID> ids) {
         return productRepository.findAllById(ids);
     }
 
