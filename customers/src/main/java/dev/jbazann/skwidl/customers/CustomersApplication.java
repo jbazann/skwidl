@@ -2,6 +2,7 @@ package dev.jbazann.skwidl.customers;
 
 import dev.jbazann.skwidl.commons.aspect.api.EnableLogging;
 import dev.jbazann.skwidl.commons.async.api.DistributedTransactionMember;
+import dev.jbazann.skwidl.commons.rest.api.IncludeRestPackage;
 import dev.jbazann.skwidl.customers.customer.Customer;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.actuate.web.exchanges.HttpExchangeRepository;
@@ -14,6 +15,7 @@ import org.springframework.scheduling.annotation.EnableAsync;
 @EnableLogging
 @EnableAsync
 @DistributedTransactionMember
+@IncludeRestPackage
 public class CustomersApplication {
 
 	public static void main(String[] args) {
