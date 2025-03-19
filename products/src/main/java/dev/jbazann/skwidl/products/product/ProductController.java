@@ -23,13 +23,13 @@ public class ProductController {
         this.productService = productService;
     }
 
-    @PostMapping
+    @PostMapping(params = "!operation")
     @ResponseStatus(HttpStatus.CREATED)
     public ProductDTO createProduct(@RequestBody NewProductDTO product) {
         return productService.newProduct(product).toDto();
     }
 
-    @PostMapping(params = "operation=availabilty")
+    @PostMapping(params = "operation=availability")
     public AvailabilityResponse checkAvailability(@RequestBody List<StockRequest> entries) {
         return productService.checkAvailability(entries);
     }
