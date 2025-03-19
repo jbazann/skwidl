@@ -6,6 +6,7 @@ import org.springframework.http.HttpRequest;
 import org.springframework.http.client.ClientHttpRequestExecution;
 import org.springframework.http.client.ClientHttpRequestInterceptor;
 import org.springframework.http.client.ClientHttpResponse;
+import org.springframework.lang.NonNull;
 
 import java.io.IOException;
 import java.util.logging.Logger;
@@ -15,7 +16,7 @@ public class LoggingRequestInterceptor implements ClientHttpRequestInterceptor {
     private final Logger logger = Logger.getLogger(getClass().getName());
 
     @Override
-    public ClientHttpResponse intercept(HttpRequest request, byte[] body, ClientHttpRequestExecution execution) throws IOException {
+    public @NonNull ClientHttpResponse intercept(HttpRequest request, @NonNull byte[] body, ClientHttpRequestExecution execution) throws IOException {
         String threadName = Thread.currentThread().getName();
         logger.info(String.format(
                 "%s: REQUEST %s %s",
