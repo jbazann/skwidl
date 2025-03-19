@@ -3,21 +3,21 @@
         id binary(16) not null,
         cuit varchar(255) not null,
         email varchar(255) not null,
-        maxActiveSites integer not null,
-        maxDebt decimal(38,2) not null,
+        max_active_sites integer not null,
+        max_debt decimal(38,2) not null,
         name varchar(255) not null,
-        pendingSites integer not null,
+        pending_sites integer not null,
         primary key (id)
     ) engine=InnoDB;
 
     create table Customer_activeSites (
         Customer_id binary(16) not null,
-        activeSites binary(16)
+        active_sites binary(16)
     ) engine=InnoDB;
 
     create table Customer_allowedUsers (
         Customer_id binary(16) not null,
-        allowedUsers binary(16)
+        allowed_users binary(16)
     ) engine=InnoDB;
 
     alter table Customer_activeSites 

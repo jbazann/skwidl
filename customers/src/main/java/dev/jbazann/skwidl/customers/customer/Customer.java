@@ -37,16 +37,21 @@ public class Customer {
     @NotNull
     private String cuit;
     @NotNull @Min(0)
+    @Column(name = "max_debt")
     private BigDecimal maxDebt;
     @NotNull @Min(0)
+    @Column(name = "max_active_sites")
     private Integer maxActiveSites;
     @ElementCollection
     @NotNull
+    @Column(name = "allowed_users")
     private List<@NotNull UUID> allowedUsers;
     @ElementCollection
     @NotNull
+    @Column(name = "active_sites")
     private List<@NotNull UUID> activeSites;
     @NotNull @Min(0)
+    @Column(name = "pending_sites")
     private Integer pendingSites;
 
     @Getter
