@@ -60,7 +60,7 @@ public class SiteService {
      */
     @Transactional()// TODO
     public void updateSiteStatus(@NotNull UUID siteId, @NotNull Site.SiteStatus newStatus) {
-        Site site = fetchSite(siteId);
+        Site site = self.fetchSite(siteId);
         siteStatusService.updateSiteStatus(site, newStatus);
         siteRepository.save(site);
     }

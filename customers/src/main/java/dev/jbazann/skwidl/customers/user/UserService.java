@@ -59,7 +59,7 @@ public class UserService {
     @SuppressWarnings("UnusedReturnValue")
     @Transactional// TODO
     public @NotNull @Valid User addAllowedUser(@NotNull UUID customerId, @NotNull UUID userId) {
-        User user = fetchUser(userId);
+        User user = self.fetchUser(userId);
         if(isEnabledFor(user, customerId)) {
             /* do not throw exception until decoupled from CustomerService
             throw new InvalidOperationException("User " + userId + " is already enabled for client " + customerId + '.') ;
