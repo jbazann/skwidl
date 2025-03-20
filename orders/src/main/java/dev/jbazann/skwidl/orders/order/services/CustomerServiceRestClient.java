@@ -61,17 +61,16 @@ public class CustomerServiceRestClient implements CustomerServiceClient {
                 .attribute(OPERATION, BILL)
                 .body(amount)
                 .exchange((req, resp) -> {
-                    if (resp.getStatusCode().equals(HttpStatus.NOT_FOUND)) {
+                    if (resp.getStatusCode().isSameCodeAs(HttpStatus.OK)) return true;
+                    if (resp.getStatusCode().isSameCodeAs(HttpStatus.CONFLICT)) return false;
+                    if (resp.getStatusCode().isSameCodeAs(HttpStatus.NOT_FOUND)) {
                         throw new EntityNotFoundException(String.format(
                                 "Customer with id %s not found.", id
                         ));
                     }
-                    if (!resp.getStatusCode().is2xxSuccessful()) {
-                        throw new UnexpectedResponseException(
-                                "Billing failed with response code: " + resp.getStatusCode()
-                        );
-                    }
-                    return resp.bodyTo(Boolean.class);
+                    throw new UnexpectedResponseException(
+                            "Billing failed with response code: " + resp.getStatusCode()
+                    );
                 });
     }
 

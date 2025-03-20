@@ -1,11 +1,14 @@
 package dev.jbazann.skwidl.customers.customer;
 
 import dev.jbazann.skwidl.commons.exceptions.DistributedTransactionException;
+import dev.jbazann.skwidl.commons.exceptions.EntityNotFoundException;
 import dev.jbazann.skwidl.customers.customer.dto.CustomerDTO;
 import dev.jbazann.skwidl.customers.customer.dto.EditableFieldsDTO;
 import dev.jbazann.skwidl.customers.customer.dto.NewCustomerDTO;
+import dev.jbazann.skwidl.customers.customer.exceptions.InsufficientCreditException;
 import dev.jbazann.skwidl.customers.customer.exceptions.InvalidCustomerException;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.data.domain.Example;
@@ -14,6 +17,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -57,6 +61,7 @@ public class CustomerService {
         CustomerDTO dto = input.toDto();
         dto.id(self.generateCustomerId());
         dto.maxDebt(defaults.maxDebt());
+        dto.budget(BigDecimal.ZERO);
         dto.maxActiveSites(defaults.maxActiveSites());
         dto.enabledSites(dto.enabledSites() == null ? new ArrayList<>() : dto.enabledSites());
         dto.enabledUsers(dto.enabledUsers() == null ? new ArrayList<>() : dto.enabledUsers());
@@ -199,6 +204,31 @@ public class CustomerService {
         return customerRepository.findById(customerId).orElseThrow(
                 () -> new InvalidCustomerException("Customer "+ customerId +" not found.")
         );
+    }
+
+    public @NotNull BigDecimal getCustomerBudget(@NotNull UUID customerId) {
+        // TODO ideally this should only fetch budget, find out how much it actually matters, if at all.
+        // TODO add or rename field, maxDebt is silly.
+        Customer customer = self.fetchCustomer(customerId);
+        return customer.maxDebt();
+    }
+
+    public @NotNull BigDecimal bill(@NotNull UUID customerId, @NotNull @Min(0) BigDecimal amount) {
+        Customer customer = self.fetchCustomer(customerId);
+        if (!customer.bill(amount)) {
+            throw new InsufficientCreditException(
+                    "Customer " + customerId + " has insufficient funds.",
+                    customer.maxDebt().add(customer.budget()).subtract(amount).abs()
+            );
+        }
+        customer = customerRepository.save(customer);
+        return customer.budget().add(customer.maxDebt());
+    }
+
+    public @NotNull BigDecimal credit(@NotNull UUID customerId, @NotNull @Min(0) BigDecimal amount) {
+        Customer customer = self.fetchCustomer(customerId);
+        customer = customerRepository.save(customer.credit(amount));
+        return customer.budget().add(customer.maxDebt());
     }
 
 }

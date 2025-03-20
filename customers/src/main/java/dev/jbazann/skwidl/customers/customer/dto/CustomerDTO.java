@@ -23,6 +23,7 @@ public class CustomerDTO {
     private String email;
     private String cuit;
     private BigDecimal maxDebt;
+    private BigDecimal budget;
     private Integer maxActiveSites;
     private List<UUID> enabledUsers;
     private List<UUID> enabledSites;
@@ -30,7 +31,7 @@ public class CustomerDTO {
 
 
     public Customer toEntity() {
-        return new Customer(id, name, email, cuit, maxDebt, maxActiveSites, enabledUsers, enabledSites, pendingSites);
+        return new Customer(id, name, email, cuit, maxDebt, budget, maxActiveSites, enabledUsers, enabledSites, pendingSites);
     }
 
 }

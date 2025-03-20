@@ -1,6 +1,7 @@
 
     create table customer (
         id binary(16) not null,
+        budget decimal(38,2) not null,
         cuit varchar(255) not null,
         email varchar(255) not null,
         max_active_sites integer not null,

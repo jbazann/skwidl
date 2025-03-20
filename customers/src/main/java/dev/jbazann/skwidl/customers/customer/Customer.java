@@ -39,6 +39,8 @@ public class Customer {
     @NotNull @Min(0)
     @Column(name = "max_debt")
     private BigDecimal maxDebt;
+    @NotNull // TODO validator(s)
+    private BigDecimal budget;
     @NotNull @Min(0)
     @Column(name = "max_active_sites")
     private Integer maxActiveSites;
@@ -66,7 +68,7 @@ public class Customer {
     }
 
     public CustomerDTO toDto() {
-        return new CustomerDTO(id, name, email, cuit, maxDebt, maxActiveSites, allowedUsers, activeSites, pendingSites);
+        return new CustomerDTO(id, name, email, cuit, maxDebt, budget, maxActiveSites, allowedUsers, activeSites, pendingSites);
     }
 
     /**
@@ -133,6 +135,28 @@ public class Customer {
      */
     public Customer removeActiveSite(@NotNull UUID siteId) {
         activeSites.remove(siteId);
+        return this;
+    }
+
+    /**
+     * If possible, decreases budget by the requested amount.
+     * @param amount how much to decrease this customer's budget.
+     * @return true if billing succeeded, false when credit is not enough.
+     */
+    public boolean bill(@NotNull @Min(0) BigDecimal amount) {
+        BigDecimal afterBilling = maxDebt.add(budget).subtract(amount);
+        if (afterBilling.compareTo(BigDecimal.ZERO) < 0) return false;
+        budget = budget.subtract(amount);
+        return true;
+    }
+
+    /**
+     * Increase budget by the requested amount.
+     * @param amount how much to increase this customer's budget.
+     * @return this.
+     */
+    public Customer credit(@NotNull @Min(0) BigDecimal amount) {
+        budget = budget.add(amount);
         return this;
     }
 
