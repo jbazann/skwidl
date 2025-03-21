@@ -34,12 +34,6 @@ public class Rollback implements TransactionStage {
         this.transactionActions = transactionActions;
     }
 
-
-    @Override
-    public List<EntityLock> getRequiredLocks(DomainEvent domainEvent) {
-        return TransactionStage.super.getRequiredLocks(domainEvent);
-    }
-
     @Override
     @Transactional
     public TransactionResult runStage(DomainEvent domainEvent,

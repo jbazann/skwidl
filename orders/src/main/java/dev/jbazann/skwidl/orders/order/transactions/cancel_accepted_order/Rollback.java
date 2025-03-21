@@ -34,11 +34,6 @@ public class Rollback implements TransactionStage {
         this.transactionActions = transactionActions;
     }
 
-    @Override
-    public List<EntityLock> getRequiredLocks(DomainEvent domainEvent) {
-        return TransactionStage.super.getRequiredLocks(domainEvent);
-    }
-
     @SuppressWarnings("DuplicatedCode")
     @Override
     @Transactional

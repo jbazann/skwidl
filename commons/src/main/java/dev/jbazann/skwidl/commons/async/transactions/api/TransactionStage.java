@@ -14,7 +14,7 @@ import java.util.List;
 public interface TransactionStage {
 
     default @NotNull List<@NotNull @Valid EntityLock> getRequiredLocks(@NotNull @Valid DomainEvent domainEvent) {
-        throw new UnsupportedOperationException("Unimplemented method.");
+        return List.of();
     }
 
     @NotNull @Valid TransactionResult runStage(@NotNull @Valid DomainEvent domainEvent,
