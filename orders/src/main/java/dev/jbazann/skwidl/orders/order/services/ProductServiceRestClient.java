@@ -71,14 +71,8 @@ public class ProductServiceRestClient implements ProductServiceClient {
                             .queryParam(PRODUCTS_PARAMS_OPERATION, PRODUCTS_OPERATION_AVAILABILITY)
                             .build())
                     .body(batch)
-                    .exchange((req, resp) -> {
-                        if (!resp.getStatusCode().is2xxSuccessful()) {
-                            throw new UnexpectedResponseException(
-                                    "Product validation failed with response code: " + resp.getStatusCode()
-                            );
-                        }
-                        return resp.bodyTo(new Sin());
-                    });
+                    .retrieve()
+                    .body(new Sin());
             return sanitizeValidatedProducts(Objects.requireNonNull(response));
         });
     }
