@@ -16,7 +16,7 @@ public class LoggingRequestInterceptor implements ClientHttpRequestInterceptor {
     private final Logger logger = Logger.getLogger(getClass().getName());
 
     @Override
-    public @NonNull ClientHttpResponse intercept(HttpRequest request, @NonNull byte[] body, ClientHttpRequestExecution execution) throws IOException {
+    public @NonNull ClientHttpResponse intercept(HttpRequest request, @NonNull byte[] body, @NonNull ClientHttpRequestExecution execution) throws IOException {
         String threadName = Thread.currentThread().getName();
         logger.info(String.format(
                 "%s: REQUEST %s %s",
@@ -31,15 +31,12 @@ public class LoggingRequestInterceptor implements ClientHttpRequestInterceptor {
                 new String(body)
         ));
 
-        try (ClientHttpResponse response = execution.execute(request, body)) {
-            logger.info(String.format(
-                    "%s: RESPONSE %s",
-                    threadName,
-                    response.getStatusCode()
-            ));
-            return response;
-        } catch (IOException e) {
-            throw new CommonsInternalException("An error occurred while trying to execute the request.",e);
-        }
+        ClientHttpResponse response = execution.execute(request, body);
+        logger.info(String.format(
+                "%s: RESPONSE %s.",
+                threadName,
+                response.getStatusCode()
+        ));
+        return response;
     }
 }
