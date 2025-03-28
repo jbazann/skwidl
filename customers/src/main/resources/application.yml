@@ -1,4 +1,6 @@
 spring:
+  profiles:
+    active: @spring-profile@
   application:
     name: customers
   config:

@@ -8,6 +8,7 @@
         <version>3.4.0</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
+    <!-- TODO fill these... n- -->
     <url/>
     <licenses>
         <license/>
@@ -30,6 +31,7 @@
     <properties>
         <java.version>21</java.version>
         <spring-cloud.version>2024.0.0</spring-cloud.version>
+        <spring-profile>default,dev</spring-profile>
 
         <!-- Custom properties -->
         <!-- AMQP Credentials -->
@@ -193,6 +195,9 @@
         <!-- Run mvn with '-P graylog' to include Graylog in the build -->
         <profile>
             <id>graylog</id>
+            <properties>
+                <spring.profile>graylog</spring.profile>
+            </properties>
             <modules>
                 <module>graylog</module>
             </modules>
