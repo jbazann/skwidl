@@ -1,6 +1,6 @@
 package dev.jbazann.skwidl.orders.order.services;
 
-import dev.jbazann.skwidl.orders.order.dto.ProductAmountDTO;
+import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import org.springframework.validation.annotation.Validated;
 
@@ -13,6 +13,6 @@ import java.util.concurrent.CompletableFuture;
 public interface ProductServiceClient {
 
     @NotNull CompletableFuture<Map<String, Object>> validateProductAndFetchCost(@NotNull List<Map<String, Object>> batch);
-    @NotNull Boolean reserveProducts(@NotNull Map<UUID, @NotNull ProductAmountDTO> products);
+    @NotNull Boolean reserveProducts(@NotNull Map<UUID, @NotNull @Min(1) Integer> products);
 
 }

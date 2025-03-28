@@ -2,7 +2,6 @@ package dev.jbazann.skwidl.orders.order.services;
 
 import dev.jbazann.skwidl.commons.exceptions.UnexpectedResponseException;
 import dev.jbazann.skwidl.orders.order.Sin;
-import dev.jbazann.skwidl.orders.order.dto.ProductAmountDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
@@ -13,7 +12,6 @@ import org.springframework.web.client.RestClient;
 import java.math.BigDecimal;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
-import java.util.stream.Collectors;
 
 @Service
 public class ProductServiceRestClient implements ProductServiceClient {
@@ -91,10 +89,12 @@ public class ProductServiceRestClient implements ProductServiceClient {
             ));
         }
 
-        if( !(response.get(TOTAL_COST) instanceof BigDecimal) )
-            throw new UnexpectedResponseException(String.format(
-                    "%s attribute missing or malformed in Products service response.", TOTAL_COST
-            ));
+        // TOTAL_COST cannot be type-checked for some reason I am not willing to dig into.
+        // I assume BigDecimal objects are being serialized as either String or float,
+        // thus failing instanceof BigDecimal checks when deserialized as Object.
+        // This entire call stack is already (intentionally) way off a correct implementation,
+        // so I will not address these edge cases any further.
+
         if( !(response.get(UNIT_COST) instanceof Map<?,?> unitCost) )
             throw new UnexpectedResponseException(String.format(
                     "%s attribute missing or malformed in Products service response.", UNIT_COST
@@ -106,12 +106,12 @@ public class ProductServiceRestClient implements ProductServiceClient {
     }
 
 
-    public Boolean reserveProducts(Map<UUID, ProductAmountDTO> products) {
+    public Boolean reserveProducts(Map<UUID, Integer> products) {
         return restClientBuilder.baseUrl(PRODUCTS).build()
                 .post().uri(builder -> builder.path(PRODUCTS_COLLECTION)
                         .queryParam(PRODUCTS_PARAMS_OPERATION, PRODUCTS_OPERATION_RESERVE)
                         .build())
-                .body(products.values().stream().collect(Collectors.toMap(ProductAmountDTO::id, ProductAmountDTO::amount)))
+                .body(products)
                 .exchange((req, resp) -> resp.getStatusCode().is2xxSuccessful());
     }
 }

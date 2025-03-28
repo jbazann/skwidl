@@ -1,7 +1,6 @@
 package dev.jbazann.skwidl.orders.mocks;
 
 import dev.jbazann.skwidl.orders.order.dto.OrderDTO;
-import dev.jbazann.skwidl.orders.order.dto.ProductAmountDTO;
 import dev.jbazann.skwidl.orders.order.services.ProductServiceRestClient;
 import dev.jbazann.skwidl.orders.order.services.ProductServiceClient;
 import dev.jbazann.skwidl.orders.testdata.StandardDataset;
@@ -52,7 +51,7 @@ public class ProductServiceMockClient implements ProductServiceClient {
     }
 
     @Override
-    public Boolean reserveProducts(Map<UUID, ProductAmountDTO> products) {
+    public Boolean reserveProducts(Map<UUID, Integer> products) {
         return mock.reserveProducts(products);
     }
 

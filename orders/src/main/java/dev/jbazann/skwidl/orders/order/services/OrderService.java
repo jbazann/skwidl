@@ -1,6 +1,7 @@
 package dev.jbazann.skwidl.orders.order.services;
 
 import dev.jbazann.skwidl.commons.async.events.EventRequestPublisher;
+import dev.jbazann.skwidl.commons.exceptions.DumbassException;
 import dev.jbazann.skwidl.commons.utils.TimeProvider;
 import dev.jbazann.skwidl.orders.order.OrderRepository;
 import dev.jbazann.skwidl.orders.order.dto.*;
@@ -137,29 +138,24 @@ public class OrderService {
 
         // Wait for response from Products service.
         Map<String, Object> validatedBatch = detailValidationResponse.join();
-        if ( !(validatedBatch.get(ProductServiceRestClient.PRODUCTS_EXIST) instanceof final Boolean exist) ) {
-            dto.totalCost(BigDecimal.valueOf(-1));
-            return reject(dto.toEntity(),"Internal communication error.");
-        }
-        if( !exist ) {
+        AvailabilityResponse productsResponse = AvailabilityResponse.fromTheSillyMap(validatedBatch);
+        if( !productsResponse.productsExist() ) {
             dto.totalCost(BigDecimal.valueOf(-1));
             return reject(dto.toEntity(),"Products did not exist.");
         }
 
         // Double-check the retrieved total cost; because I must justify using CompletableFuture.
-            // Type check.
-        if( !(validatedBatch.get(ProductServiceRestClient.TOTAL_COST) instanceof final BigDecimal expectedValue) ) {
-            dto.totalCost(BigDecimal.valueOf(-1));
-            return reject(dto.toEntity(),"Internal communication error.");
-        }
+        // Yes, it's as idiotic as it looks, I *want* this.
             // Build the data structures that simplify the calculations.
-        Map<UUID, ProductAmountDTO> products = ProductAmountDTO.fromOrder(dto.toEntity()); // TODO it's a bit awkward to use toEntity here
-        Map<UUID, ProductUnitCostDTO> costs = ProductUnitCostDTO.fromValidatedBatch(validatedBatch);
+        Map<UUID, Integer> unitsPerProduct = dto.detail().stream().collect(Collectors.toMap(
+                DetailDTO::product,
+                DetailDTO::amount
+        ));
         BigDecimal verifiedCost;
             // Verify, and add the correct value to the order.
-        if( (verifiedCost = costsMatch(expectedValue, costs, products) )
-                .compareTo(BigDecimal.valueOf(-1)) == 0 ) {// if (verifiedCost == -1).
-            //TODO exceptions
+        if( (verifiedCost = costsMatch(productsResponse.totalCost(), productsResponse.unitCost(), unitsPerProduct) )
+                .compareTo(BigDecimal.valueOf(-1)) == 0 ) {
+            throw new DumbassException("Congratulations. You are an engineer who doesn't know how to multiply.");
         }
         dto.totalCost(verifiedCost);
 
@@ -181,7 +177,7 @@ public class OrderService {
         // Attempt to reserve stock.// TODO yuck
         Boolean productsReserved;
         try {
-            productsReserved = productsRemoteService.reserveProducts(products);
+            productsReserved = productsRemoteService.reserveProducts(unitsPerProduct);
         } catch (ReserveFailureException e) {
             productsReserved = false;
         }
@@ -203,14 +199,14 @@ public class OrderService {
      * @return the total cost of all products, or -1 if the provided data is inconsistent.
      */
     private BigDecimal costsMatch(BigDecimal expected,
-                                  Map<UUID, ProductUnitCostDTO> costs,
-                                  Map<UUID, ProductAmountDTO> amounts) {
+                                  Map<UUID, BigDecimal> costs,
+                                  Map<UUID, Integer> amounts) {
         if( costs.size() != amounts.size() || !costs.keySet().stream().allMatch(amounts::containsKey) )
             return BigDecimal.valueOf(-1);//
 
         BigDecimal totalCost = costs.keySet().stream()
                 // map to cost * amount
-                .map(key -> costs.get(key).unitCost().multiply(BigDecimal.valueOf(amounts.get(key).amount())))
+                .map(key -> costs.get(key).multiply(BigDecimal.valueOf(amounts.get(key))))
                 .reduce(BigDecimal::add).orElse(BigDecimal.valueOf(-1));
 
         if( totalCost.compareTo(expected) != 0 ) return BigDecimal.valueOf(-1);
