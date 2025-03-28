@@ -1,7 +1,6 @@
 package dev.jbazann.skwidl.customers.customer;
 
 import dev.jbazann.skwidl.commons.exceptions.DistributedTransactionException;
-import dev.jbazann.skwidl.commons.exceptions.EntityNotFoundException;
 import dev.jbazann.skwidl.customers.customer.dto.CustomerDTO;
 import dev.jbazann.skwidl.customers.customer.dto.EditableFieldsDTO;
 import dev.jbazann.skwidl.customers.customer.dto.NewCustomerDTO;
@@ -10,7 +9,6 @@ import dev.jbazann.skwidl.customers.customer.exceptions.InvalidCustomerException
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -25,20 +23,17 @@ import java.util.concurrent.CancellationException;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionException;
 
-
 @Service
 @Validated
 public class CustomerService {
 
-    private final CustomerService self;
     private final Customer.DefaultValues defaults;
     private final CustomerRepository customerRepository;
     private final SiteServiceClient siteService;
     private final UserServiceClient userService;
 
-    public CustomerService(CustomerRepository customerRepository, @Lazy CustomerService self, SiteServiceClient siteService, UserServiceClient userService, Customer.DefaultValues defaults) {
+    public CustomerService(CustomerRepository customerRepository, SiteServiceClient siteService, UserServiceClient userService, Customer.DefaultValues defaults) {
         this.customerRepository = customerRepository;
-        this.self = self;
         this.siteService = siteService;
         this.userService = userService;
         this.defaults = defaults;
@@ -59,7 +54,7 @@ public class CustomerService {
 
     public @NotNull @Valid Customer newCustomer(@NotNull @Valid NewCustomerDTO input) {
         CustomerDTO dto = input.toDto();
-        dto.id(self.generateCustomerId());
+        dto.id(generateCustomerId());
         dto.maxDebt(defaults.maxDebt());
         dto.budget(BigDecimal.ZERO);
         dto.maxActiveSites(defaults.maxActiveSites());
@@ -80,7 +75,7 @@ public class CustomerService {
      *               no changes will be made, but all the database operations will be performed as if they were.
      */
     public void updateCustomer(@NotNull UUID customerId, @NotNull EditableFieldsDTO fields) {
-        Customer customer = self.fetchCustomer(customerId);
+        Customer customer = fetchCustomer(customerId);
         fields.update(customer);
         customerRepository.save(customer);
     }
@@ -109,7 +104,7 @@ public class CustomerService {
                 () -> userService.addAllowedUser(customerId, userId)
         );
         // perform local operations
-        Customer customer = self.fetchCustomer(customerId);
+        Customer customer = fetchCustomer(customerId);
         customer.addAllowedUser(userId);
 
         // await success from user service
@@ -129,7 +124,7 @@ public class CustomerService {
      */
     @Transactional
     public boolean activateSite(@NotNull UUID customerId, @NotNull UUID siteId) {
-        Customer customer = self.fetchCustomer(customerId);
+        Customer customer = fetchCustomer(customerId);
         if(customer.activeSites().size() < customer.maxActiveSites()) {
             customer.addActiveSite(siteId);
             customerRepository.save(customer);
@@ -147,7 +142,7 @@ public class CustomerService {
      */
     @Transactional
     public void activatePendingSite(@NotNull UUID customerId, @NotNull UUID siteId) {
-        Customer customer = self.fetchCustomer(customerId);
+        Customer customer = fetchCustomer(customerId);
         if (customer.activeSites().size() < customer.maxActiveSites()) {
             customer.addActiveSite(siteId);
             if (customer.pendingSites() < 1); // TODO log, customer unaware of pending site
@@ -163,7 +158,7 @@ public class CustomerService {
      */
     @Transactional
     public void finishSite(@NotNull UUID customerId, @NotNull UUID siteId) {
-        Customer customer = self.fetchCustomer(customerId);
+        Customer customer = fetchCustomer(customerId);
         if(!customer.activeSites().contains(siteId)) {
             // TODO log, customer unaware of active site
             return;
@@ -180,7 +175,7 @@ public class CustomerService {
      * @param customerId a valid customer ID.
      */
     public void addPendingSite(@NotNull UUID customerId) {
-        Customer customer = self.fetchCustomer(customerId);
+        Customer customer = fetchCustomer(customerId);
         customerRepository.save(customer.countPendingSite());
     }
 
@@ -191,7 +186,7 @@ public class CustomerService {
      * @param siteId a site ID that is presumed, but not required to be valid.
      */
     public void deactivateSite(@NotNull UUID customerId, @NotNull UUID siteId) {
-        Customer customer = self.fetchCustomer(customerId);
+        Customer customer = fetchCustomer(customerId);
         if(!customer.activeSites().contains(siteId)) {
             // TODO log, customer unaware of active site
             return;
@@ -209,12 +204,12 @@ public class CustomerService {
     public @NotNull BigDecimal getCustomerBudget(@NotNull UUID customerId) {
         // TODO ideally this should only fetch budget, find out how much it actually matters, if at all.
         // TODO add or rename field, maxDebt is silly.
-        Customer customer = self.fetchCustomer(customerId);
+        Customer customer = fetchCustomer(customerId);
         return customer.maxDebt();
     }
 
     public @NotNull BigDecimal bill(@NotNull UUID customerId, @NotNull @Min(0) BigDecimal amount) {
-        Customer customer = self.fetchCustomer(customerId);
+        Customer customer = fetchCustomer(customerId);
         if (!customer.bill(amount)) {
             throw new InsufficientCreditException(
                     "Customer " + customerId + " has insufficient funds.",
@@ -226,7 +221,7 @@ public class CustomerService {
     }
 
     public @NotNull BigDecimal credit(@NotNull UUID customerId, @NotNull @Min(0) BigDecimal amount) {
-        Customer customer = self.fetchCustomer(customerId);
+        Customer customer = fetchCustomer(customerId);
         customer = customerRepository.save(customer.credit(amount));
         return customer.budget().add(customer.maxDebt());
     }

@@ -4,7 +4,6 @@ import dev.jbazann.skwidl.products.category.dto.CategoryDTO;
 import dev.jbazann.skwidl.products.category.dto.NewCategoryDTO;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.data.domain.Example;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
@@ -16,11 +15,9 @@ import java.util.UUID;
 @Validated
 public class CategoryService {
 
-    private final CategoryService self;
     private final CategoryRepository repository;
 
-    public CategoryService(@Lazy CategoryService self, CategoryRepository categoryRepository) {
-        this.self = self;
+    public CategoryService(CategoryRepository categoryRepository) {
         this.repository = categoryRepository;
     }
 
@@ -36,7 +33,7 @@ public class CategoryService {
 
     public Category newCategory(@NotNull @Valid NewCategoryDTO input) {
         CategoryDTO dto = input.toDto();
-        dto.id(self.generateCategoryId());
+        dto.id(generateCategoryId());
         @Valid Category category = dto.toEntity();
         return repository.save(category);
     }

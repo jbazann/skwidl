@@ -20,11 +20,9 @@ import java.util.UUID;
 @Validated
 public class UserService {
 
-    private final UserService self;
     private final UserRepository userRepository;
 
-    public UserService(@Lazy UserService self, UserRepository userRepository) {
-        this.self = self;
+    public UserService(UserRepository userRepository) {
         this.userRepository = userRepository;
     }
 
@@ -43,7 +41,7 @@ public class UserService {
 
     public @NotNull @Valid User newUser(@Valid @NotNull NewUserDTO input) {
         UserDTO dto = input.toDto();
-        dto.id(self.generateUserId());
+        dto.id(generateUserId());
         dto.customers(new ArrayList<>());
         @Valid User user = dto.toEntity();
         return userRepository.save(user);
@@ -59,7 +57,7 @@ public class UserService {
     @SuppressWarnings("UnusedReturnValue")
     @Transactional// TODO
     public @NotNull @Valid User addAllowedUser(@NotNull UUID customerId, @NotNull UUID userId) {
-        User user = self.fetchUser(userId);
+        User user = fetchUser(userId);
         if(isEnabledFor(user, customerId)) {
             /* do not throw exception until decoupled from CustomerService
             throw new InvalidOperationException("User " + userId + " is already enabled for client " + customerId + '.') ;

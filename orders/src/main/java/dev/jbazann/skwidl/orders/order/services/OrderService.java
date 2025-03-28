@@ -14,7 +14,6 @@ import dev.jbazann.skwidl.orders.order.exceptions.ReserveFailureException;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.data.domain.Example;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
@@ -28,7 +27,6 @@ import java.util.stream.Collectors;
 @Validated
 public class OrderService {
 
-    private final OrderService self;
     private final ProductServiceClient productsRemoteService;
     private final CustomerServiceClient customersRemoteService;
     private final OrderNumberServiceLocalClient orderNumberServiceLocalClient;
@@ -37,8 +35,7 @@ public class OrderService {
     private final EventRequestPublisher publisher;
 
     @Autowired
-    public OrderService(@Lazy OrderService self, ProductServiceClient productsRemoteService, CustomerServiceClient customersRemoteService, OrderNumberServiceLocalClient orderNumberServiceLocalClient, OrderRepository orderRepository, DomainEventBuilder builder, EventRequestPublisher publisher) {
-        this.self = self;
+    public OrderService(ProductServiceClient productsRemoteService, CustomerServiceClient customersRemoteService, OrderNumberServiceLocalClient orderNumberServiceLocalClient, OrderRepository orderRepository, DomainEventBuilder builder, EventRequestPublisher publisher) {
         this.productsRemoteService = productsRemoteService;
         this.customersRemoteService = customersRemoteService;
         this.orderNumberServiceLocalClient = orderNumberServiceLocalClient;
@@ -118,11 +115,12 @@ public class OrderService {
         StringBuilder message = validate(input);
         if(!message.isEmpty()) throw new MalformedArgumentException(message.toString());
         OrderDTO dto = input.toDto();
-        dto.id(self.generateOrderId())
+        dto.id(generateOrderId())
                 .orderNumber(orderNumberServiceLocalClient.next())
                 .ordered(TimeProvider.localDateTimeNow())
                 .totalCost(BigDecimal.valueOf(-1));
-        dto.detail().forEach(d -> d.id(self.generateDetailId()));
+        dto.detail().forEach(d -> d.id(generateDetailId()));
+        dto.statusHistory(new ArrayList<>());
 
         // Request validation and unit cost for all the products in the order.
         List<Map<String, Object>> batchToValidate = new LinkedList<>();
@@ -141,18 +139,18 @@ public class OrderService {
         Map<String, Object> validatedBatch = detailValidationResponse.join();
         if ( !(validatedBatch.get(ProductServiceRestClient.PRODUCTS_EXIST) instanceof final Boolean exist) ) {
             dto.totalCost(BigDecimal.valueOf(-1));
-            return self.reject(dto.toEntity(),"Internal communication error.");
+            return reject(dto.toEntity(),"Internal communication error.");
         }
         if( !exist ) {
             dto.totalCost(BigDecimal.valueOf(-1));
-            return self.reject(dto.toEntity(),"Products did not exist.");
+            return reject(dto.toEntity(),"Products did not exist.");
         }
 
         // Double-check the retrieved total cost; because I must justify using CompletableFuture.
             // Type check.
         if( !(validatedBatch.get(ProductServiceRestClient.TOTAL_COST) instanceof final BigDecimal expectedValue) ) {
             dto.totalCost(BigDecimal.valueOf(-1));
-            return self.reject(dto.toEntity(),"Internal communication error.");
+            return reject(dto.toEntity(),"Internal communication error.");
         }
             // Build the data structures that simplify the calculations.
         Map<UUID, ProductAmountDTO> products = ProductAmountDTO.fromOrder(dto.toEntity()); // TODO it's a bit awkward to use toEntity here
@@ -168,16 +166,16 @@ public class OrderService {
         // Check that budget is enough.
         BigDecimal budget = budgetResponse.join();
         if( budget.compareTo(verifiedCost) < 0 ) {
-            return self.reject(dto.toEntity(), "Insufficient funds.");
+            return reject(dto.toEntity(), "Insufficient funds.");
         }
 
         // Reserve customer funds.
         Boolean success = customersRemoteService.billFor(dto.customer(),dto.totalCost());
         @Valid Order order;
         if ( success != null && success ) {
-            order = self.accept(dto.toEntity(),"");
+            order = accept(dto.toEntity(),"");
         } else {
-            return self.reject(dto.toEntity(), success == null ? "Null billing response." : "Insufficient funds.");
+            return reject(dto.toEntity(), success == null ? "Null billing response." : "Insufficient funds.");
         }
 
         // Attempt to reserve stock.// TODO yuck
@@ -188,7 +186,7 @@ public class OrderService {
             productsReserved = false;
         }
         if( productsReserved != null && productsReserved ) {
-            order = self.prepare(order, "");
+            order = prepare(order, "");
         }
 
         return order;
