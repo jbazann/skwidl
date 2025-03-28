@@ -1,0 +1,31 @@
+<configuration>
+    <springProfile name="dev">
+        <include resource="org/springframework/boot/logging/logback/defaults.xml"/>
+        <include resource="org/springframework/boot/logging/logback/console-appender.xml" />
+        <root level="INFO">
+            <appender-ref ref="CONSOLE" />
+        </root>
+    </springProfile>
+    <springProfile name="debug">
+        <include resource="org/springframework/boot/logging/logback/defaults.xml"/>
+        <include resource="org/springframework/boot/logging/logback/console-appender.xml" />
+        <root level="DEBUG">
+            <appender-ref ref="CONSOLE" />
+        </root>
+    </springProfile>
+    <springProfile name="graylog">
+        <include resource="org/springframework/boot/logging/logback/defaults.xml"/>
+        <include resource="org/springframework/boot/logging/logback/console-appender.xml" />
+        <appender name="GRAYLOG" class="com.github.pukkaone.gelf.logback.GelfAppender">
+            <graylogHost>graylog.graylog</graylogHost>
+            <graylogPort>12012</graylogPort>
+            <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+                <level>INFO</level>
+            </filter>
+        </appender>
+        <root level="INFO">
+            <appender-ref ref="GRAYLOG"/>
+            <appender-ref ref="CONSOLE" />
+        </root>
+    </springProfile>
+</configuration>
