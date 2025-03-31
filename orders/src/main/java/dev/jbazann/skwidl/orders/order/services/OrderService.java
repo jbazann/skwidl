@@ -115,6 +115,7 @@ public class OrderService {
         }
     }
 
+    // TODO refactoring candidate
     public @NotNull @Valid Order newOrder(@Valid @NotNull NewOrderDTO input) {
         StringBuilder message = validate(input);
         if(!message.isEmpty()) throw new MalformedArgumentException(message.toString());
@@ -165,6 +166,13 @@ public class OrderService {
             ));
         }
         dto.totalCost(verifiedCost);
+
+        // Set uninitialized Detail values
+        dto.detail().forEach(d -> {
+            d.discount(BigDecimal.ZERO); // TODO refactor API to provide this value
+            d.unitCost(productsResponse.unitCost().get(d.product()));
+            d.totalCost(d.unitCost().multiply(BigDecimal.valueOf(d.amount())));
+        });
 
         // Check that budget is enough.
         BigDecimal budget = budgetResponse.join();

@@ -1,6 +1,7 @@
 package dev.jbazann.skwidl.orders.order.dto;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
+import dev.jbazann.skwidl.commons.utils.TimeProvider;
 import dev.jbazann.skwidl.orders.order.entities.StatusHistory;
 import lombok.*;
 import lombok.experimental.Accessors;
@@ -24,7 +25,7 @@ public class StatusHistoryDTO {
     private String detail;
 
     public StatusHistory toEntity() {
-        return new StatusHistory(id, date, status, detail);
+        return new StatusHistory(id, date == null ? TimeProvider.localDateTimeNow() : date, status, detail);
     }
 
 }
