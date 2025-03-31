@@ -1,6 +1,5 @@
 package dev.jbazann.skwidl.commons.rest;
 
-import dev.jbazann.skwidl.commons.exceptions.CommonsInternalException;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpRequest;
 import org.springframework.http.client.ClientHttpRequestExecution;
@@ -17,10 +16,8 @@ public class LoggingRequestInterceptor implements ClientHttpRequestInterceptor {
 
     @Override
     public @NonNull ClientHttpResponse intercept(HttpRequest request, @NonNull byte[] body, @NonNull ClientHttpRequestExecution execution) throws IOException {
-        String threadName = Thread.currentThread().getName();
         logger.info(String.format(
-                "%s: REQUEST %s %s",
-                threadName,
+                "REQUEST %s %s",
                 request.getMethod(),
                 request.getURI()
         ) + String.format( // Include attributes only if one or more exist.
@@ -33,8 +30,7 @@ public class LoggingRequestInterceptor implements ClientHttpRequestInterceptor {
 
         ClientHttpResponse response = execution.execute(request, body);
         logger.info(String.format(
-                "%s: RESPONSE %s.",
-                threadName,
+                "RESPONSE %s.",
                 response.getStatusCode()
         ));
         return response;
