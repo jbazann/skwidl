@@ -7,6 +7,7 @@ import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import static dev.jbazann.skwidl.orders.order.services.ProductServiceRestClient.*;
 
@@ -25,11 +26,17 @@ public class AvailabilityResponse {
 
     @SuppressWarnings("unchecked")
     public static AvailabilityResponse fromTheSillyMap(Map<String, Object> hehe) {
+        Map<UUID, BigDecimal> unitCost = ((Map<String, String>) hehe.get(UNIT_COST))
+                .entrySet().stream()
+                .collect(Collectors.toMap(
+                        (entry) -> UUID.fromString(entry.getKey()),
+                        (entry) -> new BigDecimal(entry.getValue())
+                ));
         return new AvailabilityResponse()
                 .productsExist((Boolean)hehe.get(PRODUCTS_EXIST))
                 .missingProducts((List<UUID>)hehe.get("missingProducts"))
-                .unitCost((Map<UUID, BigDecimal>)hehe.get(UNIT_COST))
-                .totalCost((BigDecimal)hehe.get(TOTAL_COST));
+                .unitCost(unitCost)
+                .totalCost(new BigDecimal((String)hehe.get(TOTAL_COST)));
     }
 
 }
