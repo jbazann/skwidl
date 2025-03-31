@@ -2,6 +2,8 @@ package dev.jbazann.skwidl.orders.order.services;
 
 import dev.jbazann.skwidl.commons.async.events.EventRequestPublisher;
 import dev.jbazann.skwidl.commons.exceptions.DumbassException;
+import dev.jbazann.skwidl.commons.logging.Logger;
+import dev.jbazann.skwidl.commons.logging.LoggerFactory;
 import dev.jbazann.skwidl.commons.utils.TimeProvider;
 import dev.jbazann.skwidl.orders.order.OrderRepository;
 import dev.jbazann.skwidl.orders.order.dto.*;
@@ -34,6 +36,7 @@ public class OrderService {
     private final OrderRepository orderRepository;
     private final DomainEventBuilder builder;
     private final EventRequestPublisher publisher;
+    private final Logger log = LoggerFactory.get(OrderService.class);
 
     @Autowired
     public OrderService(ProductServiceClient productsRemoteService, CustomerServiceClient customersRemoteService, OrderNumberServiceLocalClient orderNumberServiceLocalClient, OrderRepository orderRepository, DomainEventBuilder builder, EventRequestPublisher publisher) {
@@ -155,7 +158,11 @@ public class OrderService {
             // Verify, and add the correct value to the order.
         if( (verifiedCost = costsMatch(productsResponse.totalCost(), productsResponse.unitCost(), unitsPerProduct) )
                 .compareTo(BigDecimal.valueOf(-1)) == 0 ) {
-            throw new DumbassException("Congratulations. You are an engineer who doesn't know how to multiply.");
+            throw new DumbassException(String.format(
+                    "Congratulations. You are an engineer who doesn't know how to multiply. Expected: %s Calculated: %s.",
+                    productsResponse.totalCost(),
+                    verifiedCost
+            ));
         }
         dto.totalCost(verifiedCost);
 
@@ -201,15 +208,19 @@ public class OrderService {
     private BigDecimal costsMatch(BigDecimal expected,
                                   Map<UUID, BigDecimal> costs,
                                   Map<UUID, Integer> amounts) {
-        if( costs.size() != amounts.size() || !costs.keySet().stream().allMatch(amounts::containsKey) )
-            return BigDecimal.valueOf(-1);//
+        log.method(Thread.currentThread().getStackTrace(),expected,costs,amounts);
+        BigDecimal totalCost = BigDecimal.valueOf(-1);
+        boolean keysMatch = costs.keySet().stream().allMatch(amounts::containsKey);
+        boolean sizesMatch = costs.size() == amounts.size();
+        log.debug("Size matching: %b. Key matching: %b",sizesMatch,keysMatch);
+        if( sizesMatch && keysMatch ) {
+            totalCost = costs.keySet().stream()
+                    // map to cost * amount
+                    .map(key -> costs.get(key).multiply(BigDecimal.valueOf(amounts.get(key))))
+                    .reduce(BigDecimal::add).orElse(BigDecimal.valueOf(-1));
+        }
 
-        BigDecimal totalCost = costs.keySet().stream()
-                // map to cost * amount
-                .map(key -> costs.get(key).multiply(BigDecimal.valueOf(amounts.get(key))))
-                .reduce(BigDecimal::add).orElse(BigDecimal.valueOf(-1));
-
-        if( totalCost.compareTo(expected) != 0 ) return BigDecimal.valueOf(-1);
+        log.result(totalCost);
         return totalCost;
     }
 
