@@ -1,7 +1,6 @@
 package dev.jbazann.skwidl.products.product;
 
 import dev.jbazann.skwidl.commons.exceptions.EntityNotFoundException;
-import dev.jbazann.skwidl.commons.exceptions.UnknownErrorException;
 import dev.jbazann.skwidl.products.product.api.AvailabilityResponse;
 import dev.jbazann.skwidl.products.product.api.StockRequest;
 import dev.jbazann.skwidl.products.product.dto.DiscountDTO;
@@ -68,25 +67,32 @@ public class ProductService {
         return actions.save(product);
     }
 
+    // TODO this implementation is ass
     public AvailabilityResponse checkAvailability(@NotNull @NotEmpty List<@NotNull @Valid StockRequest> entries) {
         List<UUID> ids = entries.stream().map(StockRequest::productId).toList();
         Map<UUID, Product> productMap = actions.fetchAll(ids).stream()
                 .collect(Collectors.toMap(Product::id, Function.identity()));
         AvailabilityResponse response = new AvailabilityResponse();
 
+        // Check that all products were found.
         final int amountNotFound = entries.size() - productMap.size();
         response.productsExist(amountNotFound == 0);
 
-        // Calculate unit costs
         response.unitCost(new HashMap<>());
+        response.totalCost(BigDecimal.ZERO);
         List<UUID> notFoundIds = new ArrayList<>(amountNotFound);
         entries.forEach(e -> {
             Product p;
             if ((p = productMap.get(e.productId())) == null) {
                 notFoundIds.add(e.productId());
+            } else if (p.currentStock() < e.amount()) {
+                notFoundIds.add(e.productId());
             } else {
                 BigDecimal discountedPrice = p.price().subtract(p.price().multiply(p.discount()));
                 response.unitCost().put(p.id(), discountedPrice);
+                response.totalCost(response.totalCost().add(
+                        discountedPrice.multiply(BigDecimal.valueOf(e.amount()))
+                ));
             }
         });
 
@@ -94,11 +100,6 @@ public class ProductService {
             response.missingProducts(new ArrayList<>());
             notFoundIds.forEach(id -> response.missingProducts().add(id));
         }
-
-        response.totalCost(
-                response.unitCost().values().stream().reduce(BigDecimal::add).
-                        orElseThrow(UnknownErrorException::new)
-        );
 
         return response;
     }
