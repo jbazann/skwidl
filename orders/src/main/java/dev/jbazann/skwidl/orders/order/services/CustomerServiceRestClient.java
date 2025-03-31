@@ -57,8 +57,9 @@ public class CustomerServiceRestClient implements CustomerServiceClient {
     @Override
     public Boolean billFor(UUID id, BigDecimal amount) {
         return restClientBuilder.baseUrl(CUSTOMERS_ROOT).build().post()
-                .uri(CUSTOMERS_WALLET, id)
-                .attribute(OPERATION, BILL)
+                .uri((builder) -> builder.path(CUSTOMERS_WALLET)
+                        .queryParam(OPERATION,BILL)
+                        .build(id))
                 .body(amount)
                 .exchange((req, resp) -> {
                     if (resp.getStatusCode().isSameCodeAs(HttpStatus.OK)) return true;
