@@ -11,22 +11,22 @@
         primary key (id)
     ) engine=InnoDB;
 
-    create table Customer_activeSites (
+    create table customer_active_sites (
         Customer_id binary(16) not null,
         active_sites binary(16)
     ) engine=InnoDB;
 
-    create table Customer_allowedUsers (
+    create table customer_allowed_users (
         Customer_id binary(16) not null,
         allowed_users binary(16)
     ) engine=InnoDB;
 
-    alter table Customer_activeSites 
-       add constraint FKp85bcth6v2wuacxg7vx9x6uk6 
+    alter table customer_active_sites 
+       add constraint FKsa2am22d2c2po265lu4rcm7nn 
        foreign key (Customer_id) 
        references customer (id);
 
-    alter table Customer_allowedUsers 
-       add constraint FK95rwfxqep8a44q5od26h6vfjm 
+    alter table customer_allowed_users 
+       add constraint FKspubd04rgskome6fon629kydc 
        foreign key (Customer_id) 
        references customer (id);

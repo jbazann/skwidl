@@ -47,10 +47,12 @@ public class Customer {
     @ElementCollection
     @NotNull
     @Column(name = "allowed_users")
+    @JoinTable(name = "customer_allowed_users")
     private List<@NotNull UUID> allowedUsers;
     @ElementCollection
     @NotNull
     @Column(name = "active_sites")
+    @JoinTable(name = "customer_active_sites")
     private List<@NotNull UUID> activeSites;
     @NotNull @Min(0)
     @Column(name = "pending_sites")
