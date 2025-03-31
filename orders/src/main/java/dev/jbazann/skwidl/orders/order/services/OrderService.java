@@ -184,7 +184,7 @@ public class OrderService {
         // Attempt to reserve stock.// TODO yuck
         Boolean productsReserved;
         try {
-            productsReserved = productsRemoteService.reserveProducts(unitsPerProduct);
+            productsReserved = productsRemoteService.reserveProducts(batchToValidate); // TODO stinky
         } catch (ReserveFailureException e) {
             productsReserved = false;
         }

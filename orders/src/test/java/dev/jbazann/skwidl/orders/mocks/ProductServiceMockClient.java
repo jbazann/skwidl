@@ -51,7 +51,7 @@ public class ProductServiceMockClient implements ProductServiceClient {
     }
 
     @Override
-    public Boolean reserveProducts(Map<UUID, Integer> products) {
+    public Boolean reserveProducts(List<Map<String, Object>> products) {
         return mock.reserveProducts(products);
     }
 

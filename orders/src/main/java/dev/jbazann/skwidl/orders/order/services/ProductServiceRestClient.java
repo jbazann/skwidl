@@ -106,7 +106,7 @@ public class ProductServiceRestClient implements ProductServiceClient {
     }
 
 
-    public Boolean reserveProducts(Map<UUID, Integer> products) {
+    public Boolean reserveProducts(List<Map<String, Object>> products) {
         return restClientBuilder.baseUrl(PRODUCTS).build()
                 .post().uri(builder -> builder.path(PRODUCTS_COLLECTION)
                         .queryParam(PRODUCTS_PARAMS_OPERATION, PRODUCTS_OPERATION_RESERVE)
