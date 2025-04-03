@@ -1,0 +1,42 @@
+.contentArea {
+    position: fixed;
+    display: grid;
+    grid-template-columns: auto;
+    grid-template-rows:
+        min(var(--header-height),var(--header-max-height))
+        var(--content-height)
+        min(var(--header-height),var(--header-max-height));
+    grid-template-areas: "header" "main" "footer";
+    margin: var(--margin-y) var(--margin-x);
+    height: var(--height);
+    width: var(--width);
+    box-sizing: border-box;
+    border: antiquewhite solid 1px; /* TODO colors */
+    border-radius: 5px;
+}
+
+.header {
+    grid-area: header;
+}
+
+.main {
+    grid-area: main;
+}
+
+.footer {
+    grid-area: footer;
+}
+
+.headerBorderContainer, .footerBorderContainer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.footerBorderContainer {
+    justify-content: start;
+}
+
+.headerBorderContainer {
+    justify-content: end;
+}

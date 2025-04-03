@@ -1,0 +1,33 @@
+.onRadio:checked ~ .closeButton {
+    display: block
+}
+
+.offRadio:checked ~ .openButton{
+    display: block
+}
+
+.noneRadio:checked ~ .closeButton {
+    display: none;
+}
+
+.onRadio:checked ~ .contentDiv, .noneRadio:checked ~ .contentDiv {
+    display: block
+}
+
+.displayCheck, .onRadio, .offRadio, .noneRadio {
+    display: none;
+}
+
+.openButton {
+    display: none
+}
+
+.closeButton {
+    display: none
+}
+
+.contentDiv {
+    display: none;
+    height: 100%;
+    width: 100%;
+}

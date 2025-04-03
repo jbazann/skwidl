@@ -1,37 +1,50 @@
 :root {
+
+
+  --margin-y: 6.12vh;
+  --margin-x: 6vw;
+  --height: calc(100vh - 2 * var(--margin-y)); /* "calc" is slang for calculator btw */
+  --width: calc(100vw - 2 * var(--margin-x));
+  --header-height: 2.22rem;
+  --header-max-height: calc(var(--height) * 0.22);
+  --content-height: calc(var(--height) - 2 * min(var(--header-height),var(--header-max-height)));
+
+
+
   --max-width: 1100px;
   --border-radius: 12px;
-  --font-mono: ui-monospace, Menlo, Monaco, "Cascadia Mono", "Segoe UI Mono",
-    "Roboto Mono", "Oxygen Mono", "Ubuntu Monospace", "Source Code Pro",
-    "Fira Mono", "Droid Sans Mono", "Courier New", monospace;
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
+  "Liberation Mono", "Cascadia Mono", "Segoe UI Mono",
+  "Roboto Mono", "Oxygen Mono", "Ubuntu Monospace", "Source Code Pro",
+  "Fira Mono", "Droid Sans Mono", "Courier New", monospace;
 
   --foreground-rgb: 0, 0, 0;
   --background-start-rgb: 214, 219, 220;
   --background-end-rgb: 255, 255, 255;
 
   --primary-glow: conic-gradient(
-    from 180deg at 50% 50%,
-    #16abff33 0deg,
-    #0885ff33 55deg,
-    #54d6ff33 120deg,
-    #0071ff33 160deg,
-    transparent 360deg
+          from 180deg at 50% 50%,
+          #16abff33 0deg,
+          #0885ff33 55deg,
+          #54d6ff33 120deg,
+          #0071ff33 160deg,
+          transparent 360deg
   );
   --secondary-glow: radial-gradient(
-    rgba(255, 255, 255, 1),
-    rgba(255, 255, 255, 0)
+          rgba(255, 255, 255, 1),
+          rgba(255, 255, 255, 0)
   );
 
   --tile-start-rgb: 239, 245, 249;
   --tile-end-rgb: 228, 232, 233;
   --tile-border: conic-gradient(
-    #00000080,
-    #00000040,
-    #00000030,
-    #00000020,
-    #00000010,
-    #00000010,
-    #00000080
+          #00000080,
+          #00000040,
+          #00000030,
+          #00000020,
+          #00000010,
+          #00000010,
+          #00000080
   );
 
   --callout-rgb: 238, 240, 241;
@@ -104,4 +117,112 @@ a {
   html {
     color-scheme: dark;
   }
+}
+
+/*
+ * STD ELEMENTS
+ */
+
+/* BUTTON */
+.menu-button {
+  margin: 0.22rem 0;
+  padding: 0.52rem 1rem;
+  user-select: none;
+  font-family: var(--font-mono);
+  font-size: 1rem;
+  background: none;
+  border: none;
+  text-underline-offset: 0;
+  text-decoration-thickness: 1px;
+}
+
+.menu-button:hover {
+  scale: 112%;
+  text-underline-offset: 0.42rem;
+  text-decoration-thickness: 12%;
+  text-decoration-line: underline;
+  cursor: pointer;
+}
+
+.menu-button:focus {
+  text-underline-offset: 0.22rem;
+  text-decoration-thickness: 12%;
+  text-decoration-line: underline;
+}
+
+.menu-button:active {
+  scale: 92%;
+  text-underline-offset: 0.08rem;
+  text-decoration-thickness: 22%;
+  text-decoration-line: underline;
+}
+
+
+
+/* #### */
+
+
+
+/*
+ * UTILITIES
+ */
+
+.hidden {
+  display: none
+}
+
+.contents {
+  display: contents;
+}
+
+.flex-row {
+  display: flex;
+  flex-direction: row;
+}
+
+.flex-row-reverse {
+  display: flex;
+  flex-direction: row-reverse;
+}
+
+.flex-col {
+  display: flex;
+  flex-direction: column;
+}
+
+.flex-col-reverse {
+  display: flex;
+  flex-direction: column-reverse;
+}
+
+.center-self {
+  place-self: center;
+}
+
+.center-children {
+  justify-content: center;
+  justify-items: center;
+  align-content: center;
+  align-items: center;
+}
+
+.relative-container {
+  position: relative;
+  height: 100%;
+  width: 100%;
+}
+
+.absolute-container {
+  position: absolute;
+  inset: 0 0;
+}
+
+.hr {
+  height: 0;
+  width: 72%;
+  border-bottom: antiquewhite solid 1px; /* TODO colors */
+}
+
+.auto-scroll-y {
+  overflow-y: auto;
 }

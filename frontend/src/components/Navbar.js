@@ -4,9 +4,9 @@ import Link from 'next/link';
 const Navbar = () => {
   return (
     <nav>
-      <Link href="/clientes">Clientes</Link>
-      <Link href="/productos">Productos</Link>
-      <Link href="/pedidos">Pedidos</Link>
+      <Link href="/clientes">Customers</Link>
+      <Link href="/products">Products</Link>
+      <Link href="/pedidos">Orders</Link>
       <style jsx>{`
         nav {
           background: #333;

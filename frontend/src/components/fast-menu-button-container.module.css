@@ -1,0 +1,12 @@
+
+.hideCheck:checked ~ input[type="checkbox"]:not(:checked) + div {
+    display: none
+}
+
+.hideChildren {}
+.hideCheck {}
+
+.container {
+    height: 100%;
+    width: 100%;
+}

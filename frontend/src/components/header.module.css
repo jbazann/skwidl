@@ -1,0 +1,10 @@
+.headerContainer {
+    position: relative;
+    width: 62%;
+    height: min(1.32rem,62%);
+    overflow: hidden;
+}
+
+.p {
+    text-align: center;
+}
