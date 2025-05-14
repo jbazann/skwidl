@@ -10,6 +10,7 @@ import static dev.jbazann.skwidl.commons.async.events.DomainEvent.Type.*;
 /**
  * A bunch of common responses that save me three to five keystrokes whenever
  * I need them.
+ * @deprecated 
  */
 @Validated
 public class EventAnswerPublisher {
