@@ -4,7 +4,9 @@ import dev.jbazann.skwidl.commons.async.events.DomainEventBuilder;
 import dev.jbazann.skwidl.commons.async.events.EventAnswerPublisher;
 import dev.jbazann.skwidl.commons.async.events.EventsConfiguration;
 import dev.jbazann.skwidl.commons.async.rabbitmq.RabbitCoordinatorListenerService;
+import dev.jbazann.skwidl.commons.async.rabbitmq.RabbitPublisher;
 import dev.jbazann.skwidl.commons.async.transactions.TransactionCoordinatorService;
+import dev.jbazann.skwidl.commons.async.transactions.TransactionCoordinatorStrategySelector;
 import dev.jbazann.skwidl.commons.async.transactions.entities.CoordinatedTransactionRepository;
 import dev.jbazann.skwidl.commons.identity.ApplicationMember;
 import dev.jbazann.skwidl.commons.identity.IdentityConfiguration;
@@ -22,16 +24,25 @@ import org.springframework.context.annotation.Import;
 public class DistributedTransactionCoordinatorConfiguration {
 
     @Bean
-    public TransactionCoordinatorService standardTransactionCoordinatorService(ApplicationMember member,
-                                                                               CoordinatedTransactionRepository repository,
-                                                                               EventAnswerPublisher publisher,
-                                                                               DomainEventBuilder builder) {
-        return new TransactionCoordinatorService(member, repository, publisher, builder);
+    public TransactionCoordinatorStrategySelector standardTransactionCoordinatorStrategySelector() {
+        return new TransactionCoordinatorStrategySelector();
+    }
+
+    @Bean
+    public TransactionCoordinatorService standardTransactionCoordinatorService(
+            ApplicationMember member,
+            CoordinatedTransactionRepository repository,
+            DomainEventBuilder builder,
+            TransactionCoordinatorStrategySelector strategies,
+            RabbitPublisher publisher
+    ) {
+        return new TransactionCoordinatorService(member, repository, builder, strategies, publisher);
     }
 
     @Bean
     public RabbitCoordinatorListenerService standardRabbitCoordinatorListenerService(
-            TransactionCoordinatorService coordinator) {
+            TransactionCoordinatorService coordinator
+    ) {
         return new RabbitCoordinatorListenerService(coordinator);
     }
 

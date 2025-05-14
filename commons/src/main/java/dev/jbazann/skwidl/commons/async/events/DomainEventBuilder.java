@@ -77,6 +77,11 @@ public class DomainEventBuilder {
         return this;
     }
 
+    public @NotNull DomainEventBuilder withContext(@NotNull String format, @NotNull Object... args) {
+        event.context(String.format(format,args));
+        return this;
+    }
+
     public @NotNull DomainEventBuilder withQuorumMembers(@NotNull @NotEmpty List<@NotNull ApplicationMember> quorum) {
         event.transaction().quorum().members(quorum);
         return this;

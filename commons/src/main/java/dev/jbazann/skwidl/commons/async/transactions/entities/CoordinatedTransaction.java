@@ -31,7 +31,6 @@ public class CoordinatedTransaction {
     private List<ApplicationMember> rollback;
     @NotNull
     private CoordinatedTransaction.TransactionStatus status;
-    private boolean isCommitted;
     @NotNull
     private LocalDateTime expires;
 
@@ -42,17 +41,16 @@ public class CoordinatedTransaction {
                 .forEach(member -> quorumStatus.put(member, QuorumStatus.UNKNOWN));
         return new CoordinatedTransaction()
                 .id(event.transaction().id())
-                .status(TransactionStatus.NOT_PERSISTED)
+                .status(TransactionStatus.STARTED)
                 .quorumStatus(quorumStatus)
                 .rollback(new ArrayList<>())
-                .isCommitted(false)
                 .expires(event.transaction().expires());
     }
 
     public boolean isExpired() {
         return TimeProvider.localDateTimeNow().isAfter(expires);
     }
-
+    
     public @NotNull @Valid CoordinatedTransaction addAccept(@NotNull @Valid ApplicationMember member) {
         quorumStatus.put(member, QuorumStatus.ACCEPT);
         return this;
@@ -96,7 +94,7 @@ public class CoordinatedTransaction {
     public boolean isConcluded() {
         return switch (status) {
             case CONCLUDED_REJECT, CONCLUDED_COMMIT, CONCLUDED_EXPIRED -> true;
-            case NOT_PERSISTED, STARTED, ACCEPTED, REJECTED, COMMITTED -> false;
+            case STARTED, REJECTED, COMMITTED -> false;
         };
     }
 
@@ -109,9 +107,7 @@ public class CoordinatedTransaction {
     }
 
     public enum TransactionStatus {
-        NOT_PERSISTED,
         STARTED,
-        ACCEPTED,
         REJECTED,
         COMMITTED,
         CONCLUDED_EXPIRED,
