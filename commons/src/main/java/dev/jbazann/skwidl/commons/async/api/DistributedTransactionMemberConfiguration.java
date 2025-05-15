@@ -1,8 +1,9 @@
 package dev.jbazann.skwidl.commons.async.api;
 
-import dev.jbazann.skwidl.commons.async.events.EventAnswerPublisher;
+import dev.jbazann.skwidl.commons.async.events.DomainEventBuilder;
 import dev.jbazann.skwidl.commons.async.events.EventsConfiguration;
 import dev.jbazann.skwidl.commons.async.rabbitmq.RabbitMemberListenerService;
+import dev.jbazann.skwidl.commons.async.rabbitmq.RabbitPublisher;
 import dev.jbazann.skwidl.commons.async.transactions.*;
 import dev.jbazann.skwidl.commons.identity.ApplicationMember;
 import dev.jbazann.skwidl.commons.identity.IdentityConfiguration;
@@ -19,8 +20,11 @@ import org.springframework.context.annotation.Import;
 public class DistributedTransactionMemberConfiguration {
 
     @Bean
-    public TransactionResponseService standardTransactionResponseService(EventAnswerPublisher publisher) {
-        return new TransactionResponseService(publisher);
+    public TransactionResponseService standardTransactionResponseService(
+            RabbitPublisher publisher,
+            DomainEventBuilder builder
+    ) {
+        return new TransactionResponseService(publisher, builder);
     }
 
     @Bean
@@ -28,8 +32,10 @@ public class DistributedTransactionMemberConfiguration {
             TransactionStageExecutorService executor,
             ApplicationMember member,
             TransactionResponseService response,
-            EventAnswerPublisher publisher) {
-        return new TransactionMemberService(executor, member, response, publisher);
+            RabbitPublisher publisher,
+            DomainEventBuilder builder
+    ) {
+        return new TransactionMemberService(executor, member, response, publisher, builder);
     }
 
     @Bean

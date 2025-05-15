@@ -1,7 +1,6 @@
 package dev.jbazann.skwidl.commons.async.api;
 
 import dev.jbazann.skwidl.commons.async.events.DomainEventBuilder;
-import dev.jbazann.skwidl.commons.async.events.EventAnswerPublisher;
 import dev.jbazann.skwidl.commons.async.events.EventsConfiguration;
 import dev.jbazann.skwidl.commons.async.rabbitmq.RabbitCoordinatorListenerService;
 import dev.jbazann.skwidl.commons.async.rabbitmq.RabbitPublisher;

@@ -1,7 +1,8 @@
 package dev.jbazann.skwidl.commons.async.transactions;
 
 import dev.jbazann.skwidl.commons.async.events.DomainEvent;
-import dev.jbazann.skwidl.commons.async.events.EventAnswerPublisher;
+import dev.jbazann.skwidl.commons.async.events.DomainEventBuilder;
+import dev.jbazann.skwidl.commons.async.rabbitmq.RabbitPublisher;
 import dev.jbazann.skwidl.commons.identity.ApplicationMember;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
@@ -17,14 +18,16 @@ public class TransactionMemberService {
     private final ApplicationMember member;
     private final TransactionStageExecutorService executor;
     private final TransactionResponseService response;
-    private final EventAnswerPublisher publisher;
+    private final RabbitPublisher publisher;
+    private final DomainEventBuilder builder;
     private final List<DomainEvent.Type> ACTION_EVENTS = List.of(REQUEST, COMMIT, ROLLBACK);
 
-    public TransactionMemberService(TransactionStageExecutorService executor, ApplicationMember member, TransactionResponseService response, EventAnswerPublisher publisher) {
+    public TransactionMemberService(TransactionStageExecutorService executor, ApplicationMember member, TransactionResponseService response, RabbitPublisher publisher, DomainEventBuilder builder) {
         this.member = member;
         this.executor = executor;
         this.response = response;
         this.publisher = publisher;
+        this.builder = builder;
     }
 
     public void handleEvent(@NotNull @Valid DomainEvent event) {
@@ -35,13 +38,14 @@ public class TransactionMemberService {
             final TransactionResult result = executor.runStageFor(event);
             response.sendResponse(event, result);
         } else {
-            publisher.discard(event, "No action required.");
+            publisher.publish(builder.discard(event));
         }
     }
 
     private boolean handleNotAMember(DomainEvent event) {
         if (!event.transaction().quorum().isMember(member)) {
-            publisher.discard(event, "Not a quorum member.");
+            publisher.publish(builder.forEvent(event)
+                    .discard("Not a quorum member."));
             return true;
         }
         return false;
@@ -53,7 +57,7 @@ public class TransactionMemberService {
             case ACCEPT, REQUEST, COMMIT, REJECT, ROLLBACK -> false;
         };
         if (shouldDiscard) {
-            publisher.discard(event, "No action required for event type.");
+            publisher.publish(builder.discard(event));
             return true;
         }
         return false;
