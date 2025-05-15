@@ -12,7 +12,7 @@ public class TransactionCoordinatorRejectStrategy implements TransactionCoordina
     private final DomainEvent event;
     private final DomainEventBuilder builder;
 
-    protected TransactionCoordinatorRejectStrategy(CoordinatedTransaction transaction, DomainEvent event, DomainEventBuilder builder) {
+    public TransactionCoordinatorRejectStrategy(CoordinatedTransaction transaction, DomainEvent event, DomainEventBuilder builder) {
         this.transaction = transaction;
         this.event = event;
         this.builder = builder;

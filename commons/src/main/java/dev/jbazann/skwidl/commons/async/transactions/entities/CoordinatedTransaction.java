@@ -47,7 +47,7 @@ public class CoordinatedTransaction {
                 .expires(event.transaction().expires());
     }
 
-    public boolean isExpired() {
+    public boolean isTimeExpired() {
         return TimeProvider.localDateTimeNow().isAfter(expires);
     }
     
@@ -84,17 +84,34 @@ public class CoordinatedTransaction {
 
     public boolean isFullyAccepted() {
         return quorumStatus.values().stream()
-                .allMatch(v -> v == QuorumStatus.ACCEPT);
+                .allMatch(v -> v == QuorumStatus.ACCEPT || v == QuorumStatus.COMMIT);
     }
 
     public boolean isRejected() {
-        return TransactionStatus.REJECTED.equals(status);
+        return switch (status) {
+            case CONCLUDED_REJECT, REJECTED, EXPIRED -> true;
+            default -> false;
+        };
+    }
+
+    public boolean isExpired() {
+        return switch (status) {
+            case EXPIRED, CONCLUDED_EXPIRED -> true;
+            default -> false;
+        };
     }
 
     public boolean isConcluded() {
         return switch (status) {
             case CONCLUDED_REJECT, CONCLUDED_COMMIT, CONCLUDED_EXPIRED -> true;
-            case STARTED, REJECTED, COMMITTED -> false;
+            default -> false;
+        };
+    }
+
+    public boolean isCommitted() {
+        return switch (status) {
+            case COMMITTED, CONCLUDED_COMMIT -> true;
+            default -> false;
         };
     }
 
@@ -110,6 +127,7 @@ public class CoordinatedTransaction {
         STARTED,
         REJECTED,
         COMMITTED,
+        EXPIRED,
         CONCLUDED_EXPIRED,
         CONCLUDED_REJECT,
         CONCLUDED_COMMIT

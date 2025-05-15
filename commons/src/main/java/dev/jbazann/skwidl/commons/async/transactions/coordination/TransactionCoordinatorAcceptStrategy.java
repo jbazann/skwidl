@@ -6,13 +6,15 @@ import dev.jbazann.skwidl.commons.async.transactions.entities.CoordinatedTransac
 
 import java.util.Optional;
 
+import static dev.jbazann.skwidl.commons.async.transactions.entities.CoordinatedTransaction.TransactionStatus.STARTED;
+
 public class TransactionCoordinatorAcceptStrategy implements TransactionCoordinatorStrategy {
 
     private final CoordinatedTransaction transaction;
     private final DomainEvent event;
     private final DomainEventBuilder builder;
 
-    protected TransactionCoordinatorAcceptStrategy(CoordinatedTransaction transaction, DomainEvent event, DomainEventBuilder builder) {
+    public TransactionCoordinatorAcceptStrategy(CoordinatedTransaction transaction, DomainEvent event, DomainEventBuilder builder) {
         this.transaction = transaction;
         this.event = event;
         this.builder = builder;
@@ -20,7 +22,7 @@ public class TransactionCoordinatorAcceptStrategy implements TransactionCoordina
 
     @Override
     public TransactionCoordinatorStrategyResult getResult() {
-        transaction.addAccept(event.sentBy());
+        if (STARTED.equals(transaction.status())) transaction.addAccept(event.sentBy());
 
         DomainEvent response = null;
         if (transaction.isFullyAccepted()) {

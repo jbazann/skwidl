@@ -23,8 +23,10 @@ import org.springframework.context.annotation.Import;
 public class DistributedTransactionCoordinatorConfiguration {
 
     @Bean
-    public TransactionCoordinatorStrategySelector standardTransactionCoordinatorStrategySelector() {
-        return new TransactionCoordinatorStrategySelector();
+    public TransactionCoordinatorStrategySelector standardTransactionCoordinatorStrategySelector(
+            DomainEventBuilder builder
+    ) {
+        return new TransactionCoordinatorStrategySelector(builder);
     }
 
     @Bean

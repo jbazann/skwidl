@@ -12,7 +12,7 @@ public class TransactionCoordinatorRollbackStrategy implements TransactionCoordi
     private final DomainEvent event;
     private final DomainEventBuilder builder;
 
-    protected TransactionCoordinatorRollbackStrategy(CoordinatedTransaction transaction, DomainEvent event, DomainEventBuilder builder) {
+    public TransactionCoordinatorRollbackStrategy(CoordinatedTransaction transaction, DomainEvent event, DomainEventBuilder builder) {
         this.transaction = transaction;
         this.event = event;
         this.builder = builder;
