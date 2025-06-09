@@ -5,7 +5,7 @@
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>3.4.0</version>
+		<version>3.5.0</version>
 		<relativePath/>
 	</parent>
 	<packaging>jar</packaging>
@@ -16,6 +16,7 @@
 	<description>ingredientes comunes</description>
 
 	<properties>
+		<java.version>24</java.version>
 		<!-- TODO get these from main pom or something -->
 		<jbazann.kube.main-port>12012</jbazann.kube.main-port>
 		<jbazann.kube.management-port>12112</jbazann.kube.management-port>
@@ -85,6 +86,22 @@
 			</resource>
 		</resources>
 		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<configuration>
+					<annotationProcessorPaths>
+						<path>
+							<groupId>org.projectlombok</groupId>
+							<artifactId>lombok</artifactId>
+						</path>
+						<path>
+							<groupId>org.springframework.boot</groupId>
+							<artifactId>spring-boot-configuration-processor</artifactId>
+						</path>
+					</annotationProcessorPaths>
+				</configuration>
+			</plugin>
 			<!-- Skip default deploy phase behavior -->
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
