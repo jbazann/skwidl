@@ -5,34 +5,36 @@ spring:
     name: gateway
   cloud:
     gateway:
-      discovery:
-        locator:
-          enabled: true
-          lower-case-service-id: true
-          predicates: # adjusted defaults to fix removal of repeated serviceId occurrences (e.g.: /eureka/eureka/apps maps to /apps)
-          # see original values at https://docs.spring.io/spring-cloud-gateway/reference/spring-cloud-gateway/the-discoveryclient-route-definition-locator.html
-            - name: PathSegmentMap # TODO find out what happens if two services expose the same collection name
-              args:
-                segment_index: 1 # /app/<segment>/**
-                # I have no idea how "serviceId" is replaced by the eureka instance ID,
-                # but it works 8).
-                serviceId: "serviceId"
-            - name: Path
-              args:
-                pattern: "'/app/**'"
-          filters:
-#            - name: CircuitBreaker TODO add this
-#              args:
-#                name: serviceId
-            - name: RewritePath
-              args:
-                regexp: "'/app/eureka(?<remaining>.*)'"
-                replacement: "'/eureka${remaining}'"
-            - name: RewritePath
-              args:
-                regexp: "'/app/(?<remaining>.*)'"
-                replacement: "'/v1/${remaining}'"
- 
+      server:
+        webflux:
+          discovery:
+            locator:
+              enabled: true
+              lower-case-service-id: true
+              predicates: # adjusted defaults to fix removal of repeated serviceId occurrences (e.g.: /eureka/eureka/apps maps to /apps)
+              # see original values at https://docs.spring.io/spring-cloud-gateway/reference/spring-cloud-gateway/the-discoveryclient-route-definition-locator.html
+                - name: PathSegmentMap # TODO find out what happens if two services expose the same collection name
+                  args:
+                    segment_index: 1 # /app/<segment>/**
+                    # I have no idea how "serviceId" is replaced by the eureka instance ID,
+                    # but it works 8).
+                    serviceId: "serviceId"
+                - name: Path
+                  args:
+                    pattern: "'/app/**'"
+              filters:
+    #            - name: CircuitBreaker TODO add this
+    #              args:
+    #                name: serviceId
+                - name: RewritePath
+                  args:
+                    regexp: "'/app/eureka(?<remaining>.*)'"
+                    replacement: "'/eureka${remaining}'"
+                - name: RewritePath
+                  args:
+                    regexp: "'/app/(?<remaining>.*)'"
+                    replacement: "'/v1/${remaining}'"
+
 server:
   port: @jbazann.kube.main-port@
 
