@@ -88,3 +88,13 @@ spec:
                 name: customers
                 port:
                   name: admin
+    - host: gateway.skwidl.jbazann.dev
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: gateway
+                port:
+                  name: admin
