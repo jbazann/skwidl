@@ -1,6 +1,6 @@
 package dev.jbazann.skwidl.commons.async.rabbitmq;
 
-import dev.jbazann.skwidl.commons.async.events.DomainEventBuilder;
+import dev.jbazann.skwidl.commons.async.events.DomainEventBuilderFactory;
 import org.springframework.amqp.rabbit.annotation.EnableRabbit;
 import org.springframework.amqp.rabbit.core.RabbitMessagingTemplate;
 import org.springframework.amqp.support.converter.Jackson2JsonMessageConverter;
@@ -27,10 +27,10 @@ public class RabbitConfiguration {
 
     @Bean
     public RabbitPublisher rabbitPublisher(
-            DomainEventBuilder domainEventBuilder,
+            DomainEventBuilderFactory factory,
             RabbitMessagingTemplate rabbitMessagingTemplate
     ) {
-        return new RabbitPublisher(domainEventBuilder,rabbitMessagingTemplate);
+        return new RabbitPublisher(factory,rabbitMessagingTemplate);
     }
 
 }

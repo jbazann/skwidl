@@ -2,6 +2,7 @@ package dev.jbazann.skwidl.commons.async.transactions.coordination;
 
 import dev.jbazann.skwidl.commons.async.events.DomainEvent;
 import dev.jbazann.skwidl.commons.async.events.DomainEventBuilder;
+import dev.jbazann.skwidl.commons.async.events.DomainEventBuilderFactory;
 import dev.jbazann.skwidl.commons.async.transactions.entities.CoordinatedTransaction;
 
 import java.util.Optional;
@@ -10,12 +11,12 @@ public class TransactionCoordinatorCommitStrategy implements TransactionCoordina
 
     private final CoordinatedTransaction transaction;
     private final DomainEvent event;
-    private final DomainEventBuilder builder;
+    private final DomainEventBuilderFactory events;
 
-    public TransactionCoordinatorCommitStrategy(CoordinatedTransaction transaction, DomainEvent event, DomainEventBuilder builder) {
+    public TransactionCoordinatorCommitStrategy(CoordinatedTransaction transaction, DomainEvent event, DomainEventBuilderFactory events) {
         this.transaction = transaction;
         this.event = event;
-        this.builder = builder;
+        this.events = events;
     }
 
     @Override
@@ -26,10 +27,11 @@ public class TransactionCoordinatorCommitStrategy implements TransactionCoordina
             transaction.status(CoordinatedTransaction.TransactionStatus.CONCLUDED_COMMIT);
 
         DomainEvent response = !transaction.isFullyCommitted() ? null :
-                builder.answer(event)
-                        .withType(DomainEvent.Type.ACK)
-                        .withContext("Transaction concluded by commit.")
-                        .asDomainEvent();
+                events.create(event.getClass())
+                        .answer(event)
+                        .setType(DomainEvent.Type.ACK)
+                        .setContext("Transaction concluded by commit.")
+                        .build();
 
         return new TransactionCoordinatorStrategyResult(
                 response == null ? Optional.empty() : Optional.of(response),

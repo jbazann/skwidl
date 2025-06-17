@@ -9,19 +9,19 @@ import org.springframework.validation.annotation.Validated;
 public class EventRequestPublisher {
 
     private final @NotNull RabbitPublisher publisher;
-    private final @NotNull DomainEventBuilder builder;
+    private final @NotNull DomainEventBuilderFactory events;
 
-    public EventRequestPublisher(RabbitPublisher publisher, DomainEventBuilder builder) {
+    public EventRequestPublisher(RabbitPublisher publisher, DomainEventBuilderFactory events) {
         this.publisher = publisher;
-        this.builder = builder;
+        this.events = events;
     }
 
-    public void request(@NotNull @Valid DomainEventBuilder builder, @NotNull String context) {
-        publisher.publish(builder.withType(DomainEvent.Type.REQUEST,context).asDomainEvent());
+    public <T extends DomainEvent> void request(@NotNull DomainEventBuilder<T> builder, @NotNull String context) {
+        publisher.publish(builder.setType(DomainEvent.Type.REQUEST,context).build());
     }
 
     public void request(@NotNull @Valid DomainEvent event, @NotNull String context) {
-        publisher.publish(builder.forEvent(event).withType(DomainEvent.Type.REQUEST, context).asDomainEvent());
+        publisher.publish(events.wrap(event).setType(DomainEvent.Type.REQUEST, context).build());
     }
 
 }

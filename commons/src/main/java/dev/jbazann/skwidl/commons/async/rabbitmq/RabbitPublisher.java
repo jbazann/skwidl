@@ -1,8 +1,7 @@
 package dev.jbazann.skwidl.commons.async.rabbitmq;
 
 import dev.jbazann.skwidl.commons.async.events.DomainEvent;
-import dev.jbazann.skwidl.commons.async.events.DomainEventBuilder;
-import dev.jbazann.skwidl.commons.identity.ApplicationMember;
+import dev.jbazann.skwidl.commons.async.events.DomainEventBuilderFactory;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import org.springframework.amqp.rabbit.core.RabbitMessagingTemplate;
@@ -18,11 +17,11 @@ public class RabbitPublisher {
     @Value("${jbazann.rabbit.queues.event}")
     public final String EVENT_Q = "";
 
-    private final DomainEventBuilder builder;
+    private final DomainEventBuilderFactory events;
     private final RabbitMessagingTemplate rabbitMessagingTemplate;
 
-    public RabbitPublisher(DomainEventBuilder builder, RabbitMessagingTemplate rabbitMessagingTemplate) {
-        this.builder = builder;
+    public RabbitPublisher(DomainEventBuilderFactory events, RabbitMessagingTemplate rabbitMessagingTemplate) {
+        this.events = events;
         this.rabbitMessagingTemplate = rabbitMessagingTemplate;
     }
 
@@ -40,10 +39,10 @@ public class RabbitPublisher {
         rabbitMessagingTemplate.send(
                 EVENT_XCHNG,
                 type.routingKey(),
-                new GenericMessage<>(builder
-                        .forEvent(event)
-                        .withType(type, context)
-                        .asDomainEvent())
+                new GenericMessage<>(events
+                        .wrap(event)
+                        .setType(type, context)
+                        .build())
         );
     }
 

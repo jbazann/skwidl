@@ -1,6 +1,10 @@
 package dev.jbazann.skwidl.orders.order.services;
 
+import dev.jbazann.skwidl.commons.async.events.DomainEventBuilderFactory;
 import dev.jbazann.skwidl.commons.async.events.EventRequestPublisher;
+import dev.jbazann.skwidl.commons.async.events.specialized.CancelAcceptedOrderEvent;
+import dev.jbazann.skwidl.commons.async.events.specialized.CancelPreparedOrderEvent;
+import dev.jbazann.skwidl.commons.async.events.specialized.DeliverOrderEvent;
 import dev.jbazann.skwidl.commons.exceptions.DumbassException;
 import dev.jbazann.skwidl.commons.logging.Logger;
 import dev.jbazann.skwidl.commons.logging.LoggerFactory;
@@ -11,7 +15,6 @@ import dev.jbazann.skwidl.orders.order.entities.Detail;
 import dev.jbazann.skwidl.orders.order.entities.Order;
 import dev.jbazann.skwidl.orders.order.entities.StatusHistory;
 import dev.jbazann.skwidl.commons.exceptions.MalformedArgumentException;
-import dev.jbazann.skwidl.commons.async.events.DomainEventBuilder;
 import dev.jbazann.skwidl.commons.identity.KnownMembers;
 import dev.jbazann.skwidl.orders.order.exceptions.ReserveFailureException;
 import jakarta.validation.Valid;
@@ -34,17 +37,17 @@ public class OrderService {
     private final CustomerServiceClient customersRemoteService;
     private final OrderNumberServiceLocalClient orderNumberServiceLocalClient;
     private final OrderRepository orderRepository;
-    private final DomainEventBuilder builder;
+    private final DomainEventBuilderFactory events;
     private final EventRequestPublisher publisher;
     private final Logger log = LoggerFactory.get(OrderService.class);
 
     @Autowired
-    public OrderService(ProductServiceClient productsRemoteService, CustomerServiceClient customersRemoteService, OrderNumberServiceLocalClient orderNumberServiceLocalClient, OrderRepository orderRepository, DomainEventBuilder builder, EventRequestPublisher publisher) {
+    public OrderService(ProductServiceClient productsRemoteService, CustomerServiceClient customersRemoteService, OrderNumberServiceLocalClient orderNumberServiceLocalClient, OrderRepository orderRepository, DomainEventBuilderFactory events, EventRequestPublisher publisher) {
         this.productsRemoteService = productsRemoteService;
         this.customersRemoteService = customersRemoteService;
         this.orderNumberServiceLocalClient = orderNumberServiceLocalClient;
         this.orderRepository = orderRepository;
-        this.builder = builder;
+        this.events = events;
         this.publisher = publisher;
     }
 
@@ -73,8 +76,8 @@ public class OrderService {
         //noinspection SwitchStatementWithTooFewBranches
         switch (order.getStatus().status()) {
             case IN_PREPARATION -> publisher.request(
-                    builder.create()
-                            .withQuorumMembers(KnownMembers.memberList(KnownMembers.ORDERS, KnownMembers.CUSTOMERS))//TODO maybe products too
+                    events.create(DeliverOrderEvent.class)
+                            .setQuorumMembers(KnownMembers.memberList(KnownMembers.ORDERS, KnownMembers.CUSTOMERS))//TODO maybe products too
                             .asDeliverOrderEvent(order.id(),order.customer(),order.totalCost()),
                     "Deliver order with id: " + order.id()
             );
@@ -90,20 +93,19 @@ public class OrderService {
         Order order = getOrder(id);
         switch (order.getStatus().status()) {
             case IN_PREPARATION -> publisher.request(
-                    builder.create()
-                            .withQuorumMembers(KnownMembers.memberList(KnownMembers.ORDERS, KnownMembers.CUSTOMERS, KnownMembers.PRODUCTS))
+                    events.create(CancelPreparedOrderEvent.class)
+                            .setQuorumMembers(KnownMembers.memberList(KnownMembers.ORDERS, KnownMembers.CUSTOMERS, KnownMembers.PRODUCTS))
                             .asCancelPreparedOrderEvent(
                                     order.id(),
                                     order.customer(),
                                     order.totalCost(),
                                     order.detail().stream()
-                                            .collect(Collectors.toMap(Detail::product, Detail::amount))
-                    ),
+                                            .collect(Collectors.toMap(Detail::product, Detail::amount))),
                     "Cancel order with id: " + order.id()
             );
             case ACCEPTED -> publisher.request(
-                    builder.create()
-                            .withQuorumMembers(KnownMembers.memberList(KnownMembers.ORDERS, KnownMembers.CUSTOMERS))
+                    events.create(CancelAcceptedOrderEvent.class)
+                            .setQuorumMembers(KnownMembers.memberList(KnownMembers.ORDERS, KnownMembers.CUSTOMERS))
                             .asCancelAcceptedOrderEvent(
                                     order.id(),
                                     order.customer(),

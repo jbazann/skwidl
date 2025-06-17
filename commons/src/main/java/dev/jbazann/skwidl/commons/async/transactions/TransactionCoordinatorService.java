@@ -1,7 +1,6 @@
 package dev.jbazann.skwidl.commons.async.transactions;
 
 import dev.jbazann.skwidl.commons.async.events.DomainEvent;
-import dev.jbazann.skwidl.commons.async.events.DomainEventBuilder;
 import dev.jbazann.skwidl.commons.async.rabbitmq.RabbitPublisher;
 import dev.jbazann.skwidl.commons.async.transactions.coordination.TransactionCoordinatorStrategy;
 import dev.jbazann.skwidl.commons.async.transactions.coordination.TransactionCoordinatorStrategyResult;
@@ -17,14 +16,12 @@ public class TransactionCoordinatorService {
 
     private final ApplicationMember member;
     private final CoordinatedTransactionRepository repository;
-    private final DomainEventBuilder builder;
     private final TransactionCoordinatorStrategySelector strategies;
     private final RabbitPublisher publisher;
 
-    public TransactionCoordinatorService(ApplicationMember member, CoordinatedTransactionRepository repository, DomainEventBuilder builder, TransactionCoordinatorStrategySelector strategies, RabbitPublisher publisher) {
+    public TransactionCoordinatorService(ApplicationMember member, CoordinatedTransactionRepository repository, TransactionCoordinatorStrategySelector strategies, RabbitPublisher publisher) {
         this.member = member;
         this.repository = repository;
-        this.builder = builder;
         this.strategies = strategies;
         this.publisher = publisher;
     }

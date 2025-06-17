@@ -2,6 +2,7 @@ package dev.jbazann.skwidl.commons.async.transactions.coordination;
 
 import dev.jbazann.skwidl.commons.async.events.DomainEvent;
 import dev.jbazann.skwidl.commons.async.events.DomainEventBuilder;
+import dev.jbazann.skwidl.commons.async.events.DomainEventBuilderFactory;
 import dev.jbazann.skwidl.commons.async.transactions.entities.CoordinatedTransaction;
 
 import java.util.Optional;
@@ -12,12 +13,12 @@ public class TransactionCoordinatorAcceptStrategy implements TransactionCoordina
 
     private final CoordinatedTransaction transaction;
     private final DomainEvent event;
-    private final DomainEventBuilder builder;
+    private final DomainEventBuilderFactory events;
 
-    public TransactionCoordinatorAcceptStrategy(CoordinatedTransaction transaction, DomainEvent event, DomainEventBuilder builder) {
+    public TransactionCoordinatorAcceptStrategy(CoordinatedTransaction transaction, DomainEvent event, DomainEventBuilderFactory events) {
         this.transaction = transaction;
         this.event = event;
-        this.builder = builder;
+        this.events = events;
     }
 
     @Override
@@ -27,10 +28,11 @@ public class TransactionCoordinatorAcceptStrategy implements TransactionCoordina
         DomainEvent response = null;
         if (transaction.isFullyAccepted()) {
             transaction.status(CoordinatedTransaction.TransactionStatus.COMMITTED);
-            response = builder.answer(event)
-                    .withType(DomainEvent.Type.COMMIT)
-                    .withContext("Accepted by full quorum.")
-                    .asDomainEvent();
+            response = events.create(event.getClass())
+                    .answer(event)
+                    .setType(DomainEvent.Type.COMMIT)
+                    .setContext("Accepted by full quorum.")
+                    .build();
         }
 
         return new TransactionCoordinatorStrategyResult(

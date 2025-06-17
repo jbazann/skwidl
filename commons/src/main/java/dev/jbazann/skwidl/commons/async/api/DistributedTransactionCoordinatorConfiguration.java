@@ -1,6 +1,6 @@
 package dev.jbazann.skwidl.commons.async.api;
 
-import dev.jbazann.skwidl.commons.async.events.DomainEventBuilder;
+import dev.jbazann.skwidl.commons.async.events.DomainEventBuilderFactory;
 import dev.jbazann.skwidl.commons.async.events.EventsConfiguration;
 import dev.jbazann.skwidl.commons.async.rabbitmq.RabbitCoordinatorListenerService;
 import dev.jbazann.skwidl.commons.async.rabbitmq.RabbitPublisher;
@@ -10,6 +10,7 @@ import dev.jbazann.skwidl.commons.async.transactions.entities.CoordinatedTransac
 import dev.jbazann.skwidl.commons.identity.ApplicationMember;
 import dev.jbazann.skwidl.commons.identity.IdentityConfiguration;
 import dev.jbazann.skwidl.commons.shared.storage.RedisConfiguration;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
@@ -24,20 +25,19 @@ public class DistributedTransactionCoordinatorConfiguration {
 
     @Bean
     public TransactionCoordinatorStrategySelector standardTransactionCoordinatorStrategySelector(
-            DomainEventBuilder builder
+            @Qualifier("DomainEventBuilderFactory") DomainEventBuilderFactory factory
     ) {
-        return new TransactionCoordinatorStrategySelector(builder);
+        return new TransactionCoordinatorStrategySelector(factory);
     }
 
     @Bean
     public TransactionCoordinatorService standardTransactionCoordinatorService(
             ApplicationMember member,
             CoordinatedTransactionRepository repository,
-            DomainEventBuilder builder,
             TransactionCoordinatorStrategySelector strategies,
             RabbitPublisher publisher
     ) {
-        return new TransactionCoordinatorService(member, repository, builder, strategies, publisher);
+        return new TransactionCoordinatorService(member, repository, strategies, publisher);
     }
 
     @Bean
