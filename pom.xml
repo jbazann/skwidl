@@ -110,6 +110,56 @@
                 <module>graylog</module>
             </modules>
         </profile>
+
+        <profile>
+            <id>debug</id>
+            <build>
+                <pluginManagement>
+                    <plugins>
+                        <plugin>
+                            <!-- https://mvnrepository.com/artifact/org.eclipse.jkube/kubernetes-maven-plugin -->
+                            <groupId>org.eclipse.jkube</groupId>
+                            <artifactId>kubernetes-maven-plugin</artifactId>
+                            <version>1.16.2</version>
+                            <executions>
+                                <execution>
+                                    <id>k8s-images</id>
+                                    <phase>install</phase>
+                                    <goals>
+                                        <goal>build</goal>
+                                    </goals>
+                                    <configuration>
+                                        <images>
+                                            <image>
+                                                <!-- this is the default image name, see https://eclipse.dev/jkube/docs/kubernetes-maven-plugin/#image-name -->
+                                                <name>%g/%a:%l</name>
+                                                <build>
+                                                    <!-- plugin defaults COPY the final artifact to targetDir inside the image -->
+                                                    <from>openjdk:${java.version}</from>
+                                                    <assembly>
+                                                        <targetDir>/${jbazann.dirname}</targetDir>
+                                                    </assembly>
+                                                    <ports>
+                                                        <port>${jbazann.kube.main-port}</port>
+                                                        <port>${jbazann.kube.management-port}</port>
+                                                    </ports>
+                                                    <volumes>
+                                                        <volume>/${jbazann.volname}</volume>
+                                                    </volumes>
+                                                    <entryPoint>
+                                                        <shell>java -jar -D"spring.profiles.active=default,debug" ${jbazann.dirname}/${jbazann.jarname} </shell>
+                                                    </entryPoint>
+                                                </build>
+                                            </image>
+                                        </images>
+                                    </configuration>
+                                </execution>
+                            </executions>
+                        </plugin>
+                    </plugins>
+                </pluginManagement>
+            </build>
+        </profile>
     </profiles>
     <dependencyManagement>
         <dependencies>
