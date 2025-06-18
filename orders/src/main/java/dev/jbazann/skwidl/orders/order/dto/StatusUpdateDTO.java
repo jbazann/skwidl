@@ -1,6 +1,5 @@
 package dev.jbazann.skwidl.orders.order.dto;
 
-import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import dev.jbazann.skwidl.orders.order.entities.StatusHistory;
 import lombok.*;
 import lombok.experimental.Accessors;
@@ -9,7 +8,6 @@ import lombok.experimental.Accessors;
 @AllArgsConstructor
 @Getter
 @Setter
-@JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
 @Accessors(chain = true, fluent = true)
 @ToString
 public class StatusUpdateDTO {

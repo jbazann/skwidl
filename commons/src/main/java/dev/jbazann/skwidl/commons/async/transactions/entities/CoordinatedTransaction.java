@@ -1,6 +1,5 @@
 package dev.jbazann.skwidl.commons.async.transactions.entities;
 
-import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import dev.jbazann.skwidl.commons.async.events.DomainEvent;
 import dev.jbazann.skwidl.commons.identity.ApplicationMember;
 import dev.jbazann.skwidl.commons.utils.TimeProvider;
@@ -17,7 +16,6 @@ import java.time.LocalDateTime;
 import java.util.*;
 
 @Data
-@JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
 @Accessors(chain = true, fluent = true)
 @ToString
 @RedisHash

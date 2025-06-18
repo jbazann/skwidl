@@ -1,6 +1,5 @@
 package dev.jbazann.skwidl.customers.user.dto;
 
-import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import dev.jbazann.skwidl.customers.user.User;
 import lombok.*;
 import lombok.experimental.Accessors;
@@ -12,7 +11,6 @@ import java.util.UUID;
 @AllArgsConstructor
 @Getter
 @Setter
-@JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
 @Accessors(chain = true, fluent = true)
 @ToString
 public class UserDTO {

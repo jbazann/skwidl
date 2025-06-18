@@ -1,6 +1,5 @@
 package dev.jbazann.skwidl.customers.user.dto;
 
-import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
@@ -11,7 +10,6 @@ import lombok.experimental.Accessors;
 @AllArgsConstructor
 @Getter
 @Setter
-@JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
 @Accessors(chain = true, fluent = true)
 @ToString
 public class NewUserDTO {

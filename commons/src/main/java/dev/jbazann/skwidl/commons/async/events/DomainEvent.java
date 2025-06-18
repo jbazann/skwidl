@@ -1,6 +1,5 @@
 package dev.jbazann.skwidl.commons.async.events;
 
-import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import dev.jbazann.skwidl.commons.async.transactions.TransactionQuorum;
 import dev.jbazann.skwidl.commons.async.transactions.entities.Transaction;
 import dev.jbazann.skwidl.commons.identity.ApplicationMember;
@@ -18,7 +17,6 @@ import java.util.List;
 import java.util.UUID;
 
 @Data
-@JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
 @Accessors(fluent = true)
 @ToString
 @EqualsAndHashCode

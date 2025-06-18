@@ -1,6 +1,5 @@
 package dev.jbazann.skwidl.orders.order.dto;
 
-import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import dev.jbazann.skwidl.orders.order.entities.Detail;
 import lombok.*;
 import lombok.experimental.Accessors;
@@ -13,7 +12,6 @@ import java.util.UUID;
 @Getter
 @Setter
 @EqualsAndHashCode
-@JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
 @ToString
 @Accessors(chain = true, fluent = true)
 public class DetailDTO {

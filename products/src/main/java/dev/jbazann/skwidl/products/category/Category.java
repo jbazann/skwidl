@@ -1,6 +1,5 @@
 package dev.jbazann.skwidl.products.category;
 
-import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import dev.jbazann.skwidl.products.category.dto.CategoryDTO;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -18,7 +17,6 @@ import java.util.UUID;
 @AllArgsConstructor
 @Setter
 @Getter
-@JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
 @Accessors(chain = true, fluent = true)
 @ToString
 @Entity

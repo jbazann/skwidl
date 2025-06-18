@@ -1,6 +1,5 @@
 package dev.jbazann.skwidl.orders.order.entities;
 
-import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import dev.jbazann.skwidl.orders.order.dto.DetailDTO;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
@@ -21,7 +20,6 @@ import java.util.UUID;
 @Setter
 @Getter
 @EqualsAndHashCode
-@JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
 @Accessors(chain = true, fluent = true)
 @ToString
 @Document
