@@ -1,7 +1,7 @@
 package dev.jbazann.skwidl.products.product.dto;
 
 import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import lombok.experimental.Accessors;
@@ -17,11 +17,11 @@ import java.math.BigDecimal;
 @ToString
 public class NewProductDTO {
 
-    @NotNull @NotEmpty
+    @NotBlank
     private String name;
     @NotNull
     private String description;
-    @NotNull @NotEmpty
+    @NotBlank
     private String categoryName;
     @Min(0)
     private int minStock;

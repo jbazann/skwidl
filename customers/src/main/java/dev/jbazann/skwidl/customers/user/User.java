@@ -3,7 +3,7 @@ package dev.jbazann.skwidl.customers.user;
 import dev.jbazann.skwidl.customers.user.dto.UserDTO;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import lombok.experimental.Accessors;
@@ -25,13 +25,13 @@ public class User {
     @Id
     @NotNull
     private UUID id;
-    @NotNull @NotEmpty
+    @NotBlank
     private String name;
-    @NotNull @NotEmpty
+    @NotBlank
     private String lastname;
-    @NotNull @NotEmpty @Email
+    @NotBlank @Email
     private String email;
-    @NotNull @NotEmpty
+    @NotBlank
     private String dni;
     @ElementCollection
     @NotNull

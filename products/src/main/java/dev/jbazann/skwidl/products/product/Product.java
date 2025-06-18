@@ -3,7 +3,7 @@ package dev.jbazann.skwidl.products.product;
 import dev.jbazann.skwidl.products.product.dto.ProductDTO;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import lombok.experimental.Accessors;
@@ -25,7 +25,7 @@ public class Product {
     @Id
     @NotNull
     private UUID id;
-    @NotNull @NotEmpty
+    @NotBlank
     private String name;
     @NotNull
     private String description;

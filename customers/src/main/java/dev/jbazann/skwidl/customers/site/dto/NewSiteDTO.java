@@ -1,6 +1,7 @@
 package dev.jbazann.skwidl.customers.site.dto;
 
 import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
@@ -17,7 +18,7 @@ import java.util.UUID;
 @ToString
 public class NewSiteDTO {
 
-    @NotNull @NotEmpty
+    @NotBlank
     private String address;
     @NotEmpty
     private String coordinates;

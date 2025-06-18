@@ -3,6 +3,7 @@ package dev.jbazann.skwidl.customers.site;
 import dev.jbazann.skwidl.customers.site.dto.SiteDTO;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
@@ -26,7 +27,7 @@ public class Site {
     @Id
     @NotNull
     private UUID id;
-    @NotNull @NotEmpty
+    @NotBlank
     private String address;
     @NotEmpty
     private String coordinates;

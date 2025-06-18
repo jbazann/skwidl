@@ -1,8 +1,7 @@
 package dev.jbazann.skwidl.customers.user.dto;
 
 import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotEmpty;
-import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 import lombok.experimental.Accessors;
 
@@ -14,13 +13,13 @@ import lombok.experimental.Accessors;
 @ToString
 public class NewUserDTO {
 
-    @NotNull @NotEmpty
+    @NotBlank
     private String name;
-    @NotNull @NotEmpty
+    @NotBlank
     private String lastname;
-    @NotNull @NotEmpty @Email
+    @NotBlank @Email
     private String email;
-    @NotNull @NotEmpty
+    @NotBlank
     private String dni;
 
     public UserDTO toDto() {
