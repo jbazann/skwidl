@@ -13,7 +13,7 @@ import java.util.UUID;
 @Setter
 @EqualsAndHashCode
 @ToString
-@Accessors(chain = true)
+@Accessors(chain = true, fluent = true)
 public class DetailDTO {
 
     private UUID id;

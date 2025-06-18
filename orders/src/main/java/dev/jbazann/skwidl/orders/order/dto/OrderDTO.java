@@ -17,7 +17,7 @@ import java.util.stream.Collectors;
 @Setter
 @EqualsAndHashCode
 @ToString
-@Accessors(chain = true)
+@Accessors(chain = true, fluent = true)
 public class OrderDTO {
 
     private UUID id;

@@ -23,11 +23,11 @@ public class SiteStatusService {
      */
     @Transactional
     public void setInitialStatus(@NotNull @Valid Site site) {
-        site.setStatus(Site.SiteStatus.PENDING);
-        if (customerServiceLocalClient.activateSite(site.getCustomer(),site.getId())) {
-            site.setStatus(Site.SiteStatus.ACTIVE);
+        site.status(Site.SiteStatus.PENDING);
+        if (customerServiceLocalClient.activateSite(site.customer(),site.id())) {
+            site.status(Site.SiteStatus.ACTIVE);
         } else {
-            customerServiceLocalClient.addPendingSite(site.getCustomer());
+            customerServiceLocalClient.addPendingSite(site.customer());
         }
     }
 
@@ -55,19 +55,19 @@ public class SiteStatusService {
     @Transactional //TODO transactional on protected method?
     protected void transitionFromActive(Site site, Site.SiteStatus newStatus) {
         switch(newStatus) {
-            case FINISHED -> customerServiceLocalClient.finishSite(site.getCustomer(),site.getId());
-            case PENDING -> customerServiceLocalClient.deactivateSite(site.getCustomer(),site.getId());
+            case FINISHED -> customerServiceLocalClient.finishSite(site.customer(),site.id());
+            case PENDING -> customerServiceLocalClient.deactivateSite(site.customer(),site.id());
         }
-        site.setStatus(newStatus);
+        site.status(newStatus);
     }
 
     @Transactional
     protected void transitionFromPending(Site site, Site.SiteStatus newStatus) {
         //noinspection SwitchStatementWithTooFewBranches
         switch(newStatus) {
-            case ACTIVE -> customerServiceLocalClient.activatePendingSite(site.getCustomer(),site.getId());
+            case ACTIVE -> customerServiceLocalClient.activatePendingSite(site.customer(),site.id());
         }
-        site.setStatus(newStatus);
+        site.status(newStatus);
     }
 
 }

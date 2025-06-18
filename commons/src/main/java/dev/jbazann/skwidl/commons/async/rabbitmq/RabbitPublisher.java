@@ -28,7 +28,7 @@ public class RabbitPublisher {
     public void publish(@NotNull @Valid DomainEvent event) {
         rabbitMessagingTemplate.send(
                 EVENT_XCHNG,
-                event.getType().getRoutingKey(),
+                event.type().routingKey(),
                 new GenericMessage<>(event)
         );
     }
@@ -38,7 +38,7 @@ public class RabbitPublisher {
                         String context) {
         rabbitMessagingTemplate.send(
                 EVENT_XCHNG,
-                type.getRoutingKey(),
+                type.routingKey(),
                 new GenericMessage<>(events
                         .wrap(event)
                         .setType(type, context)

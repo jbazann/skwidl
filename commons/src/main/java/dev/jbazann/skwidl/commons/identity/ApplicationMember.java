@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
+import lombok.experimental.Accessors;
 
 /**
  * Represents the role a given artifact has in the distributed application.
@@ -17,7 +18,7 @@ import lombok.ToString;
  * as seen in {@link TransactionQuorum}.
  */
 @Data
-@AllArgsConstructor
+@Accessors(fluent = true)
 @ToString
 @EqualsAndHashCode
 public class ApplicationMember {

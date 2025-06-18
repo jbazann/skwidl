@@ -1,6 +1,7 @@
 package dev.jbazann.skwidl.commons.async.transactions.coordination;
 
 import dev.jbazann.skwidl.commons.async.events.DomainEvent;
+import dev.jbazann.skwidl.commons.async.events.DomainEventBuilder;
 import dev.jbazann.skwidl.commons.async.events.DomainEventBuilderFactory;
 import dev.jbazann.skwidl.commons.async.transactions.entities.CoordinatedTransaction;
 
@@ -20,8 +21,8 @@ public class TransactionCoordinatorRollbackStrategy implements TransactionCoordi
 
     @Override
     public TransactionCoordinatorStrategyResult getResult() {
-        transaction.addRollback(event.getSentBy());
-        transaction.setStatus(transaction.isFullyRejected() ?
+        transaction.addRollback(event.sentBy());
+        transaction.status(transaction.isFullyRejected() ?
                 CoordinatedTransaction.TransactionStatus.CONCLUDED_REJECT :
                 CoordinatedTransaction.TransactionStatus.REJECTED
         );

@@ -19,13 +19,13 @@ public class StandardDatasetDataBuilder {
     }
 
     public StandardDatasetDataBuilder setCustomerBudget(BigDecimal budget) {
-        if (target.getCustomer() == null) {
-            target.setCustomer(CustomerMock.nonNull()
-                    .setId(target.getOrder().getCustomer()));
+        if (target.customer() == null) {
+            target.customer(CustomerMock.nonNull()
+                    .id(target.order().customer()));
         }
-        target.getCustomer()
-                .setBudget(budget)
-                .setBudgetResetValue(budget);
+        target.customer()
+                .budget(budget)
+                .budgetResetValue(budget);
         return this;
     }
 

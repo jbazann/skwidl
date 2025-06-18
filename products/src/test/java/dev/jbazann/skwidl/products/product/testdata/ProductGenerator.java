@@ -21,17 +21,17 @@ public class ProductGenerator {
         final int GENERIC_MIN_STOCK = 20;
         final BigDecimal GENERIC_PRICE = new BigDecimal("25.5");
         return new Product()
-                .setId(UUID_GENERATOR.next())
-                .setName(nextName())
-                .setCategory(UUID_GENERATOR.next())
-                .setCurrentStock(GENERIC_CURRENT_STOCK)
-                .setMinimumStock(GENERIC_MIN_STOCK)
-                .setPrice(GENERIC_PRICE);
+                .id(UUID_GENERATOR.next())
+                .name(nextName())
+                .category(UUID_GENERATOR.next())
+                .currentStock(GENERIC_CURRENT_STOCK)
+                .minimumStock(GENERIC_MIN_STOCK)
+                .price(GENERIC_PRICE);
     }
 
     public Product newlyCreatedProduct() {
         Product p = this.genericProduct();
-        p.setCurrentStock(0);
+        p.currentStock(0);
         return p;
     }
 

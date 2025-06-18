@@ -20,7 +20,7 @@ import java.util.UUID;
 @Setter
 @Getter
 @EqualsAndHashCode
-@Accessors(chain = true)
+@Accessors(chain = true, fluent = true)
 @ToString
 @Document
 public class Detail {

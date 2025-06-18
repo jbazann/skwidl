@@ -20,7 +20,7 @@ public class DetailGenerator {
 
     public static BigDecimal getTotalCost(List<Detail> detail) {
         return detail.stream()
-                .map(Detail::getTotalCost)
+                .map(Detail::totalCost)
                 .reduce(BigDecimal::add)
                 .orElseGet(() -> new BigDecimal(0));
     }
@@ -71,12 +71,12 @@ public class DetailGenerator {
         if (UNITS < 1) UNITS = random.nextInt(6);
         if (DISCOUNT_PERCENT < 0) DISCOUNT_PERCENT = random.nextInt(101);
         return new Detail()
-                .setId(uuid.next())
-                .setProduct(uuid.next())
-                .setAmount(UNITS)
-                .setDiscount(BigDecimal.valueOf((long) UNITS * UNIT_COST * DISCOUNT_PERCENT, 2))
-                .setUnitCost(new BigDecimal(UNIT_COST))
-                .setTotalCost(new BigDecimal(UNIT_COST * UNITS));
+                .id(uuid.next())
+                .product(uuid.next())
+                .amount(UNITS)
+                .discount(BigDecimal.valueOf((long) UNITS * UNIT_COST * DISCOUNT_PERCENT, 2))
+                .unitCost(new BigDecimal(UNIT_COST))
+                .totalCost(new BigDecimal(UNIT_COST * UNITS));
     }
 
 

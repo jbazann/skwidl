@@ -15,7 +15,7 @@ import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Data
-@Accessors(chain = true)
+@Accessors(chain = true, fluent = true)
 @ToString
 @RedisHash
 public class Transaction {
@@ -41,9 +41,9 @@ public class Transaction {
 
     public static Transaction from(@NotNull @Valid DomainEvent event) {
         return new Transaction() // TODO quorum? return validation=?
-                .setId(event.getTransaction().getId())
-                .setExpires(event.getTransaction().getExpires())
-                .setStatus(event.getTransaction().getStatus());
+                .id(event.transaction().id())
+                .expires(event.transaction().expires())
+                .status(event.transaction().status());
     }
 
     public boolean isExpired() {

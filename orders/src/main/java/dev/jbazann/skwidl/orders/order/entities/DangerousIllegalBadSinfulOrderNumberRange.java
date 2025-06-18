@@ -18,7 +18,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @AllArgsConstructor
 @Getter
 @Setter
-@Accessors(chain = true)
+@Accessors(chain = true, fluent = true)
 @Document
 @ToString
 public class DangerousIllegalBadSinfulOrderNumberRange {

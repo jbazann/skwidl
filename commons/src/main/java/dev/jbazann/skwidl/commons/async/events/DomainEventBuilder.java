@@ -48,9 +48,9 @@ public class DomainEventBuilder<Type extends DomainEvent> {
         ) {
             throw new CommonsInternalException("Exception while trying to instantiate " + eventClass,e);
         }
-        event.setSentBy(thisApplication);
-        event.getTransaction().getQuorum().setCoordinator(defaultCoordinator);
-        event.getTransaction().getQuorum().setMembers(List.of(thisApplication));
+        event.sentBy(thisApplication);
+        event.transaction().quorum().coordinator(defaultCoordinator);
+        event.transaction().quorum().members(List.of(thisApplication));
     }
 
     public DomainEventBuilder(ApplicationMember identity, ApplicationMember defaultCoordinator, Type event) {
@@ -64,57 +64,57 @@ public class DomainEventBuilder<Type extends DomainEvent> {
             DomainEvent event
     ) {
         log.method(event);
-        this.event.setContext("Answer to " + event.getId())
-                .setTransaction(event.getTransaction());
+        this.event.context("Answer to " + event.id())
+                .transaction(event.transaction());
         log.result(this);
         return this;
     }
 
     public @NotNull DomainEventBuilder<Type> setType(@NotNull DomainEvent.Type type) {
         log.method(type);
-        event.setType(type);
+        event.type(type);
         log.result(this);
         return this;
     }
 
     public @NotNull DomainEventBuilder<Type> setType(@NotNull DomainEvent.Type type, @NotNull String context) {
         log.method(type,context);
-        event.setType(type).setContext(context);
+        event.type(type).context(context);
         log.result(this);
         return this;
     }
 
     public @NotNull DomainEventBuilder<Type> setContext(@NotNull String context) {
         log.method(context);
-        event.setContext(context);
+        event.context(context);
         log.result(this);
         return this;
     }
 
     public @NotNull DomainEventBuilder<Type> setContext(@NotNull String format, @NotNull Object... args) {
         log.method(format,args);
-        event.setContext(String.format(format,args));
+        event.context(String.format(format,args));
         log.result(this);
         return this;
     }
 
     public @NotNull DomainEventBuilder<Type> setQuorumMembers(@NotNull @NotEmpty List<@NotNull ApplicationMember> quorum) {
         log.method(quorum);
-        event.getTransaction().getQuorum().setMembers(quorum);
+        event.transaction().quorum().members(quorum);
         log.result(this);
         return this;
     }
 
     public @NotNull DomainEventBuilder<Type> setCoordinator(@NotNull ApplicationMember coordinator) {
         log.method(coordinator);
-        event.getTransaction().getQuorum().setCoordinator(coordinator);
+        event.transaction().quorum().coordinator(coordinator);
         log.result(this);
         return this;
     }
 
     public @NotNull DomainEventBuilder<Type> setTransaction(@NotNull @Valid Transaction transaction) {
         log.method(transaction);
-        event.setTransaction(transaction);
+        event.transaction(transaction);
         log.result(this);
         return this;
     }
@@ -126,11 +126,11 @@ public class DomainEventBuilder<Type extends DomainEvent> {
             @NotNull LocalDateTime expires
     ) {
         log.method(id,quorum,status,expires);
-        event.setTransaction(new Transaction()
-                .setId(id)
-                .setQuorum(quorum)
-                .setStatus(status)
-                .setExpires(expires)
+        event.transaction(new Transaction()
+                .id(id)
+                .quorum(quorum)
+                .status(status)
+                .expires(expires)
         );
         log.result(this);
         return this;
@@ -153,9 +153,9 @@ public class DomainEventBuilder<Type extends DomainEvent> {
     ) {
         log.method(orderId, customerId, returnedFunds);
         ((CancelAcceptedOrderEvent) event)
-                .setOrderId(orderId)
-                .setCustomerId(customerId)
-                .setReturnedFunds(returnedFunds);
+                .orderId(orderId)
+                .customerId(customerId)
+                .returnedFunds(returnedFunds);
         log.result(this);
         return this;
     }
@@ -168,10 +168,10 @@ public class DomainEventBuilder<Type extends DomainEvent> {
     ) {
         log.method(orderId, customerId, returnedFunds, returnedStock);
         ((CancelPreparedOrderEvent) event)
-                .setOrderId(orderId)
-                .setCustomerId(customerId)
-                .setReturnedFunds(returnedFunds)
-                .setReturnedStock(returnedStock);
+                .orderId(orderId)
+                .customerId(customerId)
+                .returnedFunds(returnedFunds)
+                .returnedStock(returnedStock);
         log.result(this);
         return this;
     }
@@ -183,9 +183,9 @@ public class DomainEventBuilder<Type extends DomainEvent> {
     ) {
         log.method(orderId, customerId, returnedFunds);
         ((DeliverOrderEvent) event)
-                .setOrderId(orderId)
-                .setCustomerId(customerId)
-                .setReturnedFunds(returnedFunds);
+                .orderId(orderId)
+                .customerId(customerId)
+                .returnedFunds(returnedFunds);
         log.result(this);
         return this;
     }

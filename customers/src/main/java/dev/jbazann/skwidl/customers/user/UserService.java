@@ -5,6 +5,7 @@ import dev.jbazann.skwidl.customers.user.dto.UserDTO;
 import dev.jbazann.skwidl.customers.user.exceptions.InvalidUserException;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -40,8 +41,8 @@ public class UserService {
 
     public @NotNull @Valid User newUser(@Valid @NotNull NewUserDTO input) {
         UserDTO dto = input.toDto();
-        dto.setId(generateUserId());
-        dto.setCustomers(new ArrayList<>());
+        dto.id(generateUserId());
+        dto.customers(new ArrayList<>());
         @Valid User user = dto.toEntity();
         return userRepository.save(user);
     }
@@ -63,7 +64,7 @@ public class UserService {
             TODO log
              */
         }
-        user.getCustomers().add(customerId);
+        user.customers().add(customerId);
         return userRepository.save(user);
     }
 

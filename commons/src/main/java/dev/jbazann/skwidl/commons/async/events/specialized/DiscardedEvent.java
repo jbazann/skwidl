@@ -9,8 +9,8 @@ import lombok.ToString;
 import lombok.experimental.Accessors;
 
 @Data()
-@Accessors(chain = true)
-@ToString(callSuper = true)
+@Accessors(chain = true, fluent = true)
+@ToString
 @EqualsAndHashCode(callSuper = true)
 public class DiscardedEvent extends DomainEvent {
 
@@ -22,9 +22,9 @@ public class DiscardedEvent extends DomainEvent {
         // Using copyOf() to avoid default init values, even if irrelevant.
         // The copied ones are at least related to the discarded event.
         final DiscardedEvent result = (DiscardedEvent) DomainEvent.copyOf(event)
-                .setContext(context)
-                .setType(Type.DISCARD);
-        return result.setDiscarded(event);
+                .context(context)
+                .type(Type.DISCARD);
+        return result.discarded(event);
 
     }
 
@@ -35,6 +35,6 @@ public class DiscardedEvent extends DomainEvent {
         @Override
     protected DomainEvent copy() {
         return new DiscardedEvent()
-                .setDiscarded(discarded);
+                .discarded(discarded);
     }
 }

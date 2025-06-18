@@ -17,8 +17,8 @@ public class CategoryGenerator {
 
     public Category genericCategory() {
         return new Category()
-                .setId(UUID_GENERATOR.next())
-                .setName(nextName());
+                .id(UUID_GENERATOR.next())
+                .name(nextName());
     }
 
     private String nextName() {

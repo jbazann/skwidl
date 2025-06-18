@@ -3,10 +3,12 @@ package dev.jbazann.skwidl.products.product.testdata;
 import dev.jbazann.skwidl.products.product.Product;
 import dev.jbazann.skwidl.commons.utils.FunStuff;
 import lombok.Getter;
+import lombok.experimental.Accessors;
 
 import java.util.List;
 
 @Getter
+@Accessors(fluent = true)
 public enum ProductDataset {
 
     PERSISTED(ProductDatasetEntryStaticGenerator.genericEntryList()),
@@ -36,7 +38,7 @@ public enum ProductDataset {
         final List<ProductDatasetEntry> persistedProducts =
                 FunStuff.nElemList(ProductDatasetEntryStaticGenerator::genericEntry,AMOUNT);
         persistedProducts.add(PERSISTED.entry);
-        return persistedProducts.stream().map(ProductDatasetEntry::getProduct).toList();
+        return persistedProducts.stream().map(ProductDatasetEntry::product).toList();
     }
 
 }

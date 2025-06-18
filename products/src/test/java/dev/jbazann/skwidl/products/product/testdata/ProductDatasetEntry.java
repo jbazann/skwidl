@@ -15,7 +15,7 @@ import java.util.List;
 @AllArgsConstructor
 @Setter
 @Getter
-@Accessors(chain = true)
+@Accessors(chain = true, fluent = true)
 public class ProductDatasetEntry {
 
     private Product product;
@@ -31,7 +31,7 @@ public class ProductDatasetEntry {
 
     public NewProductDTO asNewProductDTO() {
         return new NewProductDTO()
-                .setName(product.getName());
+                .name(product.name());
     }
 
 }

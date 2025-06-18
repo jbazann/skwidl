@@ -33,7 +33,7 @@ public class CancelPreparedOrderReserve implements TransactionStage {
 
     @Override
     public List<EntityLock> getRequiredLocks(DomainEvent domainEvent) {
-        return ((CancelPreparedOrderEvent) domainEvent).getReturnedStock().keySet().stream()
+        return ((CancelPreparedOrderEvent) domainEvent).returnedStock().keySet().stream()
                 .map(k -> new EntityLock(k.toString(), Product.class))
                 .toList();
     }
@@ -45,29 +45,29 @@ public class CancelPreparedOrderReserve implements TransactionStage {
         if (!(domainEvent instanceof CancelPreparedOrderEvent event))
             throw new IllegalArgumentException("Wrong DomainEvent type.");
 
-        final Collection<Product> products = actions.fetchAll(event.getReturnedStock().keySet());
-        final Map<UUID, Integer> stock = event.getReturnedStock();
+        final Collection<Product> products = actions.fetchAll(event.returnedStock().keySet());
+        final Map<UUID, Integer> stock = event.returnedStock();
 
         if (stock.size() != products.size()) {
             StringBuilder message = new StringBuilder("Could not find products for ID(s): ");
-            List<UUID> foundIds = products.stream().map(Product::getId).toList();
+            List<UUID> foundIds = products.stream().map(Product::id).toList();
             stock.keySet().stream().filter(k -> !foundIds.contains(k))
                     .forEach(k -> message.append(k).append(", "));
             message.setLength(message.length() - 2);
             message.append('.');
             transaction = transactions.reject(transaction);
             return new TransactionResult()
-                    .setData(transaction)
-                    .setSimpleResult(TransactionResult.SimpleResult.FAILURE)
-                    .setContext(message.toString());
+                    .data(transaction)
+                    .simpleResult(TransactionResult.SimpleResult.FAILURE)
+                    .context(message.toString());
         }
 
-        products.forEach(p -> p.setCurrentStock(p.getCurrentStock() + stock.get(p.getId())));
+        products.forEach(p -> p.currentStock(p.currentStock() + stock.get(p.id())));
         actions.saveAll(products);
         transaction = transactions.accept(transaction);
         return new TransactionResult()
-                .setData(transaction)
-                .setSimpleResult(TransactionResult.SimpleResult.SUCCESS)
-                .setContext("Stock returned.");
+                .data(transaction)
+                .simpleResult(TransactionResult.SimpleResult.SUCCESS)
+                .context("Stock returned.");
     }
 }

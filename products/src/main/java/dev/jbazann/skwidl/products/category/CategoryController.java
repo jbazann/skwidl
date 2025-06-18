@@ -25,8 +25,8 @@ public class CategoryController {
         if (!params.containsKey("name") && !params.containsKey("id"))
             throw new BadRequestException("Query parameter 'name' and/or 'id' required.");
         return categoryService.find(new Category()
-                .setId(params.containsKey("id") ? UUID.fromString(params.get("id")) : null)
-                .setName(params.get("name"))
+                .id(params.containsKey("id") ? UUID.fromString(params.get("id")) : null)
+                .name(params.get("name"))
         ).stream().map(Category::toDto).toList();
     }
 

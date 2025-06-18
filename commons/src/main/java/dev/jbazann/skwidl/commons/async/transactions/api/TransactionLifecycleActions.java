@@ -17,36 +17,36 @@ public class TransactionLifecycleActions {
     }
 
     public @NotNull @Valid Transaction error(@NotNull @Valid Transaction transaction) {
-        transaction.setStatus(Transaction.TransactionStatus.ERROR);
+        transaction.status(Transaction.TransactionStatus.ERROR);
         return repository.save(transaction);
     }
 
     public @NotNull @Valid Transaction reject(@NotNull @Valid Transaction transaction) {
-        transaction.setStatus(Transaction.TransactionStatus.REJECTED);
+        transaction.status(Transaction.TransactionStatus.REJECTED);
         return repository.save(transaction);
     }
 
     public @NotNull @Valid Transaction accept(@NotNull @Valid Transaction transaction) {
-        transaction.setStatus(Transaction.TransactionStatus.ACCEPTED);
+        transaction.status(Transaction.TransactionStatus.ACCEPTED);
         return repository.save(transaction);
     }
 
     @SuppressWarnings("UnusedReturnValue")
     public @NotNull @Valid Transaction rollback(@NotNull @Valid Transaction transaction) {
-        transaction.setStatus(Transaction.TransactionStatus.ROLLED_BACK);
+        transaction.status(Transaction.TransactionStatus.ROLLED_BACK);
         return repository.save(transaction);
     }
 
     public @NotNull @Valid Transaction commit(@NotNull @Valid Transaction transaction) {
-        transaction.setStatus(Transaction.TransactionStatus.COMMITTED);
+        transaction.status(Transaction.TransactionStatus.COMMITTED);
         return repository.save(transaction);
     }
 
     public @NotNull @Valid Transaction fetchOrCreateForEvent(@NotNull @Valid DomainEvent event) {
-        Transaction transaction = repository.findById(event.getTransaction().getId()).orElse(null);
+        Transaction transaction = repository.findById(event.transaction().id()).orElse(null);
         if (transaction == null) {
             transaction = Transaction.from(event);
-            transaction.setStatus(Transaction.TransactionStatus.UNKNOWN);
+            transaction.status(Transaction.TransactionStatus.UNKNOWN);
             repository.save(transaction);
         }
         return transaction;

@@ -13,7 +13,7 @@ import java.util.UUID;
 @AllArgsConstructor
 @Getter
 @Setter
-@Accessors(chain = true)
+@Accessors(chain = true, fluent = true)
 @ToString
 public class NewCustomerDTO {
 
@@ -28,11 +28,11 @@ public class NewCustomerDTO {
 
     public CustomerDTO toDto() {
         return new CustomerDTO()
-                .setId(id)
-                .setName(name)
-                .setEmail(email)
-                .setCuit(cuit)
-                .setEnabledUsers(enabledUsers == null ? new ArrayList<>() : enabledUsers);
+                .id(id)
+                .name(name)
+                .email(email)
+                .cuit(cuit)
+                .enabledUsers(enabledUsers == null ? new ArrayList<>() : enabledUsers);
     }
 
 }

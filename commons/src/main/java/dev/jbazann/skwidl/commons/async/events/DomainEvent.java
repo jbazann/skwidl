@@ -17,8 +17,8 @@ import java.util.List;
 import java.util.UUID;
 
 @Data
+@Accessors(fluent = true)
 @ToString
-@Accessors(chain = true)
 @EqualsAndHashCode
 public abstract class DomainEvent {
 
@@ -37,18 +37,18 @@ public abstract class DomainEvent {
 
     public static DomainEvent init(final DomainEvent event) {
         final TransactionQuorum emptyQuorum = new TransactionQuorum()
-                .setMembers(List.of())
-                .setCoordinator(new ApplicationMember(""));
+                .members(List.of())
+                .coordinator(new ApplicationMember(""));
         final Transaction transaction = new Transaction()
-                .setId(UUID.randomUUID()) // TODO replace with safe alternative
-                .setQuorum(emptyQuorum)
-                .setStatus(Transaction.TransactionStatus.UNKNOWN)
-                .setExpires(TimeProvider.localDateTimeNow().plusHours(1L)); // TODO configure expiring time
-        return event.setId(UUID.randomUUID()) // TODO replace with safe alternative
-                .setTransaction(transaction)
-                .setTimestamp(TimeProvider.localDateTimeNow())
-                .setType(Type.UNKNOWN)
-                .setContext("Initialized by .commons.async.events.DomainEvent.init");
+                .id(UUID.randomUUID()) // TODO replace with safe alternative
+                .quorum(emptyQuorum)
+                .status(Transaction.TransactionStatus.UNKNOWN)
+                .expires(TimeProvider.localDateTimeNow().plusHours(1L)); // TODO configure expiring time
+        return event.id(UUID.randomUUID()) // TODO replace with safe alternative
+                .transaction(transaction)
+                .timestamp(TimeProvider.localDateTimeNow())
+                .type(Type.UNKNOWN)
+                .context("Initialized by .commons.async.events.DomainEvent.init");
     }
 
     /**
@@ -58,12 +58,12 @@ public abstract class DomainEvent {
      */
     public static @NotNull @Valid DomainEvent copyOf(DomainEvent event) {
         return event.copy()
-                .setId(UUID.randomUUID()) // TODO replace with safe alternative
-                .setTransaction(event.getTransaction())
-                .setTimestamp(TimeProvider.localDateTimeNow()) // TODO replace with safe alternative
-                .setSentBy(event.getSentBy())
-                .setType(event.getType())
-                .setContext("Copied by .commons.async.events.DomainEvent.copyOf");
+                .id(UUID.randomUUID()) // TODO replace with safe alternative
+                .transaction(event.transaction())
+                .timestamp(TimeProvider.localDateTimeNow()) // TODO replace with safe alternative
+                .sentBy(event.sentBy())
+                .type(event.type())
+                .context("Copied by .commons.async.events.DomainEvent.copyOf");
     }
 
     /**
@@ -77,6 +77,7 @@ public abstract class DomainEvent {
     protected abstract DomainEvent copy();
 
     @Getter
+    @Accessors(fluent = true)
     public enum Type{
         REQUEST("request.event"),
         ACCEPT("accept.event"),

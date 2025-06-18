@@ -27,7 +27,7 @@ public class TransactionStageExecutorService {
         lockingService.getLocks(stage, event);
         TransactionResult result = stage.runStage(event, transaction);
         lockingService.releaseLocks(stage, event);
-        result.setData(transaction);
+        result.data(transaction);
         return result;
     }
 

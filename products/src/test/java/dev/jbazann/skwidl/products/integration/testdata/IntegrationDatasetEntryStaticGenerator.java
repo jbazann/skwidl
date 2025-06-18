@@ -27,20 +27,20 @@ public class IntegrationDatasetEntryStaticGenerator {
     public static IntegrationDatasetEntry genericEntry() {
         Product p = PRODUCT_GENERATOR.genericProduct();
         Category c = CATEGORY_GENERATOR.genericCategory();
-        p.setCategory(c.getId());
+        p.category(c.id());
         return new IntegrationDatasetEntry()
-                .setProduct(p)
-                .setCategory(c);
+                .product(p)
+                .category(c);
     }
 
     public static IntegrationDatasetEntry productsInCategoryEntry() {
         final int PRODUCTS_IN_CATEGORY = 6;
         List<Product> p = nElemList(PRODUCT_GENERATOR::genericProduct, PRODUCTS_IN_CATEGORY);
         Category c = CATEGORY_GENERATOR.genericCategory();
-        p.forEach(prod -> prod.setCategory(c.getId()));
+        p.forEach(prod -> prod.category(c.id()));
         return new IntegrationDatasetEntry()
-                .setProducts(p)
-                .setCategory(c);
+                .products(p)
+                .category(c);
     }
 
 }

@@ -14,7 +14,7 @@ import java.util.UUID;
 @AllArgsConstructor
 @Getter
 @Setter
-@Accessors(chain = true)
+@Accessors(chain = true, fluent = true)
 @ToString
 public class NewSiteDTO {
 
@@ -29,10 +29,10 @@ public class NewSiteDTO {
 
     public SiteDTO toDto() {
         return new SiteDTO()
-                .setAddress(address)
-                .setCustomer(customer)
-                .setBudget(budget)
-                .setCoordinates(coordinates);
+                .address(address)
+                .customer(customer)
+                .budget(budget)
+                .coordinates(coordinates);
     }
 
 }

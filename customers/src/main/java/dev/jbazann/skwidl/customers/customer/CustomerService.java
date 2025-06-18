@@ -54,13 +54,13 @@ public class CustomerService {
 
     public @NotNull @Valid Customer newCustomer(@NotNull @Valid NewCustomerDTO input) {
         CustomerDTO dto = input.toDto();
-        dto.setId(generateCustomerId());
-        dto.setMaxDebt(defaults.getMaxDebt());
-        dto.setBudget(BigDecimal.ZERO);
-        dto.setMaxActiveSites(defaults.getMaxActiveSites());
-        dto.setEnabledSites(dto.getEnabledSites() == null ? new ArrayList<>() : dto.getEnabledSites());
-        dto.setEnabledUsers(dto.getEnabledUsers() == null ? new ArrayList<>() : dto.getEnabledUsers());
-        dto.setPendingSites(0);
+        dto.id(generateCustomerId());
+        dto.maxDebt(defaults.maxDebt());
+        dto.budget(BigDecimal.ZERO);
+        dto.maxActiveSites(defaults.maxActiveSites());
+        dto.enabledSites(dto.enabledSites() == null ? new ArrayList<>() : dto.enabledSites());
+        dto.enabledUsers(dto.enabledUsers() == null ? new ArrayList<>() : dto.enabledUsers());
+        dto.pendingSites(0);
         @Valid Customer customer = dto.toEntity();
         return customerRepository.save(customer);
     }
@@ -125,7 +125,7 @@ public class CustomerService {
     @Transactional
     public boolean activateSite(@NotNull UUID customerId, @NotNull UUID siteId) {
         Customer customer = fetchCustomer(customerId);
-        if(customer.getActiveSites().size() < customer.getMaxActiveSites()) {
+        if(customer.activeSites().size() < customer.maxActiveSites()) {
             customer.addActiveSite(siteId);
             customerRepository.save(customer);
             return true;
@@ -143,23 +143,23 @@ public class CustomerService {
     @Transactional
     public void activatePendingSite(@NotNull UUID customerId, @NotNull UUID siteId) {
         Customer customer = fetchCustomer(customerId);
-        if (customer.getActiveSites().size() < customer.getMaxActiveSites()) {
+        if (customer.activeSites().size() < customer.maxActiveSites()) {
             customer.addActiveSite(siteId);
-            if (customer.getPendingSites() < 1); // TODO log, customer unaware of pending site
+            if (customer.pendingSites() < 1); // TODO log, customer unaware of pending site
             customer.removePendingSite();
             customerRepository.save(customer);
         }
     }
 
     /**
-     * Remove the given site from {@link Customer#getActiveSites()}.
+     * Remove the given site from {@link Customer#activeSites()}.
      * @param customerId a valid customer ID.
      * @param siteId a site ID that is presumed, but not required to be valid.
      */
     @Transactional
     public void finishSite(@NotNull UUID customerId, @NotNull UUID siteId) {
         Customer customer = fetchCustomer(customerId);
-        if(!customer.getActiveSites().contains(siteId)) {
+        if(!customer.activeSites().contains(siteId)) {
             // TODO log, customer unaware of active site
             return;
         }
@@ -167,11 +167,11 @@ public class CustomerService {
         customerRepository.save(customer);
         // the customer may now activate more sites
         // TODO concurrency, retry
-        if(customer.getPendingSites() > 0) siteService.signalActivatePendingSites(customer.getId());
+        if(customer.pendingSites() > 0) siteService.signalActivatePendingSites(customer.id());
     }
 
     /**
-     * Add one to {@link Customer#getPendingSites()}
+     * Add one to {@link Customer#pendingSites()}
      * @param customerId a valid customer ID.
      */
     public void addPendingSite(@NotNull UUID customerId) {
@@ -181,13 +181,13 @@ public class CustomerService {
 
     /**
      * Like {@link CustomerService#finishSite(UUID, UUID)}, remove the given site from
-     * {@link Customer#getActiveSites()}, but also increment {@link Customer#getPendingSites()}.
+     * {@link Customer#activeSites()}, but also increment {@link Customer#pendingSites()}.
      * @param customerId a valid customer ID.
      * @param siteId a site ID that is presumed, but not required to be valid.
      */
     public void deactivateSite(@NotNull UUID customerId, @NotNull UUID siteId) {
         Customer customer = fetchCustomer(customerId);
-        if(!customer.getActiveSites().contains(siteId)) {
+        if(!customer.activeSites().contains(siteId)) {
             // TODO log, customer unaware of active site
             return;
         }
@@ -205,7 +205,7 @@ public class CustomerService {
         // TODO ideally this should only fetch budget, find out how much it actually matters, if at all.
         // TODO add or rename field, maxDebt is silly.
         Customer customer = fetchCustomer(customerId);
-        return customer.getMaxDebt();
+        return customer.maxDebt();
     }
 
     public @NotNull BigDecimal bill(@NotNull UUID customerId, @NotNull @Min(0) BigDecimal amount) {
@@ -213,17 +213,17 @@ public class CustomerService {
         if (!customer.bill(amount)) {
             throw new InsufficientCreditException(
                     "Customer " + customerId + " has insufficient funds.",
-                    customer.getMaxDebt().add(customer.getBudget()).subtract(amount).abs()
+                    customer.maxDebt().add(customer.budget()).subtract(amount).abs()
             );
         }
         customer = customerRepository.save(customer);
-        return customer.getBudget().add(customer.getMaxDebt());
+        return customer.budget().add(customer.maxDebt());
     }
 
     public @NotNull BigDecimal credit(@NotNull UUID customerId, @NotNull @Min(0) BigDecimal amount) {
         Customer customer = fetchCustomer(customerId);
         customer = customerRepository.save(customer.credit(amount));
-        return customer.getBudget().add(customer.getMaxDebt());
+        return customer.budget().add(customer.maxDebt());
     }
 
 }

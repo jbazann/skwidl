@@ -7,6 +7,7 @@ import dev.jbazann.skwidl.commons.async.transactions.api.Stage;
 import dev.jbazann.skwidl.commons.async.transactions.api.TransactionLifecycleActions;
 import dev.jbazann.skwidl.commons.async.transactions.api.TransactionStage;
 import dev.jbazann.skwidl.commons.async.transactions.api.TransactionStageBean;
+import dev.jbazann.skwidl.commons.async.transactions.api.locking.EntityLock;
 import dev.jbazann.skwidl.commons.async.transactions.entities.Transaction;
 import dev.jbazann.skwidl.orders.order.entities.Order;
 import dev.jbazann.skwidl.orders.order.entities.StatusHistory;
@@ -14,6 +15,7 @@ import dev.jbazann.skwidl.orders.order.services.OrderLifecycleActions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Optional;
 
 @TransactionStageBean(
@@ -39,34 +41,34 @@ public class Rollback implements TransactionStage {
         if (!(domainEvent instanceof DeliverOrderEvent event))
             throw new IllegalArgumentException("Wrong DomainEvent type.");
 
-        final Optional<Order> OPT = orderActions.fetch(event.getOrderId());
+        final Optional<Order> OPT = orderActions.fetch(event.orderId());
         if (OPT.isEmpty()) {
             transaction = transactionActions.error(transaction);
             return new TransactionResult()
-                    .setData(transaction)
-                    .setSimpleResult(TransactionResult.SimpleResult.CRITICAL_FAILURE)
-                    .setContext("Order not found.");
+                    .data(transaction)
+                    .simpleResult(TransactionResult.SimpleResult.CRITICAL_FAILURE)
+                    .context("Order not found.");
         }
         final Order order = OPT.get();
 
-        final StatusHistory.Status STATUS = order.getStatusHistory().getLast().getStatus();
+        final StatusHistory.Status STATUS = order.statusHistory().getLast().status();
         if (STATUS != StatusHistory.Status.DELIVERED) {
             transaction = transactionActions.error(transaction);
             // TODO single stage transactions are never committed
             return new TransactionResult()
-                    .setData(transaction)
-                    .setSimpleResult(TransactionResult.SimpleResult.CRITICAL_FAILURE)
-                    .setContext("Order status was expected to be 'delivered', but is instead " + STATUS + '.');
+                    .data(transaction)
+                    .simpleResult(TransactionResult.SimpleResult.CRITICAL_FAILURE)
+                    .context("Order status was expected to be 'delivered', but is instead " + STATUS + '.');
         }
 
-        orderActions.rollbackToPreparation(order, "Failed to deliver with context " + event.getContext());
+        orderActions.rollbackToPreparation(order, "Failed to deliver with context " + event.context());
         transactionActions.rollback(transaction);
         return new TransactionResult()
-                .setData(transaction)
-                .setSimpleResult(TransactionResult.SimpleResult.SUCCESS)
-                .setContext(String.format(
+                .data(transaction)
+                .simpleResult(TransactionResult.SimpleResult.SUCCESS)
+                .context(String.format(
                         "Order delivered by event %s with context %s",
-                        event.getId(), event.getContext()
+                        event.id(), event.context()
                 ));
     }
 }

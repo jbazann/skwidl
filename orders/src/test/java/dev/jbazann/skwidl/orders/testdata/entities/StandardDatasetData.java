@@ -13,7 +13,7 @@ import java.util.List;
 @AllArgsConstructor
 @Setter
 @Getter
-@Accessors(chain = true)
+@Accessors(chain = true, fluent = true)
 public class StandardDatasetData {
 
     private Order order;

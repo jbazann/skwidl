@@ -14,7 +14,7 @@ import java.util.UUID;
 @Getter
 @Setter
 @ToString
-@Accessors(chain = true)
+@Accessors(chain = true, fluent = true)
 public class NewOrderDTO {
 
     @NotNull
@@ -30,11 +30,11 @@ public class NewOrderDTO {
 
     public OrderDTO toDto() {
         return new OrderDTO()
-                .setUser(user)
-                .setCustomer(customer)
-                .setSite(site)
-                .setNote(note)
-                .setDetail(detail.stream().map(NewDetailDTO::toDto).toList());
+                .user(user)
+                .customer(customer)
+                .site(site)
+                .note(note)
+                .detail(detail.stream().map(NewDetailDTO::toDto).toList());
     }
 
 }

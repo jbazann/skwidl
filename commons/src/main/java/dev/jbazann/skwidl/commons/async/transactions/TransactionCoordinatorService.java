@@ -27,7 +27,7 @@ public class TransactionCoordinatorService {
     }
 
     public void handle(@NotNull @Valid DomainEvent event) {
-        CoordinatedTransaction transaction = repository.findById(event.getTransaction().getId())
+        CoordinatedTransaction transaction = repository.findById(event.transaction().id())
                 .orElse(repository.save(CoordinatedTransaction.from(event)));
 
         TransactionCoordinatorStrategy strategy = strategies.getStrategy(event, transaction);
@@ -42,7 +42,7 @@ public class TransactionCoordinatorService {
     }
 
     public boolean isCoordinatorFor(DomainEvent event) {
-        return member.equals(event.getTransaction().getQuorum().getCoordinator());
+        return member.equals(event.transaction().quorum().coordinator());
     }
 
 }

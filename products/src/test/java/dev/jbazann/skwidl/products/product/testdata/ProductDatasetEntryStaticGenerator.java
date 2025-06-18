@@ -20,78 +20,78 @@ public class ProductDatasetEntryStaticGenerator {
 
     public static ProductDatasetEntry genericEntry() {
         return new ProductDatasetEntry()
-                .setProduct(PRODUCT_GENERATOR.genericProduct());
+                .product(PRODUCT_GENERATOR.genericProduct());
     }
 
     public static ProductDatasetEntry createProductEntry() {
         return new ProductDatasetEntry()
-                .setProduct(PRODUCT_GENERATOR.newlyCreatedProduct());
+                .product(PRODUCT_GENERATOR.newlyCreatedProduct());
     }
 
     public static ProductDatasetEntry genericEntryList() {
         final int AMOUNT = 5;
         return new ProductDatasetEntry()
-                .setProducts(FunStuff.nElemList(PRODUCT_GENERATOR::genericProduct,AMOUNT));
+                .products(FunStuff.nElemList(PRODUCT_GENERATOR::genericProduct,AMOUNT));
     }
 
     public static ProductDatasetEntry nullNameEntry() {
         return new ProductDatasetEntry()
-                .setProduct(PRODUCT_GENERATOR.genericProduct()
-                        .setName(null));
+                .product(PRODUCT_GENERATOR.genericProduct()
+                        .name(null));
     }
 
     public static ProductDatasetEntry emptyNameEntry() {
         return new ProductDatasetEntry()
-                .setProduct(PRODUCT_GENERATOR.genericProduct()
-                        .setName(""));
+                .product(PRODUCT_GENERATOR.genericProduct()
+                        .name(""));
     }
 
     public static ProductDatasetEntry negativePriceEntry() {
         return new ProductDatasetEntry()
-                .setProduct(PRODUCT_GENERATOR.genericProduct()
-                        .setPrice(new BigDecimal("-0.01")));
+                .product(PRODUCT_GENERATOR.genericProduct()
+                        .price(new BigDecimal("-0.01")));
     }
 
     public static ProductDatasetEntry zeroPriceEntry() {
         return new ProductDatasetEntry()
-                .setProduct(PRODUCT_GENERATOR.genericProduct()
-                        .setPrice(BigDecimal.ZERO));
+                .product(PRODUCT_GENERATOR.genericProduct()
+                        .price(BigDecimal.ZERO));
     }
 
     public static ProductDatasetEntry nullPriceEntry() {
         return new ProductDatasetEntry()
-                .setProduct(PRODUCT_GENERATOR.genericProduct()
-                        .setPrice(null));
+                .product(PRODUCT_GENERATOR.genericProduct()
+                        .price(null));
     }
 
     public static ProductDatasetEntry nullDescriptionEntry() {
         return new ProductDatasetEntry()
-                .setProduct(PRODUCT_GENERATOR.genericProduct()
-                        .setDescription(null));
+                .product(PRODUCT_GENERATOR.genericProduct()
+                        .description(null));
     }
 
     public static ProductDatasetEntry emptyDescriptionEntry() {
         return new ProductDatasetEntry()
-                .setProduct(PRODUCT_GENERATOR.genericProduct()
-                    .setDescription(""));
+                .product(PRODUCT_GENERATOR.genericProduct()
+                    .description(""));
     }
 
     public static ProductDatasetEntry negativeStockEntry() {
         return new ProductDatasetEntry()
-                .setProduct(PRODUCT_GENERATOR.genericProduct()
-                        .setCurrentStock(-1));
+                .product(PRODUCT_GENERATOR.genericProduct()
+                        .currentStock(-1));
     }
 
     public static ProductDatasetEntry negativeMinStockEntry() {
         return new ProductDatasetEntry()
-                .setProduct(PRODUCT_GENERATOR.genericProduct()
-                        .setMinimumStock(-1));
+                .product(PRODUCT_GENERATOR.genericProduct()
+                        .minimumStock(-1));
     }
 
     public static ProductDatasetEntry nullCategoryEntry() {
         return new ProductDatasetEntry()
-                .setProduct(PRODUCT_GENERATOR.genericProduct()
-                        .setCategory(null));
+                .product(PRODUCT_GENERATOR.genericProduct()
+                        .category(null));
     }
 
 }

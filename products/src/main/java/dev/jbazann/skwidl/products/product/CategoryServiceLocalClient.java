@@ -18,13 +18,13 @@ public class CategoryServiceLocalClient implements CategoryServiceClient {
 
     @Override
     public CompletableFuture<UUID> findCategoryByName(String name) {
-        Category probe = new Category().setName(name); // keep id null
+        Category probe = new Category().name(name); // keep id null
         return CompletableFuture.completedFuture(
                 categoryService.find(probe)
                         .stream()
                         .findFirst()
                         .orElse(probe) // has null id
-                        .getId()
+                        .id()
         );
     }
 

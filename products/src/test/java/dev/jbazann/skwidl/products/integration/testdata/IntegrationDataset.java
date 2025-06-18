@@ -4,6 +4,7 @@ import dev.jbazann.skwidl.products.category.Category;
 import dev.jbazann.skwidl.products.category.dto.CategoryDTO;
 import dev.jbazann.skwidl.products.product.Product;
 import lombok.Getter;
+import lombok.experimental.Accessors;
 
 import java.util.List;
 import java.util.Objects;
@@ -12,15 +13,16 @@ import java.util.stream.Stream;
 import static dev.jbazann.skwidl.commons.utils.FunStuff.nElemList;
 
 @Getter
+@Accessors(fluent = true)
 public enum IntegrationDataset {
 
     PERSISTED_GENERIC(IntegrationDatasetEntryStaticGenerator.genericEntry()),
     PERSISTED_PRODUCTS_IN_CATEGORY(IntegrationDatasetEntryStaticGenerator.productsInCategoryEntry()),
-    PERSISTED_MISSING_CATEGORY(IntegrationDatasetEntryStaticGenerator.genericEntry().setCategory(null)),
-    PERSISTED_EMPTY_CATEGORY(IntegrationDatasetEntryStaticGenerator.genericEntry().setProduct(null)),
+    PERSISTED_MISSING_CATEGORY(IntegrationDatasetEntryStaticGenerator.genericEntry().category(null)),
+    PERSISTED_EMPTY_CATEGORY(IntegrationDatasetEntryStaticGenerator.genericEntry().product(null)),
     GENERIC(IntegrationDatasetEntryStaticGenerator.genericEntry()),
-    MISSING_CATEGORY(IntegrationDatasetEntryStaticGenerator.genericEntry().setCategory(null)),
-    EMPTY_CATEGORY(IntegrationDatasetEntryStaticGenerator.genericEntry().setProduct(null)),
+    MISSING_CATEGORY(IntegrationDatasetEntryStaticGenerator.genericEntry().category(null)),
+    EMPTY_CATEGORY(IntegrationDatasetEntryStaticGenerator.genericEntry().product(null)),
 
     ;
 
@@ -53,22 +55,22 @@ public enum IntegrationDataset {
 
     private static List<Product> buildPersistedProducts() {
         return List.copyOf(PERSISTED_ENTRIES.stream().flatMap(e -> {
-            if (e.getProduct() != null) return Stream.of(e.getProduct());
-            if (e.getProducts() != null) return e.getProducts().stream();
+            if (e.product() != null) return Stream.of(e.product());
+            if (e.products() != null) return e.products().stream();
             return null;
         }).filter(Objects::nonNull).toList());
     }
 
     private static List<Category> buildPersistedCategories() {
         return List.copyOf(PERSISTED_ENTRIES.stream().flatMap(e -> {
-            if (e.getCategory() != null) return Stream.of(e.getCategory());
-            if (e.getCategories() != null) return e.getCategories().stream();
+            if (e.category() != null) return Stream.of(e.category());
+            if (e.categories() != null) return e.categories().stream();
             return null;
         }).filter(Objects::nonNull).toList());
     }
 
     public CategoryDTO asCategoryDTO() {
-        return this.entry.getCategory().toDto();
+        return this.entry.category().toDto();
     }
 
 }

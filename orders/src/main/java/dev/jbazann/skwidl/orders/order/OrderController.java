@@ -49,7 +49,7 @@ public class OrderController {
     public void updateOrder(@PathVariable UUID id,
                                 @RequestBody StatusUpdateDTO update) {
         if (!orderService.orderExists(id)) throw new OrderNotFoundException("No Order found with id: " + id +'.');
-        switch(update.getStatus()) {
+        switch(update.status()) {
             case StatusHistory.Status.DELIVERED -> orderService.deliverOrder(id, update);
             case StatusHistory.Status.CANCELED -> orderService.cancelOrder(id, update);
             default -> throw new BadRequestException("Status must be one of: " +

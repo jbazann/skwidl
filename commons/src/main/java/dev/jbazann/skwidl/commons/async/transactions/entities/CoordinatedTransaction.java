@@ -16,7 +16,7 @@ import java.time.LocalDateTime;
 import java.util.*;
 
 @Data
-@Accessors(chain = true)
+@Accessors(chain = true, fluent = true)
 @ToString
 @RedisHash
 public class CoordinatedTransaction {
@@ -35,14 +35,14 @@ public class CoordinatedTransaction {
 
     public static @NotNull @Valid CoordinatedTransaction from(@NotNull @Valid DomainEvent event) {
         final Map<ApplicationMember, QuorumStatus> quorumStatus = new HashMap<>();
-        event.getTransaction().getQuorum().getMembers()
+        event.transaction().quorum().members()
                 .forEach(member -> quorumStatus.put(member, QuorumStatus.UNKNOWN));
         return new CoordinatedTransaction()
-                .setId(event.getTransaction().getId())
-                .setStatus(TransactionStatus.STARTED)
-                .setQuorumStatus(quorumStatus)
-                .setRollback(new ArrayList<>())
-                .setExpires(event.getTransaction().getExpires());
+                .id(event.transaction().id())
+                .status(TransactionStatus.STARTED)
+                .quorumStatus(quorumStatus)
+                .rollback(new ArrayList<>())
+                .expires(event.transaction().expires());
     }
 
     public boolean isTimeExpired() {

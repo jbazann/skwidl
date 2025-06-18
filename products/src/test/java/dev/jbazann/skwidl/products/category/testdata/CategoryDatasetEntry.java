@@ -15,7 +15,7 @@ import java.util.List;
 @AllArgsConstructor
 @Setter
 @Getter
-@Accessors(chain = true)
+@Accessors(chain = true, fluent = true)
 public class CategoryDatasetEntry {
 
     private Category category;
@@ -30,7 +30,7 @@ public class CategoryDatasetEntry {
     }
 
     public NewCategoryDTO asNewCategoryDTO() {
-        return new NewCategoryDTO(category.getName());
+        return new NewCategoryDTO(category.name());
     }
 
 }

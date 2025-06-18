@@ -14,7 +14,7 @@ import java.util.List;
 @AllArgsConstructor
 @Setter
 @Getter
-@Accessors(chain = true)
+@Accessors(chain = true, fluent = true)
 public class IntegrationDatasetEntry {
 
     private Product product;

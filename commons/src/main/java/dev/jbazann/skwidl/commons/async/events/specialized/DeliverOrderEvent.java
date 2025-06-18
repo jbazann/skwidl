@@ -12,8 +12,8 @@ import java.math.BigDecimal;
 import java.util.UUID;
 
 @Data()
-@Accessors(chain = true)
-@ToString(callSuper = true)
+@Accessors(chain = true, fluent = true)
+@ToString
 @EqualsAndHashCode(callSuper = true)
 public class DeliverOrderEvent extends DomainEvent {
 
@@ -27,8 +27,8 @@ public class DeliverOrderEvent extends DomainEvent {
     @Override
     protected DomainEvent copy() {
         return new DeliverOrderEvent()
-                .setOrderId(orderId)
-                .setCustomerId(customerId)
-                .setReturnedFunds(returnedFunds);
+                .orderId(orderId)
+                .customerId(customerId)
+                .returnedFunds(returnedFunds);
     }
 }

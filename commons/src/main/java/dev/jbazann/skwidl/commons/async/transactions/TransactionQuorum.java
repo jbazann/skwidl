@@ -17,7 +17,7 @@ import java.util.List;
  * as the completion state of said processing.
  */
 @Data()
-@Accessors(chain = true)
+@Accessors(chain = true, fluent = true)
 @EqualsAndHashCode
 public final class TransactionQuorum {
 
