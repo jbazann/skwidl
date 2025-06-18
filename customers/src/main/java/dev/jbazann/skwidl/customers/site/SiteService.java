@@ -46,8 +46,8 @@ public class SiteService {
 
     public @NotNull @Valid Site newSite(@Valid @NotNull NewSiteDTO input) {
         SiteDTO dto = input.toDto();
-        dto.id(self.generateSiteId());
-        dto.status(Site.SiteStatus.UNSET);
+        dto.setId(self.generateSiteId());
+        dto.setStatus(Site.SiteStatus.UNSET);
         @Valid Site site = dto.toEntity();
         siteStatusService.setInitialStatus(site);
         return siteRepository.save(site);
@@ -85,7 +85,7 @@ public class SiteService {
     @Transactional
     public void activatePendingSites(@NotNull UUID customerId) {
         // fetch some pending sites (ideally go through all of them in the future)
-        Example<Site> query = Example.of(new Site().customer(customerId).status(Site.SiteStatus.PENDING));
+        Example<Site> query = Example.of(new Site().setCustomer(customerId).setStatus(Site.SiteStatus.PENDING));
         Iterator<Site> sites = siteRepository.findAll(query, Pageable.ofSize(5)).iterator();
 
         // try activating sites until max capacity
@@ -93,9 +93,9 @@ public class SiteService {
         while(sites.hasNext() && previousSucceeded) {
             final Site site = sites.next();
             // this is the only necessarily transactional operation
-            updateSiteStatus(site.id(), Site.SiteStatus.ACTIVE);
+            updateSiteStatus(site.getId(), Site.SiteStatus.ACTIVE);
             // if status was updated, there may be room for one more, so try another
-            previousSucceeded = site.status().equals(Site.SiteStatus.ACTIVE);
+            previousSucceeded = site.getStatus().equals(Site.SiteStatus.ACTIVE);
         }
     }
 

@@ -13,7 +13,7 @@ import java.util.UUID;
 @AllArgsConstructor
 @Getter
 @Setter
-@Accessors(chain = true, fluent = true)
+@Accessors(chain = true)
 @ToString
 public class NewSiteDTO {
 
@@ -28,10 +28,10 @@ public class NewSiteDTO {
 
     public SiteDTO toDto() {
         return new SiteDTO()
-                .address(address)
-                .customer(customer)
-                .budget(budget)
-                .coordinates(coordinates);
+                .setAddress(address)
+                .setCustomer(customer)
+                .setBudget(budget)
+                .setCoordinates(coordinates);
     }
 
 }

@@ -12,7 +12,7 @@ import java.util.UUID;
 @AllArgsConstructor
 @Getter
 @Setter
-@Accessors(chain = true, fluent = true)
+@Accessors(chain = true)
 @ToString
 public class CustomerDTO {
 

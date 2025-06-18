@@ -13,7 +13,7 @@ import java.util.UUID;
 @Getter
 @Setter
 @ToString
-@Accessors(chain = true, fluent = true)
+@Accessors(chain = true)
 public class NewDetailDTO {
 
     @NotNull
@@ -25,10 +25,10 @@ public class NewDetailDTO {
 
     public DetailDTO toDto() {
         return new DetailDTO()
-                .product(product)
-                .amount(amount)
-                .discount(discount)
-                .unitCost(unitCost);
+                .setProduct(product)
+                .setAmount(amount)
+                .setDiscount(discount)
+                .setUnitCost(unitCost);
     }
 
 }

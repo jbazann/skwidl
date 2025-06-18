@@ -1,7 +1,6 @@
 package dev.jbazann.skwidl.commons.async.transactions.coordination;
 
 import dev.jbazann.skwidl.commons.async.events.DomainEvent;
-import dev.jbazann.skwidl.commons.async.events.DomainEventBuilder;
 import dev.jbazann.skwidl.commons.async.events.DomainEventBuilderFactory;
 import dev.jbazann.skwidl.commons.async.transactions.entities.CoordinatedTransaction;
 
@@ -23,20 +22,20 @@ public class TransactionCoordinatorExpiredStrategy implements TransactionCoordin
     public TransactionCoordinatorStrategyResult getResult() {
         DomainEvent response = null;
         if (!transaction.isExpired()) { // First expired event.
-            transaction.status(CoordinatedTransaction.TransactionStatus.EXPIRED);
+            transaction.setStatus(CoordinatedTransaction.TransactionStatus.EXPIRED);
             response = events.create(event.getClass())
                     .answer(event)
                     .setType(DomainEvent.Type.REJECT)
                     .setContext("Transactional operation timed out.")
                     .build();
         } else {
-            switch (event.type()) {
-                case REJECT -> transaction.addReject(event.sentBy());
-                case ROLLBACK -> transaction.addRollback(event.sentBy());
+            switch (event.getType()) {
+                case REJECT -> transaction.addReject(event.getSentBy());
+                case ROLLBACK -> transaction.addRollback(event.getSentBy());
             }
 
             if (transaction.isFullyRejected()) {
-                transaction.status(CoordinatedTransaction.TransactionStatus.CONCLUDED_EXPIRED);
+                transaction.setStatus(CoordinatedTransaction.TransactionStatus.CONCLUDED_EXPIRED);
                 response = events.create(event.getClass())
                         .answer(event)
                         .setType(DomainEvent.Type.ACK)

@@ -68,14 +68,14 @@ public class ProductServiceMockClient implements ProductServiceClient {
         Stream.of(StandardDataset.values())
                 .filter(StandardDataset::hasOrder)
                 .map(StandardDataset::asOrderDTO)
-                .map(OrderDTO::detail)
+                .map(OrderDTO::getDetail)
                 .filter(Objects::nonNull)
                 .flatMap(List::stream)
                 .forEach(detail -> {
-                    when(getTotalCost.apply(eq(detail.product())))
-                            .thenReturn(detail.totalCost());
-                    when(getUnitCost.apply(eq(detail.product())))
-                            .thenReturn(detail.unitCost());
+                    when(getTotalCost.apply(eq(detail.getProduct())))
+                            .thenReturn(detail.getTotalCost());
+                    when(getUnitCost.apply(eq(detail.getProduct())))
+                            .thenReturn(detail.getUnitCost());
                 });
     }
 

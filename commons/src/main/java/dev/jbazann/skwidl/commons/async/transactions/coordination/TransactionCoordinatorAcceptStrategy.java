@@ -1,7 +1,6 @@
 package dev.jbazann.skwidl.commons.async.transactions.coordination;
 
 import dev.jbazann.skwidl.commons.async.events.DomainEvent;
-import dev.jbazann.skwidl.commons.async.events.DomainEventBuilder;
 import dev.jbazann.skwidl.commons.async.events.DomainEventBuilderFactory;
 import dev.jbazann.skwidl.commons.async.transactions.entities.CoordinatedTransaction;
 
@@ -23,11 +22,11 @@ public class TransactionCoordinatorAcceptStrategy implements TransactionCoordina
 
     @Override
     public TransactionCoordinatorStrategyResult getResult() {
-        if (STARTED.equals(transaction.status())) transaction.addAccept(event.sentBy());
+        if (STARTED.equals(transaction.getStatus())) transaction.addAccept(event.getSentBy());
 
         DomainEvent response = null;
         if (transaction.isFullyAccepted()) {
-            transaction.status(CoordinatedTransaction.TransactionStatus.COMMITTED);
+            transaction.setStatus(CoordinatedTransaction.TransactionStatus.COMMITTED);
             response = events.create(event.getClass())
                     .answer(event)
                     .setType(DomainEvent.Type.COMMIT)

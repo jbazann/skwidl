@@ -23,56 +23,56 @@ public class StatusHistoryGenerator {
 
     protected Order initAccepted(Order order) {
         final List<StatusHistory> initialHistory = new ArrayList<>();
-        initialHistory.add(stdHistory(order.ordered())
-                .status(StatusHistory.Status.ACCEPTED)// Redundant but consistent.
+        initialHistory.add(stdHistory(order.getOrdered())
+                .setStatus(StatusHistory.Status.ACCEPTED)// Redundant but consistent.
         );
-        return order.statusHistory(initialHistory);
+        return order.setStatusHistory(initialHistory);
     }
 
     protected Order initPreparation(Order order) {
         final List<StatusHistory> initialHistory = new ArrayList<>();
-        initialHistory.add(stdHistory(order.ordered())
-                .status(StatusHistory.Status.IN_PREPARATION)
+        initialHistory.add(stdHistory(order.getOrdered())
+                .setStatus(StatusHistory.Status.IN_PREPARATION)
         );
-        return order.statusHistory(initialHistory);
+        return order.setStatusHistory(initialHistory);
     }
 
     protected Order initRejected(Order order) {
         final List<StatusHistory> initialHistory = new ArrayList<>();
-        initialHistory.add(stdHistory(order.ordered())
-                .status(StatusHistory.Status.REJECTED)
+        initialHistory.add(stdHistory(order.getOrdered())
+                .setStatus(StatusHistory.Status.REJECTED)
         );
-        return order.statusHistory(initialHistory);
+        return order.setStatusHistory(initialHistory);
     }
 
     protected Order initCanceled(Order order) {
-        final DateCarrier date = new DateCarrier(order.ordered());
+        final DateCarrier date = new DateCarrier(order.getOrdered());
         final List<StatusHistory> beforeCanceled = switch (random.nextInt(3)) {
-            case 0 -> List.of(stdHistory(date.next()).status(StatusHistory.Status.IN_PREPARATION));
+            case 0 -> List.of(stdHistory(date.next()).setStatus(StatusHistory.Status.IN_PREPARATION));
             case 1 -> List.of(
-                    stdHistory(date.next()).status(StatusHistory.Status.ACCEPTED),
-                    stdHistory(date.next()).status(StatusHistory.Status.IN_PREPARATION)
+                    stdHistory(date.next()).setStatus(StatusHistory.Status.ACCEPTED),
+                    stdHistory(date.next()).setStatus(StatusHistory.Status.IN_PREPARATION)
             );
-            default -> List.of(stdHistory(date.next()).status(StatusHistory.Status.ACCEPTED));
+            default -> List.of(stdHistory(date.next()).setStatus(StatusHistory.Status.ACCEPTED));
         };
         final List<StatusHistory> initialHistory = new ArrayList<>(beforeCanceled);
-        initialHistory.add(stdHistory(randomDateSince(date.next())).status(StatusHistory.Status.CANCELED));
-        return order.statusHistory(initialHistory);
+        initialHistory.add(stdHistory(randomDateSince(date.next())).setStatus(StatusHistory.Status.CANCELED));
+        return order.setStatusHistory(initialHistory);
     }
 
     protected Order initDelivered(Order order) {
-        final DateCarrier date = new DateCarrier(order.ordered());
+        final DateCarrier date = new DateCarrier(order.getOrdered());
         //noinspection SwitchStatementWithTooFewBranches
         final List<StatusHistory> beforeDelivered = switch (random.nextInt(2)) {
             case 0 -> List.of(
-                    stdHistory(date.next()).status(StatusHistory.Status.ACCEPTED),
-                    stdHistory(date.next()).status(StatusHistory.Status.IN_PREPARATION)
+                    stdHistory(date.next()).setStatus(StatusHistory.Status.ACCEPTED),
+                    stdHistory(date.next()).setStatus(StatusHistory.Status.IN_PREPARATION)
             );
-            default -> List.of(stdHistory(date.next()).status(StatusHistory.Status.IN_PREPARATION));
+            default -> List.of(stdHistory(date.next()).setStatus(StatusHistory.Status.IN_PREPARATION));
         };
         final List<StatusHistory> initialHistory = new ArrayList<>(beforeDelivered);
-        initialHistory.add(stdHistory(randomDateSince(date.next())).status(StatusHistory.Status.DELIVERED));
-        return order.statusHistory(initialHistory);
+        initialHistory.add(stdHistory(randomDateSince(date.next())).setStatus(StatusHistory.Status.DELIVERED));
+        return order.setStatusHistory(initialHistory);
     }
 
     /**
@@ -85,10 +85,10 @@ public class StatusHistoryGenerator {
 
     private StatusHistory stdHistory(LocalDateTime dateTime) {
         return  new StatusHistory()
-                .id(uuid.next())
-                .date(dateTime)
-                .detail(detail)
-                .status(StatusHistory.Status.ACCEPTED);
+                .setId(uuid.next())
+                .setDate(dateTime)
+                .setDetail(detail)
+                .setStatus(StatusHistory.Status.ACCEPTED);
     }
 
 

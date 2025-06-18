@@ -54,17 +54,17 @@ public enum StandardDataset {
     private static List<Order> buildInitData() {
         System.out.println("TPDAN: ### Building initial test data for StandardDataset.");// TODO print
         final List<Order> data = standardOrderList();
-        data.addAll(PERSISTED_LIST_FROM_CUSTOMER.data.orders());
+        data.addAll(PERSISTED_LIST_FROM_CUSTOMER.data.getOrders());
         System.out.printf("TPDAN: ### Built %d randomized entries to initialize test database. Seed: %d.%n", data.size(), SEED);// TODO print
         return data;
     }
 
     private static void resetBudgets() {
         Arrays.stream(StandardDataset.values())
-                .map(v -> v.data.customer())
+                .map(v -> v.data.getCustomer())
                 .filter(Objects::nonNull)
-                .filter(c -> c.budget() != null &&
-                        c.budget().compareTo(BigDecimal.ZERO) > 0)
+                .filter(c -> c.getBudget() != null &&
+                        c.getBudget().compareTo(BigDecimal.ZERO) > 0)
                 .forEach(CustomerMock::resetBudget);
     }
 
@@ -79,49 +79,49 @@ public enum StandardDataset {
     }
 
     public NewOrderDTO asNewOrderDTO() {
-        final Order o = data.order();
+        final Order o = data.getOrder();
         return new NewOrderDTO()
-                .user(o.user())
-                .customer(o.customer())
-                .site(o.site())
-                .note(o.note())
-                .detail(o.detail() == null ? null :
-                    o.detail().stream()
+                .setUser(o.getUser())
+                .setCustomer(o.getCustomer())
+                .setSite(o.getSite())
+                .setNote(o.getNote())
+                .setDetail(o.getDetail() == null ? null :
+                    o.getDetail().stream()
                             .map(d -> new NewDetailDTO()
-                                    .amount(d.amount())
-                                    .unitCost(d.unitCost())
-                                    .discount(d.discount())
-                                    .product(d.product()))
+                                    .setAmount(d.getAmount())
+                                    .setUnitCost(d.getUnitCost())
+                                    .setDiscount(d.getDiscount())
+                                    .setProduct(d.getProduct()))
                             .toList()
                 );
     }
 
     public OrderDTO asOrderDTO() {
-        return data.order().toDto();
+        return data.getOrder().toDto();
     }
 
     public CustomerMock getCustomer() {
-        return data.customer().copy();
+        return data.getCustomer().copy();
     }
 
     public boolean hasCustomer() {
-        return data.customer() != null;
+        return data.getCustomer() != null;
     }
 
     public boolean hasOrderList() {
-        return data.orders() != null;
+        return data.getOrders() != null;
     }
 
     public boolean hasOrder() {
-        return data.order() != null;
+        return data.getOrder() != null;
     }
 
     public UUID customerId() {
-        return data.customer().id();
+        return data.getCustomer().getId();
     }
 
     public UUID orderId() {
-        return data.order().id();
+        return data.getOrder().getId();
     }
 
 

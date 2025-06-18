@@ -10,7 +10,7 @@ import lombok.experimental.Accessors;
 @AllArgsConstructor
 @Getter
 @Setter
-@Accessors(chain = true, fluent = true)
+@Accessors(chain = true)
 @ToString
 public class NewUserDTO {
 
@@ -25,10 +25,10 @@ public class NewUserDTO {
 
     public UserDTO toDto() {
         return new UserDTO()
-                .name(name)
-                .lastname(lastname)
-                .email(email)
-                .dni(dni);
+                .setName(name)
+                .setLastname(lastname)
+                .setEmail(email)
+                .setDni(dni);
     }
 
 }

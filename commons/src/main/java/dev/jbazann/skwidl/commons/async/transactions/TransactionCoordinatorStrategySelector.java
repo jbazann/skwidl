@@ -22,7 +22,7 @@ public class TransactionCoordinatorStrategySelector {
             return new TransactionCoordinatorExpiredStrategy(transaction, event, factory);
         }
 
-        return switch (event.type()) {
+        return switch (event.getType()) {
             case ACCEPT -> new TransactionCoordinatorAcceptStrategy(transaction, event, factory);
             case REJECT -> new TransactionCoordinatorRejectStrategy(transaction, event, factory);
             case ROLLBACK -> new TransactionCoordinatorRollbackStrategy(transaction, event, factory);

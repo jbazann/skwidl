@@ -33,7 +33,7 @@ public class CategoryService {
 
     public Category newCategory(@NotNull @Valid NewCategoryDTO input) {
         CategoryDTO dto = input.toDto();
-        dto.id(generateCategoryId());
+        dto.setId(generateCategoryId());
         @Valid Category category = dto.toEntity();
         return repository.save(category);
     }

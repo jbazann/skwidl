@@ -30,8 +30,8 @@ public class UserController {
             throw new IllegalArgumentException("Must provide at least one of: id, email, name, lastname, dni, customer.");
         }
         return userService.findUsersByExample(
-                new User().id(id).name(name).lastname(lastname).email(email).dni(dni)
-                        .customers(customerId == null ? null : List.of(customerId))
+                new User().setId(id).setName(name).setLastname(lastname).setEmail(email).setDni(dni)
+                        .setCustomers(customerId == null ? null : List.of(customerId))
         ).stream().map(User::toDto).toList();
     }
 

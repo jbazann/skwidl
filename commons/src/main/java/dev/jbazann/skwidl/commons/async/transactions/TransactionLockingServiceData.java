@@ -16,7 +16,7 @@ import java.util.UUID;
 
 @Getter
 @Setter
-@Accessors(chain = true, fluent = true)
+@Accessors(chain = true)
 @NoArgsConstructor
 @AllArgsConstructor
 public class TransactionLockingServiceData {

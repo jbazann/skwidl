@@ -26,9 +26,9 @@ public class TransactionStageRegistrarService {
     }
 
     public @NotNull @Valid TransactionStage getStageForEvent(@NotNull @Valid DomainEvent event) {
-        StageKey key = new StageKey(event.getClass(), event.type());
+        StageKey key = new StageKey(event.getClass(), event.getType());
         if (!stages.containsKey(key)) throw new IllegalStateException(String.format(
-                "No TransactionStage registered for event ID %s of type %s.", event.id(), event.type()));
+                "No TransactionStage registered for event ID %s of type %s.", event.getId(), event.getType()));
         return stages.get(key);
     }
 

@@ -38,18 +38,18 @@ public class OrderGenerator {
         final Long ORDER_NUMBER = orderNumberCounter.getAndIncrement();
         final List<Detail> details = detailGenerator.standardDetailList();
         final BigDecimal TOTAL_COST = details.stream()
-                .map(Detail::totalCost).reduce(BigDecimal::add)
+                .map(Detail::getTotalCost).reduce(BigDecimal::add)
                 .orElseGet(() -> new BigDecimal(0));
         final Order order = new Order()
-                .id(uuid.next())
-                .ordered(TimeProvider.localDateTimeNow().minusMinutes(random.nextInt((24 * 60) * 90)))// 90 Days.
-                .orderNumber(ORDER_NUMBER)
-                .site(uuid.next())
-                .customer(uuid.next())
-                .user(uuid.next())
-                .totalCost(TOTAL_COST)
-                .note(MUSE)
-                .detail(details);
+                .setId(uuid.next())
+                .setOrdered(TimeProvider.localDateTimeNow().minusMinutes(random.nextInt((24 * 60) * 90)))// 90 Days.
+                .setOrderNumber(ORDER_NUMBER)
+                .setSite(uuid.next())
+                .setCustomer(uuid.next())
+                .setUser(uuid.next())
+                .setTotalCost(TOTAL_COST)
+                .setNote(MUSE)
+                .setDetail(details);
         return setRandomStatus(order);
     }
 
@@ -58,15 +58,15 @@ public class OrderGenerator {
         final List<Detail> details = detailGenerator.freeDetailList();
         final BigDecimal TOTAL_COST = new BigDecimal(0); // Ideally freeDetailList guarantees this.
         final Order order = new Order()
-                .id(uuid.next())
-                .ordered(TimeProvider.localDateTimeNow().minusMinutes(random.nextInt((24 * 60) * 90)))// 90 Days.
-                .orderNumber(ORDER_NUMBER)
-                .site(uuid.next())
-                .customer(uuid.next())
-                .user(uuid.next())
-                .totalCost(TOTAL_COST)
-                .note(MUSE)
-                .detail(details);
+                .setId(uuid.next())
+                .setOrdered(TimeProvider.localDateTimeNow().minusMinutes(random.nextInt((24 * 60) * 90)))// 90 Days.
+                .setOrderNumber(ORDER_NUMBER)
+                .setSite(uuid.next())
+                .setCustomer(uuid.next())
+                .setUser(uuid.next())
+                .setTotalCost(TOTAL_COST)
+                .setNote(MUSE)
+                .setDetail(details);
         return setRandomStatus(order);
     }
 
@@ -108,7 +108,7 @@ public class OrderGenerator {
         final List<Order> orders = new ArrayList<>(STD_ORDERS_AMOUNT);
         for (int i = 0; i < STD_ORDERS_AMOUNT; i++)
             orders.add(generateRandomOrder()
-                    .customer(customer));
+                    .setCustomer(customer));
         return orders;
     }
 

@@ -1,7 +1,6 @@
 package dev.jbazann.skwidl.commons.async.transactions.coordination;
 
 import dev.jbazann.skwidl.commons.async.events.DomainEvent;
-import dev.jbazann.skwidl.commons.async.events.DomainEventBuilder;
 import dev.jbazann.skwidl.commons.async.events.DomainEventBuilderFactory;
 import dev.jbazann.skwidl.commons.async.transactions.entities.CoordinatedTransaction;
 
@@ -21,10 +20,10 @@ public class TransactionCoordinatorCommitStrategy implements TransactionCoordina
 
     @Override
     public TransactionCoordinatorStrategyResult getResult() {
-        if(DomainEvent.Type.COMMIT.equals(event.type())) transaction.addCommit(event.sentBy());
+        if(DomainEvent.Type.COMMIT.equals(event.getType())) transaction.addCommit(event.getSentBy());
 
         if(transaction.isFullyCommitted())
-            transaction.status(CoordinatedTransaction.TransactionStatus.CONCLUDED_COMMIT);
+            transaction.setStatus(CoordinatedTransaction.TransactionStatus.CONCLUDED_COMMIT);
 
         DomainEvent response = !transaction.isFullyCommitted() ? null :
                 events.create(event.getClass())

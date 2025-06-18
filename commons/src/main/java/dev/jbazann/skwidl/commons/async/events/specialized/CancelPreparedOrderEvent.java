@@ -14,8 +14,8 @@ import java.util.Map;
 import java.util.UUID;
 
 @Data()
-@Accessors(chain = true, fluent = true)
-@ToString
+@Accessors(chain = true)
+@ToString(callSuper = true)
 @EqualsAndHashCode(callSuper = true)
 public class CancelPreparedOrderEvent extends DomainEvent {
 
@@ -31,10 +31,10 @@ public class CancelPreparedOrderEvent extends DomainEvent {
     @Override
     protected DomainEvent copy() {
         return new CancelPreparedOrderEvent()
-                .orderId(orderId)
-                .customerId(customerId)
-                .returnedFunds(returnedFunds)
-                .returnedStock(returnedStock);
+                .setOrderId(orderId)
+                .setCustomerId(customerId)
+                .setReturnedFunds(returnedFunds)
+                .setReturnedStock(returnedStock);
     }
 
 }

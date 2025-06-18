@@ -14,7 +14,7 @@ import static dev.jbazann.skwidl.orders.order.services.ProductServiceRestClient.
 @Getter
 @Setter
 @NoArgsConstructor
-@Accessors(chain = true, fluent = true)
+@Accessors(chain = true)
 @EqualsAndHashCode
 @ToString
 public class AvailabilityResponse {
@@ -33,10 +33,10 @@ public class AvailabilityResponse {
                         (entry) -> new BigDecimal(entry.getValue())
                 ));
         return new AvailabilityResponse()
-                .productsExist((Boolean)hehe.get(PRODUCTS_EXIST))
-                .missingProducts((List<UUID>)hehe.get("missingProducts"))
-                .unitCost(unitCost)
-                .totalCost(new BigDecimal((String)hehe.get(TOTAL_COST)));
+                .setProductsExist((Boolean)hehe.get(PRODUCTS_EXIST))
+                .setMissingProducts((List<UUID>)hehe.get("missingProducts"))
+                .setUnitCost(unitCost)
+                .setTotalCost(new BigDecimal((String)hehe.get(TOTAL_COST)));
     }
 
 }

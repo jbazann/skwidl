@@ -8,7 +8,7 @@ import lombok.experimental.Accessors;
 @AllArgsConstructor
 @Getter
 @Setter
-@Accessors(chain = true, fluent = true)
+@Accessors(chain = true)
 @ToString
 public class StatusUpdateDTO {
 

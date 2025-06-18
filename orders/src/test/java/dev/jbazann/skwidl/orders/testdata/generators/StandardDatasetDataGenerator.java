@@ -34,62 +34,62 @@ public abstract class StandardDatasetDataGenerator {
     public static StandardDatasetData orderListFromSameCustomer() {
         final List<Order> orders = orderGenerator.standardOrderListFromSameCustomer();
         return new StandardDatasetData()
-                .orders(orders)
-                .order(orders.getFirst())
-                .customer(CustomerMock.nonNull()
-                        .id(orders.getFirst().customer()));
+                .setOrders(orders)
+                .setOrder(orders.getFirst())
+                .setCustomer(CustomerMock.nonNull()
+                        .setId(orders.getFirst().getCustomer()));
     }
 
     public static StandardDatasetData newOrderEmptyDetailList() {
         return new StandardDatasetData()
-                .order(orderGenerator.generateRandomOrder().detail(new ArrayList<>()));
+                .setOrder(orderGenerator.generateRandomOrder().setDetail(new ArrayList<>()));
 
     }
 
     public static StandardDatasetData newOrderNoDetail() {
         return new StandardDatasetData()
-                .order(orderGenerator.generateRandomOrder().detail(null));
+                .setOrder(orderGenerator.generateRandomOrder().setDetail(null));
 
     }
 
     public static StandardDatasetData newOrderNoSite() {
         return new StandardDatasetData()
-                .order(orderGenerator.generateRandomOrder().site(null));
+                .setOrder(orderGenerator.generateRandomOrder().setSite(null));
 
     }
 
     public static StandardDatasetData newOrderNoUser() {
         return new StandardDatasetData()
-                .order(orderGenerator.generateRandomOrder().user(null));
+                .setOrder(orderGenerator.generateRandomOrder().setUser(null));
     }
 
     public static StandardDatasetData newOrderNoCustomer() {
         return new StandardDatasetData()
-                .order(orderGenerator.generateRandomOrder().customer(null));
+                .setOrder(orderGenerator.generateRandomOrder().setCustomer(null));
     }
 
     public static StandardDatasetData newOrderFree() {
         final Order order = orderGenerator.generateFreeOrder();
         return new StandardDatasetData()
-                .order(order)
-                .customer(CustomerMock.nonNull()
-                        .id(order.customer()));
+                .setOrder(order)
+                .setCustomer(CustomerMock.nonNull()
+                        .setId(order.getCustomer()));
     }
 
     public static StandardDatasetData newOrderValid() {
         final Order order = orderGenerator.generateRandomOrder();
-        final BigDecimal budget = DetailGenerator.getTotalCost(order.detail());
+        final BigDecimal budget = DetailGenerator.getTotalCost(order.getDetail());
         return new StandardDatasetData()
-                .order(order)
-                .customer(CustomerMock.nonNull()
-                        .id(order.customer())
-                        .budget(budget)
-                        .budgetResetValue(budget));
+                .setOrder(order)
+                .setCustomer(CustomerMock.nonNull()
+                        .setId(order.getCustomer())
+                        .setBudget(budget)
+                        .setBudgetResetValue(budget));
     }
 
     public static StandardDatasetData genericOrder() {
         return new StandardDatasetData()
-                .order(orderGenerator.generateRandomOrder());
+                .setOrder(orderGenerator.generateRandomOrder());
     }
 
 }

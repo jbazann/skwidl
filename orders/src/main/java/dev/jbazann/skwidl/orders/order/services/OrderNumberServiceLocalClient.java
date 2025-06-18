@@ -38,12 +38,12 @@ public class OrderNumberServiceLocalClient { //TODO wtf are these classes
         if(max == 0) max = 500L;
         DangerousIllegalBadSinfulOrderNumberRange next = remoteService.requestNextRange(
                 new DangerousIllegalBadSinfulOrderNumberRange()
-                        .base(base.get())
-                        .max(max)
+                        .setBase(base.get())
+                        .setMax(max)
         );
-        base.set(next.base());
+        base.set(next.getBase());
         lastUsedIndex.set(0);
-        max = next.max();
+        max = next.getMax();
     }
 
 

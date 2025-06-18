@@ -12,7 +12,7 @@ import java.math.BigDecimal;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Accessors(chain = true, fluent = true)
+@Accessors(chain = true)
 @EqualsAndHashCode
 @ToString
 public class NewProductDTO {
@@ -32,10 +32,10 @@ public class NewProductDTO {
 
     public ProductDTO toDto() {
         return new ProductDTO()
-                .name(name)
-                .description(description)
-                .minimumStock(minStock)
-                .price(price)
-                .discount(discount);
+                .setName(name)
+                .setDescription(description)
+                .setMinimumStock(minStock)
+                .setPrice(price)
+                .setDiscount(discount);
     }
 }

@@ -33,7 +33,7 @@ public class CustomerController {
             throw new IllegalArgumentException("Must provide at least one of: id, email, name, cuit.");
         }
         return customerService.findCustomersByExample(
-                new Customer().id(id).email(email).name(name).cuit(cuit)
+                new Customer().setId(id).setEmail(email).setName(name).setCuit(cuit)
         ).stream().map(Customer::toDto).toList();
     }
 

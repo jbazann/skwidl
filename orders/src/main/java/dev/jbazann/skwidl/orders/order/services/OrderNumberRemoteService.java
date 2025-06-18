@@ -16,7 +16,7 @@ public class OrderNumberRemoteService implements OrderNumberServiceClient {
     @Override
     public DangerousIllegalBadSinfulOrderNumberRange requestNextRange(DangerousIllegalBadSinfulOrderNumberRange current) {
         return new DangerousIllegalBadSinfulOrderNumberRange()
-                .base(current.base() + current.max())
-                .max(current.max());
+                .setBase(current.getBase() + current.getMax())
+                .setMax(current.getMax());
     }
 }

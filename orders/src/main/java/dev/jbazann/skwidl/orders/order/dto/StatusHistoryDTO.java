@@ -13,7 +13,7 @@ import java.util.UUID;
 @Getter
 @Setter
 @EqualsAndHashCode
-@Accessors(chain = true, fluent = true)
+@Accessors(chain = true)
 @ToString
 public class StatusHistoryDTO {
 

@@ -7,7 +7,7 @@ import lombok.Data;
 import lombok.experimental.Accessors;
 
 @Data
-@Accessors(chain = true, fluent = true)
+@Accessors(chain = true)
 public class TransactionResult {
 
     @NotNull

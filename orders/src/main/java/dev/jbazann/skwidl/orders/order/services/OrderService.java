@@ -69,17 +69,17 @@ public class OrderService {
 
     public void deliverOrder(@NotNull UUID id,
                               @NotNull StatusUpdateDTO update) {
-        if( !update.status().equals(StatusHistory.Status.DELIVERED) )
-            throw new IllegalArgumentException("Expected delivered status but received: " + update.status());
+        if( !update.getStatus().equals(StatusHistory.Status.DELIVERED) )
+            throw new IllegalArgumentException("Expected delivered status but received: " + update.getStatus());
 
         Order order = getOrder(id);
         //noinspection SwitchStatementWithTooFewBranches
-        switch (order.getStatus().status()) {
+        switch (order.getStatus().getStatus()) {
             case IN_PREPARATION -> publisher.request(
                     events.create(DeliverOrderEvent.class)
                             .setQuorumMembers(KnownMembers.memberList(KnownMembers.ORDERS, KnownMembers.CUSTOMERS))//TODO maybe products too
-                            .asDeliverOrderEvent(order.id(),order.customer(),order.totalCost()),
-                    "Deliver order with id: " + order.id()
+                            .asDeliverOrderEvent(order.getId(),order.getCustomer(),order.getTotalCost()),
+                    "Deliver order with id: " + order.getId()
             );
             default -> throw new IllegalStateException("Cannot deliver Order in status: " + order.getStatus());
         }
@@ -87,31 +87,31 @@ public class OrderService {
 
     public void cancelOrder(@NotNull UUID id,
                              @NotNull StatusUpdateDTO update) {
-        if( !update.status().equals(StatusHistory.Status.CANCELED) )
-            throw new IllegalArgumentException("Expected canceled status but received: " + update.status());
+        if( !update.getStatus().equals(StatusHistory.Status.CANCELED) )
+            throw new IllegalArgumentException("Expected canceled status but received: " + update.getStatus());
 
         Order order = getOrder(id);
-        switch (order.getStatus().status()) {
+        switch (order.getStatus().getStatus()) {
             case IN_PREPARATION -> publisher.request(
                     events.create(CancelPreparedOrderEvent.class)
                             .setQuorumMembers(KnownMembers.memberList(KnownMembers.ORDERS, KnownMembers.CUSTOMERS, KnownMembers.PRODUCTS))
                             .asCancelPreparedOrderEvent(
-                                    order.id(),
-                                    order.customer(),
-                                    order.totalCost(),
-                                    order.detail().stream()
-                                            .collect(Collectors.toMap(Detail::product, Detail::amount))),
-                    "Cancel order with id: " + order.id()
+                                    order.getId(),
+                                    order.getCustomer(),
+                                    order.getTotalCost(),
+                                    order.getDetail().stream()
+                                            .collect(Collectors.toMap(Detail::getProduct, Detail::getAmount))),
+                    "Cancel order with id: " + order.getId()
             );
             case ACCEPTED -> publisher.request(
                     events.create(CancelAcceptedOrderEvent.class)
                             .setQuorumMembers(KnownMembers.memberList(KnownMembers.ORDERS, KnownMembers.CUSTOMERS))
                             .asCancelAcceptedOrderEvent(
-                                    order.id(),
-                                    order.customer(),
-                                    order.totalCost()
+                                    order.getId(),
+                                    order.getCustomer(),
+                                    order.getTotalCost()
                     ),
-                    "Cancel order with id: " + order.id()
+                    "Cancel order with id: " + order.getId()
             );
             default -> throw new IllegalStateException("Cannot deliver Order in status: " + order.getStatus());
         }
@@ -122,58 +122,58 @@ public class OrderService {
         StringBuilder message = validate(input);
         if(!message.isEmpty()) throw new MalformedArgumentException(message.toString());
         OrderDTO dto = input.toDto();
-        dto.id(generateOrderId())
-                .orderNumber(orderNumberServiceLocalClient.next())
-                .ordered(TimeProvider.localDateTimeNow())
-                .totalCost(BigDecimal.valueOf(-1));
-        dto.detail().forEach(d -> d.id(generateDetailId()));
-        dto.statusHistory(new ArrayList<>());
+        dto.setId(generateOrderId())
+                .setOrderNumber(orderNumberServiceLocalClient.next())
+                .setOrdered(TimeProvider.localDateTimeNow())
+                .setTotalCost(BigDecimal.valueOf(-1));
+        dto.getDetail().forEach(d -> d.setId(generateDetailId()));
+        dto.setStatusHistory(new ArrayList<>());
 
         // Request validation and unit cost for all the products in the order.
         List<Map<String, Object>> batchToValidate = new LinkedList<>();
-        dto.detail().forEach(detail -> {
+        dto.getDetail().forEach(detail -> {
             Map<String, Object> entryToValidate = new HashMap<>();
-            entryToValidate.put(ProductServiceRestClient.PRODUCT_ID, detail.product());
-            entryToValidate.put(ProductServiceRestClient.REQUESTED_STOCK, detail.amount());
+            entryToValidate.put(ProductServiceRestClient.PRODUCT_ID, detail.getProduct());
+            entryToValidate.put(ProductServiceRestClient.REQUESTED_STOCK, detail.getAmount());
             batchToValidate.add(entryToValidate);
         });
         CompletableFuture<Map<String, Object>> detailValidationResponse = productsRemoteService.validateProductAndFetchCost(batchToValidate);
 
         // Request validation that customer exists, as well as their available budget.
-        CompletableFuture<BigDecimal> budgetResponse = customersRemoteService.validateCustomerAndFetchBudget(dto.customer());
+        CompletableFuture<BigDecimal> budgetResponse = customersRemoteService.validateCustomerAndFetchBudget(dto.getCustomer());
 
         // Wait for response from Products service.
         Map<String, Object> validatedBatch = detailValidationResponse.join();
         AvailabilityResponse productsResponse = AvailabilityResponse.fromTheSillyMap(validatedBatch);
-        if( !productsResponse.productsExist() ) {
-            dto.totalCost(BigDecimal.valueOf(-1));
+        if( !productsResponse.getProductsExist() ) {
+            dto.setTotalCost(BigDecimal.valueOf(-1));
             return reject(dto.toEntity(),"Products did not exist.");
         }
 
         // Double-check the retrieved total cost; because I must justify using CompletableFuture.
         // Yes, it's as idiotic as it looks, I *want* this.
             // Build the data structures that simplify the calculations.
-        Map<UUID, Integer> unitsPerProduct = dto.detail().stream().collect(Collectors.toMap(
-                DetailDTO::product,
-                DetailDTO::amount
+        Map<UUID, Integer> unitsPerProduct = dto.getDetail().stream().collect(Collectors.toMap(
+                DetailDTO::getProduct,
+                DetailDTO::getAmount
         ));
         BigDecimal verifiedCost;
             // Verify, and add the correct value to the order.
-        if( (verifiedCost = costsMatch(productsResponse.totalCost(), productsResponse.unitCost(), unitsPerProduct) )
+        if( (verifiedCost = costsMatch(productsResponse.getTotalCost(), productsResponse.getUnitCost(), unitsPerProduct) )
                 .compareTo(BigDecimal.valueOf(-1)) == 0 ) {
             throw new DumbassException(String.format(
                     "Congratulations. You are an engineer who doesn't know how to multiply. Expected: %s Calculated: %s.",
-                    productsResponse.totalCost(),
+                    productsResponse.getTotalCost(),
                     verifiedCost
             ));
         }
-        dto.totalCost(verifiedCost);
+        dto.setTotalCost(verifiedCost);
 
         // Set uninitialized Detail values
-        dto.detail().forEach(d -> {
-            d.discount(BigDecimal.ZERO); // TODO refactor API to provide this value
-            d.unitCost(productsResponse.unitCost().get(d.product()));
-            d.totalCost(d.unitCost().multiply(BigDecimal.valueOf(d.amount())));
+        dto.getDetail().forEach(d -> {
+            d.setDiscount(BigDecimal.ZERO); // TODO refactor API to provide this value
+            d.setUnitCost(productsResponse.getUnitCost().get(d.getProduct()));
+            d.setTotalCost(d.getUnitCost().multiply(BigDecimal.valueOf(d.getAmount())));
         });
 
         // Check that budget is enough.
@@ -183,7 +183,7 @@ public class OrderService {
         }
 
         // Reserve customer funds.
-        Boolean success = customersRemoteService.billFor(dto.customer(),dto.totalCost());
+        Boolean success = customersRemoteService.billFor(dto.getCustomer(),dto.getTotalCost());
         @Valid Order order;
         if ( success != null && success ) {
             order = accept(dto.toEntity(),"");
@@ -236,56 +236,56 @@ public class OrderService {
 
     private Order reject(@NotNull @Valid Order order, @NotNull String detail) {
         return orderRepository.save(order.setStatus(new StatusHistory()
-                .id(UUID.randomUUID()) // TODO safe ids
-                .status(StatusHistory.Status.REJECTED)
-                .detail(detail.isEmpty() ? "Rejected." : detail)));
+                .setId(UUID.randomUUID()) // TODO safe ids
+                .setStatus(StatusHistory.Status.REJECTED)
+                .setDetail(detail.isEmpty() ? "Rejected." : detail)));
     }
 
     private Order accept(@NotNull @Valid Order order, @SuppressWarnings("SameParameterValue") @NotNull String detail) {
         return orderRepository.save(order.setStatus(new StatusHistory()
-                .id(UUID.randomUUID())// TODO safe ids
-                .status(StatusHistory.Status.ACCEPTED)
-                .detail(detail.isEmpty() ? "Accepted." : detail)));
+                .setId(UUID.randomUUID())// TODO safe ids
+                .setStatus(StatusHistory.Status.ACCEPTED)
+                .setDetail(detail.isEmpty() ? "Accepted." : detail)));
     }
 
     private Order prepare(@NotNull @Valid Order order, @SuppressWarnings("SameParameterValue") @NotNull String detail) {
         return orderRepository.save(order.setStatus(new StatusHistory()
-                .id(UUID.randomUUID())// TODO safe ids
-                .status(StatusHistory.Status.IN_PREPARATION)
-                .detail(detail.isEmpty() ? "Products reserved." : detail)));
+                .setId(UUID.randomUUID())// TODO safe ids
+                .setStatus(StatusHistory.Status.IN_PREPARATION)
+                .setDetail(detail.isEmpty() ? "Products reserved." : detail)));
     }
 
     private Order deliver(@NotNull @Valid Order order, @NotNull String detail) {
         return orderRepository.save(order.setStatus(new StatusHistory()
-                .id(UUID.randomUUID())// TODO safe ids
-                .status(StatusHistory.Status.DELIVERED)
-                .detail(detail.isEmpty() ? "Products delivered." : detail)));
+                .setId(UUID.randomUUID())// TODO safe ids
+                .setStatus(StatusHistory.Status.DELIVERED)
+                .setDetail(detail.isEmpty() ? "Products delivered." : detail)));
     }
 
     public @NotNull @Valid Order getOrder(@NotNull UUID id) {
-        return orderRepository.findOne(Example.of(new Order().id(id))).orElseThrow();
+        return orderRepository.findOne(Example.of(new Order().setId(id))).orElseThrow();
     }
 
     public @NotNull List<@NotNull @Valid Order> getCustomerOrders(@NotNull UUID customer) {
-        return orderRepository.findAll(Example.of(new Order().customer(customer)));
+        return orderRepository.findAll(Example.of(new Order().setCustomer(customer)));
     }
 
     private StringBuilder validate(NewOrderDTO o) { //TODO wtf is this
         final StringBuilder order = new StringBuilder();
         final StringBuilder detail = new StringBuilder();
         final StringBuilder message = new StringBuilder();
-        if( o.customer() == null ) order.append("'customer', ");
-        if( o.user() == null ) order.append("'user', ");
-        if( o.site() == null ) order.append("'site', ");
-        if( o.detail() == null ) order.append("'detail', ");
-        if (o.detail() != null && !o.detail().isEmpty()) {
-            if(o.detail().stream().anyMatch(d -> d.amount() == null)) detail.append("'amount', ");
-            if(o.detail().stream().anyMatch(d -> d.product() == null)) detail.append("'product', ");
+        if( o.getCustomer() == null ) order.append("'customer', ");
+        if( o.getUser() == null ) order.append("'user', ");
+        if( o.getSite() == null ) order.append("'site', ");
+        if( o.getDetail() == null ) order.append("'detail', ");
+        if (o.getDetail() != null && !o.getDetail().isEmpty()) {
+            if(o.getDetail().stream().anyMatch(d -> d.getAmount() == null)) detail.append("'amount', ");
+            if(o.getDetail().stream().anyMatch(d -> d.getProduct() == null)) detail.append("'product', ");
         } // 8=D
         if(!order.isEmpty()) message.append("The field(s) ").append(order).append("cannot be null.");
-        if(o.detail() != null && o.detail().isEmpty()) message.append("The field 'detail' cannot be empty.");
+        if(o.getDetail() != null && o.getDetail().isEmpty()) message.append("The field 'detail' cannot be empty.");
         if(!detail.isEmpty()) message.append("The detail field(s) ").append(detail).append("cannot be null.");
-        if(o.detail() != null && o.detail().stream().anyMatch(d -> d.amount() < 0 ))
+        if(o.getDetail() != null && o.getDetail().stream().anyMatch(d -> d.getAmount() < 0 ))
             message.append("The detail field 'amount' must be a positive integer.");
         return message;
     }

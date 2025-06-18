@@ -9,7 +9,7 @@ import lombok.experimental.Accessors;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Accessors(chain = true, fluent = true)
+@Accessors(chain = true)
 @EqualsAndHashCode
 @ToString
 public class NewCategoryDTO {
@@ -18,7 +18,7 @@ public class NewCategoryDTO {
     private String name;
 
     public CategoryDTO toDto() {
-        return new CategoryDTO().name(name);
+        return new CategoryDTO().setName(name);
     }
 
 }

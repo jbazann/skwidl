@@ -9,7 +9,7 @@ import lombok.experimental.Accessors;
 @AllArgsConstructor
 @Getter
 @Setter
-@Accessors(chain = true, fluent = true)
+@Accessors(chain = true)
 @ToString
 public class EditableFieldsDTO {
 
@@ -24,9 +24,9 @@ public class EditableFieldsDTO {
      * @return the updated customer.
      */
     public Customer update(@NotNull Customer base) {
-        return base.name(name == null ? base.name() : name)
-                .email(email == null ? base.email() : email)
-                .cuit(cuit == null ? base.cuit() : cuit);
+        return base.setName(name == null ? base.getName() : name)
+                .setEmail(email == null ? base.getEmail() : email)
+                .setCuit(cuit == null ? base.getCuit() : cuit);
     }
 
 }

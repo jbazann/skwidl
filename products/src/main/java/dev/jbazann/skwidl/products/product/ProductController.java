@@ -41,12 +41,12 @@ public class ProductController {
 
     @PutMapping("/{id}")
     public ProductDTO updateProduct(@PathVariable UUID id, @RequestBody ProvisioningDTO update) {
-        return productService.updateProduct(update.productId(id)).toDto();
+        return productService.updateProduct(update.setProductId(id)).toDto();
     }
 
     @PutMapping("/{id}/discount")
     public ProductDTO discountProduct(@PathVariable UUID id, @RequestBody DiscountDTO discount) {
-        return productService.discountProduct(discount.productId(id)).toDto();
+        return productService.discountProduct(discount.setProductId(id)).toDto();
     }
 
     @ExceptionHandler(InsufficientStockException.class)

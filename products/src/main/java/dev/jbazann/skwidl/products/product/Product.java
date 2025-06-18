@@ -17,7 +17,7 @@ import java.util.UUID;
 @Setter
 @Getter
 @ToString
-@Accessors(chain = true, fluent = true)
+@Accessors(chain = true)
 @Entity
 @Table(name = "product",schema = "product")
 public class Product {

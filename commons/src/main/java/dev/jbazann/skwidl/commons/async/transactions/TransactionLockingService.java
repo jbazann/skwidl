@@ -43,7 +43,7 @@ public class TransactionLockingService {
         if( optional.isEmpty() ) return;
         Locking annotation = optional.get();
         if (annotation.action().equals(Locking.LockingActions.RELEASE))
-            _releaseLocks(event.transaction().id());
+            _releaseLocks(event.getTransaction().getId());
     }
 
     private void _getLocks(TransactionStage stage, DomainEvent event, Locking annotation) {
@@ -57,7 +57,7 @@ public class TransactionLockingService {
         if (!currentLocks.containsKey(transactionId))
             throw new IllegalStateException("Method called without a lock to release.");
         TransactionLockingServiceData data = currentLocks.get(transactionId);
-        data.acquiredLocks().forEach(RLock::unlock);
+        data.getAcquiredLocks().forEach(RLock::unlock);
         currentLocks.remove(transactionId);
     }
 
@@ -68,32 +68,31 @@ public class TransactionLockingService {
     )
     private void getEphemeralLocks(TransactionStage stage, DomainEvent event, Locking annotation) {
         TransactionLockingServiceData data;
-        if (currentLocks.containsKey(event.transaction().id())) {
-            data = currentLocks.get(event.transaction().id());
+        if (currentLocks.containsKey(event.getTransaction().getId())) {
+            data = currentLocks.get(event.getTransaction().getId());
         } else {
             data = new TransactionLockingServiceData();
             List<EntityLock> entityLocks = stage.getRequiredLocks(event);
-            data.locks(entityLocks.stream()
+            data.setLocks(entityLocks.stream()
                     .map(EntityLock::toString)
                     .map(redisson::getLock)
                     .toList());
-            currentLocks.put(event.transaction(
-            ).id(), data);
+            currentLocks.put(event.getTransaction().getId(), data);
         }
 
-        data.acquiredLocks(data.locks().stream().filter(RLock::tryLock).toList());
+        data.setAcquiredLocks(data.getLocks().stream().filter(RLock::tryLock).toList());
 
-        if(data.locks().size() != data.acquiredLocks().size()) {
-            data.acquiredLocks().forEach(RLock::unlock);
-            data.acquiredLocks(List.of());
+        if(data.getLocks().size() != data.getAcquiredLocks().size()) {
+            data.getAcquiredLocks().forEach(RLock::unlock);
+            data.setAcquiredLocks(List.of());
             throw new LockAcquisitionException(String.format(
-                    "Failed attempt %d for transaction %s.", data.retryCount(), data.transactionId()));
+                    "Failed attempt %d for transaction %s.", data.getRetryCount(), data.getTransactionId()));
         }
     }
 
     private Optional<Locking> getAnnotation(TransactionStage stage, DomainEvent event) {
-        if (currentLocks.containsKey(event.transaction().id())) {
-            return Optional.of(currentLocks.get(event.transaction().id()).metadata());
+        if (currentLocks.containsKey(event.getTransaction().getId())) {
+            return Optional.of(currentLocks.get(event.getTransaction().getId()).getMetadata());
         }
         if (stage.getClass().isAnnotationPresent(Locking.class)) {
             return Optional.of(stage.getClass().getAnnotation(Locking.class));

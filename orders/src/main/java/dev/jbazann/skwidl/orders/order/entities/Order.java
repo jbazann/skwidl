@@ -25,7 +25,7 @@ import java.util.UUID;
 @Setter
 @Getter
 @EqualsAndHashCode
-@Accessors(chain = true, fluent = true)
+@Accessors(chain = true)
 @ToString
 @Document(collection="order")
 public class Order {

@@ -10,7 +10,7 @@ import java.util.UUID;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Accessors(chain = true, fluent = true)
+@Accessors(chain = true)
 @EqualsAndHashCode
 @ToString
 public class CategoryDTO {

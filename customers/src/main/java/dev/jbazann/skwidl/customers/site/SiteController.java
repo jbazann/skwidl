@@ -28,7 +28,7 @@ public class SiteController {
             throw new IllegalArgumentException("Must provide at least one of: id, status, customer_id.");
         }
         return siteService.findSitesByExample(
-                new Site().id(id).status(status).customer(customerId)
+                new Site().setId(id).setStatus(status).setCustomer(customerId)
         ).stream().map(Site::toDto).toList();
     }
 

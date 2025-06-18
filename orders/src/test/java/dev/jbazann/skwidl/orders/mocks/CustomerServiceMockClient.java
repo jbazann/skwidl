@@ -31,7 +31,7 @@ public class CustomerServiceMockClient implements CustomerServiceClient {
         Arrays.stream(StandardDataset.values())
                 .filter(StandardDataset::hasCustomer)
                 .map(StandardDataset::getCustomer)
-                .forEach(customer -> when(mock.billFor(eq(customer.id()),any(BigDecimal.class)))
+                .forEach(customer -> when(mock.billFor(eq(customer.getId()),any(BigDecimal.class)))
                         .thenAnswer((Answer<Boolean>) (invocationOnMock) ->
                                 customer.bill(invocationOnMock.getArgument(1))
                         )
@@ -48,9 +48,9 @@ public class CustomerServiceMockClient implements CustomerServiceClient {
         Arrays.stream(StandardDataset.values())
                 .filter(StandardDataset::hasCustomer)
                 .map(StandardDataset::getCustomer)
-                .forEach(customer -> when(mock.validateCustomerAndFetchBudget(eq(customer.id())))
+                .forEach(customer -> when(mock.validateCustomerAndFetchBudget(eq(customer.getId())))
                         .thenAnswer((Answer<CompletableFuture<BigDecimal>>) (invocationOnMock) ->
-                                CompletableFuture.completedFuture(customer.budget())
+                                CompletableFuture.completedFuture(customer.getBudget())
                         )
                 );
         Assertions.assertTrue(StandardDataset.INVALID_CUSTOMER.hasCustomer());

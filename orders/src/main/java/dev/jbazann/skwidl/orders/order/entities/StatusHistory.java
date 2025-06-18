@@ -16,7 +16,7 @@ import java.util.UUID;
 @AllArgsConstructor
 @Setter
 @Getter
-@Accessors(chain = true, fluent = true)
+@Accessors(chain = true)
 @ToString
 @Document
 public class StatusHistory {

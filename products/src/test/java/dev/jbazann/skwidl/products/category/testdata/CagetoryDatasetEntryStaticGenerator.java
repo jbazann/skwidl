@@ -19,25 +19,25 @@ public class CagetoryDatasetEntryStaticGenerator {
 
     public static CategoryDatasetEntry genericEntry() {
         return new CategoryDatasetEntry()
-                .category(CATEGORY_GENERATOR.genericCategory());
+                .setCategory(CATEGORY_GENERATOR.genericCategory());
     }
 
     public static CategoryDatasetEntry genericEntryList() {
         final int AMOUNT = 5;
         return new CategoryDatasetEntry()
-                .categories(FunStuff.nElemList(CATEGORY_GENERATOR::genericCategory,AMOUNT));
+                .setCategories(FunStuff.nElemList(CATEGORY_GENERATOR::genericCategory,AMOUNT));
     }
 
     public static CategoryDatasetEntry nullNameEntry() {
         return new CategoryDatasetEntry()
-                .category(CATEGORY_GENERATOR.genericCategory()
-                        .name(null));
+                .setCategory(CATEGORY_GENERATOR.genericCategory()
+                        .setName(null));
     }
 
     public static CategoryDatasetEntry emptyNameEntry() {
         return new CategoryDatasetEntry()
-                .category(CATEGORY_GENERATOR.genericCategory()
-                        .name(""));
+                .setCategory(CATEGORY_GENERATOR.genericCategory()
+                        .setName(""));
     }
 
 }

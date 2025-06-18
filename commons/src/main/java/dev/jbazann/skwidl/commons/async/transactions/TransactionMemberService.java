@@ -34,7 +34,7 @@ public class TransactionMemberService {
         if (handleNotAMember(event)) return;
         if (handleNotRelevantEventType(event)) return;
 
-        if (ACTION_EVENTS.contains(event.type())) {
+        if (ACTION_EVENTS.contains(event.getType())) {
             final TransactionResult result = executor.runStageFor(event);
             response.sendResponse(event, result);
         } else {
@@ -43,7 +43,7 @@ public class TransactionMemberService {
     }
 
     private boolean handleNotAMember(DomainEvent event) {
-        if (!event.transaction().quorum().isMember(member)) {
+        if (!event.getTransaction().getQuorum().isMember(member)) {
             publisher.publish(events.wrap(event)
                     .discard("Not a quorum member."));
             return true;
@@ -52,7 +52,7 @@ public class TransactionMemberService {
     }
 
     private boolean handleNotRelevantEventType(DomainEvent event) {
-        final boolean shouldDiscard = switch (event.type()) {
+        final boolean shouldDiscard = switch (event.getType()) {
             case ACK, WARNING, ERROR, DISCARD, UNKNOWN -> true;
             case ACCEPT, REQUEST, COMMIT, REJECT, ROLLBACK -> false;
         };

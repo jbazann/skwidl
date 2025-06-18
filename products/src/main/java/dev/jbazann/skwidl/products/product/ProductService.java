@@ -33,85 +33,85 @@ public class ProductService {
 
     public Product newProduct(@NotNull @Valid NewProductDTO input) {
         ProductDTO dto = input.toDto();
-        UUID categoryId = request.findCategoryByName(input.categoryName()).join();
+        UUID categoryId = request.findCategoryByName(input.getCategoryName()).join();
         if (categoryId == null) throw new EntityNotFoundException(String.format(
-                "No category found with name %s.", input.categoryName()
+                "No category found with name %s.", input.getCategoryName()
         ));
-        dto.category(categoryId);
-        dto.id(actions.generateProductId());
-        dto.currentStock(0);
+        dto.setCategory(categoryId);
+        dto.setId(actions.generateProductId());
+        dto.setCurrentStock(0);
         @Valid Product product = dto.toEntity();
         return actions.save(product);
     }
 
     public Product updateProduct(@NotNull @Valid ProvisioningDTO update) {
-        Product product = actions.fetch(update.productId())
+        Product product = actions.fetch(update.getProductId())
                 .orElseThrow(() -> new EntityNotFoundException(String.format(
-                        "No product found with id %s.", update.productId()
+                        "No product found with id %s.", update.getProductId()
                 )));
-        boolean shouldUpdatePrice = update.price() != null &&
-                update.price().compareTo(BigDecimal.ZERO) >= 0;
-        boolean shouldUpdateStock = update.units() != null &&
-                update.units() > 0;
-        if (shouldUpdatePrice) product.price(update.price());
-        if (shouldUpdateStock) product.currentStock(product.currentStock() + update.units());
+        boolean shouldUpdatePrice = update.getPrice() != null &&
+                update.getPrice().compareTo(BigDecimal.ZERO) >= 0;
+        boolean shouldUpdateStock = update.getUnits() != null &&
+                update.getUnits() > 0;
+        if (shouldUpdatePrice) product.setPrice(update.getPrice());
+        if (shouldUpdateStock) product.setCurrentStock(product.getCurrentStock() + update.getUnits());
         return actions.save(product);
     }
 
     public Product discountProduct(@NotNull @Valid DiscountDTO discount) {
-        Product product = actions.fetch(discount.productId())
+        Product product = actions.fetch(discount.getProductId())
                 .orElseThrow(() -> new EntityNotFoundException(String.format(
-                        "No product found with id %s.", discount.productId()
+                        "No product found with id %s.", discount.getProductId()
                 )));
-        product.discount(discount.discount());
+        product.setDiscount(discount.getDiscount());
         return actions.save(product);
     }
 
     // TODO this implementation is ass
     public AvailabilityResponse checkAvailability(@NotNull @NotEmpty List<@NotNull @Valid StockRequest> entries) {
-        List<UUID> ids = entries.stream().map(StockRequest::productId).toList();
+        List<UUID> ids = entries.stream().map(StockRequest::getProductId).toList();
         Map<UUID, Product> productMap = actions.fetchAll(ids).stream()
-                .collect(Collectors.toMap(Product::id, Function.identity()));
+                .collect(Collectors.toMap(Product::getId, Function.identity()));
         AvailabilityResponse response = new AvailabilityResponse();
 
         // Check that all products were found.
         final int amountNotFound = entries.size() - productMap.size();
-        response.productsExist(amountNotFound == 0);
+        response.setProductsExist(amountNotFound == 0);
 
-        response.unitCost(new HashMap<>());
-        response.totalCost(BigDecimal.ZERO);
+        response.setUnitCost(new HashMap<>());
+        response.setTotalCost(BigDecimal.ZERO);
         List<UUID> notFoundIds = new ArrayList<>(amountNotFound);
         entries.forEach(e -> {
             Product p;
-            if ((p = productMap.get(e.productId())) == null) {
-                notFoundIds.add(e.productId());
-            } else if (p.currentStock() < e.amount()) {
-                notFoundIds.add(e.productId());
+            if ((p = productMap.get(e.getProductId())) == null) {
+                notFoundIds.add(e.getProductId());
+            } else if (p.getCurrentStock() < e.getAmount()) {
+                notFoundIds.add(e.getProductId());
             } else {
-                BigDecimal discountedPrice = p.price().subtract(p.price().multiply(p.discount()));
-                response.unitCost().put(p.id(), discountedPrice);
-                response.totalCost(response.totalCost().add(
-                        discountedPrice.multiply(BigDecimal.valueOf(e.amount()))
+                BigDecimal discountedPrice = p.getPrice().subtract(p.getPrice().multiply(p.getDiscount()));
+                response.getUnitCost().put(p.getId(), discountedPrice);
+                response.setTotalCost(response.getTotalCost().add(
+                        discountedPrice.multiply(BigDecimal.valueOf(e.getAmount()))
                 ));
             }
         });
 
         if (!notFoundIds.isEmpty()) {
-            response.missingProducts(new ArrayList<>());
-            notFoundIds.forEach(id -> response.missingProducts().add(id));
+            response.setMissingProducts(new ArrayList<>());
+            notFoundIds.forEach(id -> response.getMissingProducts().add(id));
         }
 
         return response;
     }
 
     public void reserveProducts(@NotNull @NotEmpty List<@NotNull @Valid StockRequest> entries) {
-        Collection<Product> products = actions.fetchAll(entries.stream().map(StockRequest::productId).toList());
+        Collection<Product> products = actions.fetchAll(entries.stream().map(StockRequest::getProductId).toList());
         Map<UUID, Product> productMap = new HashMap<>();
-        products.forEach(p -> productMap.put(p.id(),p));
+        products.forEach(p -> productMap.put(p.getId(),p));
         entries.forEach(e -> {
-            Product p = productMap.get(e.productId());
-            if (p.currentStock() < e.amount()) throw new InsufficientStockException();
-            p.currentStock(p.currentStock() - e.amount());
+            Product p = productMap.get(e.getProductId());
+            if (p.getCurrentStock() < e.getAmount()) throw new InsufficientStockException();
+            p.setCurrentStock(p.getCurrentStock() - e.getAmount());
         });
         actions.saveAll(products);
     }

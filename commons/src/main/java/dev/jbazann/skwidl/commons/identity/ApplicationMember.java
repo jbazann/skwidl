@@ -6,7 +6,6 @@ import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
-import lombok.experimental.Accessors;
 
 /**
  * Represents the role a given artifact has in the distributed application.
@@ -18,7 +17,7 @@ import lombok.experimental.Accessors;
  * as seen in {@link TransactionQuorum}.
  */
 @Data
-@Accessors(fluent = true)
+@AllArgsConstructor
 @ToString
 @EqualsAndHashCode
 public class ApplicationMember {

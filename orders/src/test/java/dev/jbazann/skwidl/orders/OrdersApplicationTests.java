@@ -87,11 +87,11 @@ class OrdersApplicationTests {
 		final UUID CUSTOMER_ID = StandardDataset.PERSISTED_LIST_FROM_CUSTOMER.customerId();
 		final OrderDTO NOT_EXPECTED = StandardDataset.NOT_FOUND.asOrderDTO();
 		final List<OrderDTO> EXPECTED = StandardDataset.DATA.stream()
-				.filter(order -> order.customer().equals(CUSTOMER_ID))
+				.filter(order -> order.getCustomer().equals(CUSTOMER_ID))
 				.map(Order::toDto)
 				.toList();
 		assertFalse(EXPECTED.isEmpty());
-		assertNotEquals(NOT_EXPECTED.customer(), CUSTOMER_ID);
+		assertNotEquals(NOT_EXPECTED.getCustomer(), CUSTOMER_ID);
 		assertFalse(EXPECTED.contains(NOT_EXPECTED));
 		webClient.get().uri("/customer/{id}", CUSTOMER_ID)
 				.accept(MediaType.APPLICATION_JSON)
@@ -133,19 +133,19 @@ class OrdersApplicationTests {
 				.expectStatus().isCreated()
 				.expectBody(OrderDTO.class)
 				.value(response -> {
-					assertNotNull(response.id());
-					assertEquals(NEW_ORDER.customer(), response.customer());
-					assertEquals(NEW_ORDER.site(), response.site());
-					assertEquals(NEW_ORDER.user(), response.user());
-					assertEquals(NEW_ORDER.note(), response.note());
-					NEW_ORDER.detail().forEach(detail -> assertTrue(response.detail().stream()
-                            .anyMatch(d -> Objects.equals(d.product(), detail.product()) &&
-                                    Objects.equals(d.amount(), detail.amount()))));
-					response.detail().forEach(detail -> {
-						assertNotNull(detail.id());
-						assertNotNull(detail.totalCost());
-						assertNotNull(detail.discount());
-						assertNotNull(detail.unitCost());
+					assertNotNull(response.getId());
+					assertEquals(NEW_ORDER.getCustomer(), response.getCustomer());
+					assertEquals(NEW_ORDER.getSite(), response.getSite());
+					assertEquals(NEW_ORDER.getUser(), response.getUser());
+					assertEquals(NEW_ORDER.getNote(), response.getNote());
+					NEW_ORDER.getDetail().forEach(detail -> assertTrue(response.getDetail().stream()
+                            .anyMatch(d -> Objects.equals(d.getProduct(), detail.getProduct()) &&
+                                    Objects.equals(d.getAmount(), detail.getAmount()))));
+					response.getDetail().forEach(detail -> {
+						assertNotNull(detail.getId());
+						assertNotNull(detail.getTotalCost());
+						assertNotNull(detail.getDiscount());
+						assertNotNull(detail.getUnitCost());
 					});
 				});
 	}

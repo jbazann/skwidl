@@ -38,8 +38,8 @@ class ProductsApplicationTests {
 
 	@Test
 	void createProduct() {
-		NewProductDTO dto = ProductDataset.CREATE_PRODUCT.entry().asNewProductDTO();
-		ProductDTO result = ProductDataset.CREATE_PRODUCT.entry().asProductDTO();
+		NewProductDTO dto = ProductDataset.CREATE_PRODUCT.getEntry().asNewProductDTO();
+		ProductDTO result = ProductDataset.CREATE_PRODUCT.getEntry().asProductDTO();
 		webClient.post().uri("/product")
 				.contentType(MediaType.APPLICATION_JSON)
 				.bodyValue(dto)
@@ -48,14 +48,14 @@ class ProductsApplicationTests {
 				.expectHeader().contentType(MediaType.APPLICATION_JSON)
 				.expectStatus().isCreated()
 				.expectBody(ProductDTO.class)
-				.value(p -> assertEquals(result.id(p.id()),p));
+				.value(p -> assertEquals(result.setId(p.getId()),p));
 	}
 
 	@Test
 	void deleteProduct() {
-		ProductDTO dto = ProductDataset.PERSISTED.entry().asProductDTO();
+		ProductDTO dto = ProductDataset.PERSISTED.getEntry().asProductDTO();
 		String reason = "A valid deletion reason string, 14 $#$!#$ ! /)#$YT!\"#$%&/()=?\\°|¬;,-_";
-		UUID transactionId = webClient.post().uri("/removed/product/{id}", dto.id())
+		UUID transactionId = webClient.post().uri("/removed/product/{id}", dto.getId())
 				.contentType(MediaType.TEXT_PLAIN)
 				.bodyValue(reason)
 				.exchange()
@@ -69,7 +69,7 @@ class ProductsApplicationTests {
 
     @Test
 	void findCategoryByName() {
-		String QUERY = PERSISTED_GENERIC.entry().category().name();
+		String QUERY = PERSISTED_GENERIC.getEntry().getCategory().getName();
 		webClient.get().uri("/category/{query}", QUERY)
 				.accept(MediaType.APPLICATION_JSON)
 				.exchange()

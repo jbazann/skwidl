@@ -19,7 +19,7 @@ import java.util.UUID;
 @AllArgsConstructor
 @Getter
 @Setter
-@Accessors(chain = true, fluent = true)
+@Accessors(chain = true)
 @ToString
 @Entity
 @Table(name = "customer", schema = "customer")
@@ -58,7 +58,7 @@ public class Customer {
 
     @Getter
     @Setter
-    @Accessors(chain = true, fluent = true)
+    @Accessors(chain = true)
     @ToString
     public static class DefaultValues {
         @Value("${jbazann.customers.maxDebt}")
