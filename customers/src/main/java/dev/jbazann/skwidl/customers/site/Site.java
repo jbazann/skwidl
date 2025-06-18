@@ -1,5 +1,6 @@
 package dev.jbazann.skwidl.customers.site;
 
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import dev.jbazann.skwidl.customers.site.dto.SiteDTO;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Min;
@@ -17,6 +18,7 @@ import java.util.UUID;
 @NoArgsConstructor
 @Getter
 @Setter
+@JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
 @Accessors(chain = true, fluent = true)
 @ToString
 @Entity

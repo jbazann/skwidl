@@ -1,5 +1,6 @@
 package dev.jbazann.skwidl.orders.order.dto;
 
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
@@ -12,6 +13,7 @@ import java.util.UUID;
 @AllArgsConstructor
 @Getter
 @Setter
+@JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
 @ToString
 @Accessors(chain = true, fluent = true)
 public class NewDetailDTO {

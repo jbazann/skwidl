@@ -1,5 +1,6 @@
 package dev.jbazann.skwidl.customers.customer.dto;
 
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import dev.jbazann.skwidl.customers.customer.Customer;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
@@ -9,6 +10,7 @@ import lombok.experimental.Accessors;
 @AllArgsConstructor
 @Getter
 @Setter
+@JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
 @Accessors(chain = true, fluent = true)
 @ToString
 public class EditableFieldsDTO {

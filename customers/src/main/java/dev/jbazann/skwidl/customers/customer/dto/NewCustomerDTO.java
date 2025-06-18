@@ -1,5 +1,6 @@
 package dev.jbazann.skwidl.customers.customer.dto;
 
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
@@ -13,6 +14,7 @@ import java.util.UUID;
 @AllArgsConstructor
 @Getter
 @Setter
+@JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
 @Accessors(chain = true, fluent = true)
 @ToString
 public class NewCustomerDTO {
