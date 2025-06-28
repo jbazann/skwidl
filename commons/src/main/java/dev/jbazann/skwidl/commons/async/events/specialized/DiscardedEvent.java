@@ -12,7 +12,7 @@ import lombok.experimental.Accessors;
 @Data()
 @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
 @Accessors(chain = true, fluent = true)
-@ToString
+@ToString(callSuper = true)
 @EqualsAndHashCode(callSuper = true)
 public class DiscardedEvent extends DomainEvent {
 
