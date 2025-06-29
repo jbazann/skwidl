@@ -1,13 +1,7 @@
 package dev.jbazann.skwidl.commons.identity;
 
-import com.fasterxml.jackson.annotation.JsonAutoDetect;
-import dev.jbazann.skwidl.commons.async.transactions.TransactionQuorum;
+import dev.jbazann.skwidl.commons.async.transactions.entities.TransactionQuorum;
 import jakarta.validation.constraints.NotBlank;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.ToString;
-import lombok.experimental.Accessors;
 
 /**
  * Represents the role a given artifact has in the distributed application.
@@ -17,19 +11,8 @@ import lombok.experimental.Accessors;
  * <br>
  * Instances of this class may also be used to represent other artifacts,
  * as seen in {@link TransactionQuorum}.
+ *
+ * @param id A unique ID for each different service. The same for
+ *           replicas of the same service.
  */
-@Data
-@JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
-@Accessors(fluent = true)
-@ToString
-@EqualsAndHashCode
-public class ApplicationMember {
-
-    /**
-     * A unique ID for each different service. The same for
-     * replicas of the same service.
-     */
-    @NotBlank
-    private final String id;
-
-}
+public record ApplicationMember(@NotBlank String id) {}
