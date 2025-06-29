@@ -146,8 +146,8 @@ public class Logger {
         return val;
     }
 
-    public void debug(String format, Object... params) {
-        logger.debug(format,params);
+    public final void debug(String format, Object... params) {
+        logger.debug(format, params);
     }
 
     private String paramsString(Object... params) {
