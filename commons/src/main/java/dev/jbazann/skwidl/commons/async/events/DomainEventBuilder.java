@@ -14,7 +14,6 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
-
 import lombok.ToString;
 import org.springframework.validation.annotation.Validated;
 
@@ -51,6 +50,7 @@ public class DomainEventBuilder<Type extends DomainEvent> {
         event.sentBy(thisApplication);
         event.transaction().quorum().coordinator(defaultCoordinator);
         event.transaction().quorum().members(List.of(thisApplication));
+        log.result(this);
     }
 
     public DomainEventBuilder(ApplicationMember identity, ApplicationMember defaultCoordinator, Type event) {
@@ -58,6 +58,7 @@ public class DomainEventBuilder<Type extends DomainEvent> {
         this.thisApplication = identity;
         this.defaultCoordinator = defaultCoordinator;
         this.event = event;
+        log.result(this);
     }
 
     public @NotNull @Valid DomainEventBuilder<Type> answer(
