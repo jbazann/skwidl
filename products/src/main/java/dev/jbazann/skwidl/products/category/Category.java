@@ -10,6 +10,7 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import lombok.experimental.Accessors;
+import org.hibernate.validator.constraints.Length;
 
 import java.util.UUID;
 
@@ -29,7 +30,7 @@ public class Category {
     @NotNull
     private UUID id;
     @Column
-    @NotBlank
+    @NotBlank @Length(max = 511)
     private String name;
 
     public CategoryDTO toDto() {

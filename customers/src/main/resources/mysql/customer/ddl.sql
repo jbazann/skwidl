@@ -2,11 +2,11 @@
     create table customer (
         id binary(16) not null,
         budget decimal(38,2) not null,
-        cuit varchar(255) not null,
-        email varchar(255) not null,
+        cuit varchar(15) not null,
+        email varchar(1023) not null,
         max_active_sites integer not null,
         max_debt decimal(38,2) not null,
-        name varchar(255) not null,
+        name varchar(511) not null,
         pending_sites integer not null,
         primary key (id)
     ) engine=InnoDB;

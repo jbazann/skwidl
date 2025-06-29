@@ -1,8 +1,5 @@
 package dev.jbazann.skwidl.customers.customer;
 
-import java.math.BigDecimal;
-import java.util.List;
-
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import dev.jbazann.skwidl.customers.customer.dto.CustomerDTO;
 import jakarta.persistence.*;
@@ -11,8 +8,11 @@ import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import lombok.experimental.Accessors;
+import org.hibernate.validator.constraints.Length;
 import org.springframework.beans.factory.annotation.Value;
 
+import java.math.BigDecimal;
+import java.util.List;
 import java.util.UUID;
 
 @SuppressWarnings("JpaDataSourceORMInspection")
@@ -30,11 +30,11 @@ public class Customer {
     @Id
     @NotNull
     private UUID id;
-    @NotNull
+    @NotNull @Length(max = 511)
     private String name;
-    @NotNull @Email
+    @NotNull @Email @Length(max = 1023)
     private String email;
-    @NotNull
+    @NotNull @Length(max = 15)
     private String cuit;
     @NotNull @Min(0)
     @Column(name = "max_debt")

@@ -9,6 +9,7 @@ import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import lombok.experimental.Accessors;
+import org.hibernate.validator.constraints.Length;
 
 import java.math.BigDecimal;
 import java.util.UUID;
@@ -29,9 +30,9 @@ public class Site {
     @Id
     @NotNull
     private UUID id;
-    @NotBlank
+    @NotBlank @Length(max = 511)
     private String address;
-    @NotEmpty
+    @NotEmpty @Length(max = 511)
     private String coordinates;
     @Min(0)
     private BigDecimal budget;

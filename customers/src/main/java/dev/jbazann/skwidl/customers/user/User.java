@@ -8,6 +8,7 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import lombok.experimental.Accessors;
+import org.hibernate.validator.constraints.Length;
 
 import java.util.List;
 import java.util.UUID;
@@ -27,13 +28,13 @@ public class User {
     @Id
     @NotNull
     private UUID id;
-    @NotBlank
+    @NotBlank @Length(max = 511)
     private String name;
-    @NotBlank
+    @NotBlank @Length(max = 511)
     private String lastname;
-    @NotBlank @Email
+    @NotBlank @Email @Length(max = 511)
     private String email;
-    @NotBlank
+    @NotBlank @Length(max = 15)
     private String dni;
     @ElementCollection
     @NotNull

@@ -1,10 +1,10 @@
 
     create table user (
         id binary(16) not null,
-        dni varchar(255) not null,
-        email varchar(255) not null,
-        lastname varchar(255) not null,
-        name varchar(255) not null,
+        dni varchar(15),
+        email varchar(511),
+        lastname varchar(511),
+        name varchar(511),
         primary key (id)
     ) engine=InnoDB;
 
