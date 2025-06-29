@@ -8,6 +8,7 @@ import java.util.Arrays;
 import java.util.List;
 
 @Validated
+@Deprecated
 public enum KnownMembers {
     ORDERS("orders"),
     PRODUCTS("products"),
