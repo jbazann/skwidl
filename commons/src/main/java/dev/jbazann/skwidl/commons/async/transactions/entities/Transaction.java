@@ -2,7 +2,6 @@ package dev.jbazann.skwidl.commons.async.transactions.entities;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import dev.jbazann.skwidl.commons.async.events.DomainEvent;
-import dev.jbazann.skwidl.commons.async.transactions.TransactionQuorum;
 import dev.jbazann.skwidl.commons.utils.TimeProvider;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;

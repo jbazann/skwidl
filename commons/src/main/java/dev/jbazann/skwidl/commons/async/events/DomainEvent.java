@@ -1,7 +1,7 @@
 package dev.jbazann.skwidl.commons.async.events;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
-import dev.jbazann.skwidl.commons.async.transactions.TransactionQuorum;
+import dev.jbazann.skwidl.commons.async.transactions.entities.TransactionQuorum;
 import dev.jbazann.skwidl.commons.async.transactions.entities.Transaction;
 import dev.jbazann.skwidl.commons.identity.ApplicationMember;
 import dev.jbazann.skwidl.commons.utils.TimeProvider;

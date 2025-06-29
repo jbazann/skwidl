@@ -4,7 +4,7 @@ import dev.jbazann.skwidl.commons.async.events.specialized.CancelAcceptedOrderEv
 import dev.jbazann.skwidl.commons.async.events.specialized.CancelPreparedOrderEvent;
 import dev.jbazann.skwidl.commons.async.events.specialized.DeliverOrderEvent;
 import dev.jbazann.skwidl.commons.async.events.specialized.DiscardedEvent;
-import dev.jbazann.skwidl.commons.async.transactions.TransactionQuorum;
+import dev.jbazann.skwidl.commons.async.transactions.entities.TransactionQuorum;
 import dev.jbazann.skwidl.commons.async.transactions.entities.Transaction;
 import dev.jbazann.skwidl.commons.exceptions.CommonsInternalException;
 import dev.jbazann.skwidl.commons.identity.ApplicationMember;
