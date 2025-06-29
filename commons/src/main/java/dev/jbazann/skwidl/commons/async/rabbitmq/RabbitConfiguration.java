@@ -1,28 +1,31 @@
 package dev.jbazann.skwidl.commons.async.rabbitmq;
 
 import dev.jbazann.skwidl.commons.async.events.DomainEventBuilderFactory;
+import dev.jbazann.skwidl.commons.logging.LoggerFactory;
 import org.springframework.amqp.rabbit.annotation.EnableRabbit;
 import org.springframework.amqp.rabbit.core.RabbitMessagingTemplate;
 import org.springframework.amqp.support.converter.Jackson2JsonMessageConverter;
 import org.springframework.amqp.support.converter.MessageConverter;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.amqp.RabbitTemplateCustomizer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Primary;
 
 @EnableRabbit
 @Configuration
 public class RabbitConfiguration {
 
-    /**
-     * If this bean is unique, it will be injected into the
-     * {@link org.springframework.amqp.rabbit.core.RabbitTemplate}
-     * instance wrapped by the autoconfigured {@link org.springframework.amqp.rabbit.core.RabbitMessagingTemplate}
-     * bean, which is then used by {@link RabbitPublisher}.
-     */
     @Bean
-    @Primary
-    public MessageConverter messageConverter() {
+    public MessageConverter plainJackson2JsonMessageConverter() {
         return new Jackson2JsonMessageConverter();
+    }
+
+    @Bean("RabbitTemplateMessageConverterCustomizer")
+    public RabbitTemplateCustomizer rabbitTemplateCustomizer(
+            @Qualifier("plainJackson2JsonMessageConverter")
+            MessageConverter converter
+    ) {
+        return template -> template.setMessageConverter(converter);
     }
 
     @Bean
@@ -30,6 +33,10 @@ public class RabbitConfiguration {
             DomainEventBuilderFactory factory,
             RabbitMessagingTemplate rabbitMessagingTemplate
     ) {
+        LoggerFactory.get(getClass()).debug(
+                "CREATING RabbitPublisher with MessageConverter class: {}",
+                rabbitMessagingTemplate.getRabbitTemplate().getMessageConverter().getClass().getSimpleName()
+        );
         return new RabbitPublisher(factory,rabbitMessagingTemplate);
     }
 
