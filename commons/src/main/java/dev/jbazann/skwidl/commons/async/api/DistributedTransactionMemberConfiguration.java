@@ -4,8 +4,11 @@ import dev.jbazann.skwidl.commons.async.events.DomainEventBuilderFactory;
 import dev.jbazann.skwidl.commons.async.events.EventsConfiguration;
 import dev.jbazann.skwidl.commons.async.rabbitmq.RabbitMemberListenerService;
 import dev.jbazann.skwidl.commons.async.rabbitmq.RabbitPublisher;
-import dev.jbazann.skwidl.commons.async.transactions.*;
-import dev.jbazann.skwidl.commons.identity.ApplicationMember;
+import dev.jbazann.skwidl.commons.async.transactions.TransactionMemberService;
+import dev.jbazann.skwidl.commons.async.transactions.TransactionResponseService;
+import dev.jbazann.skwidl.commons.async.transactions.TransactionStageExecutorService;
+import dev.jbazann.skwidl.commons.async.transactions.TransactionsConfiguration;
+import dev.jbazann.skwidl.commons.identity.ApplicationMemberRegistry;
 import dev.jbazann.skwidl.commons.identity.IdentityConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -30,12 +33,12 @@ public class DistributedTransactionMemberConfiguration {
     @Bean
     public TransactionMemberService standardTransactionMemberService(
             TransactionStageExecutorService executor,
-            ApplicationMember member,
+            ApplicationMemberRegistry memberRegistry,
             TransactionResponseService response,
             RabbitPublisher publisher,
             DomainEventBuilderFactory factory
     ) {
-        return new TransactionMemberService(executor, member, response, publisher, factory);
+        return new TransactionMemberService(executor, memberRegistry.SELF, response, publisher, factory);
     }
 
     @Bean

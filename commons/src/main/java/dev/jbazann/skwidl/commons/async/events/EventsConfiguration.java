@@ -2,7 +2,7 @@ package dev.jbazann.skwidl.commons.async.events;
 
 import dev.jbazann.skwidl.commons.async.rabbitmq.RabbitConfiguration;
 import dev.jbazann.skwidl.commons.async.rabbitmq.RabbitPublisher;
-import dev.jbazann.skwidl.commons.identity.ApplicationMember;
+import dev.jbazann.skwidl.commons.identity.ApplicationMemberRegistry;
 import dev.jbazann.skwidl.commons.identity.IdentityConfiguration;
 import dev.jbazann.skwidl.commons.internal.CommonsBeanFactory;
 import org.springframework.beans.factory.ObjectProvider;
@@ -22,28 +22,26 @@ public class EventsConfiguration {
     @Scope("prototype")
     @Lazy()
     public DomainEventBuilder<?> blankDomainEventBuilder(
-            @Qualifier("identity") ApplicationMember identity,
-            @Qualifier("defaultCoordinator") ApplicationMember defaultCoordinator,
+            ApplicationMemberRegistry memberRegistry,
             @Nullable Class<? extends DomainEvent> c
     ) {
         if (c == null) {
-            return new DomainEventBuilder<>(identity, defaultCoordinator, GenericDomainEvent.class);
+            return new DomainEventBuilder<>(memberRegistry.SELF, memberRegistry.DEFAULT_COORDINATOR, GenericDomainEvent.class);
         }
-        return new DomainEventBuilder<>(identity, defaultCoordinator, c);
+        return new DomainEventBuilder<>(memberRegistry.SELF, memberRegistry.DEFAULT_COORDINATOR, c);
     }
 
     @Bean("WrapperDomainEventBuilder")
     @Scope("prototype")
     @Lazy()
     public <T extends DomainEvent> DomainEventBuilder<?> wrapperDomainEventBuilder(
-            @Qualifier("identity") ApplicationMember identity,
-            @Qualifier("defaultCoordinator") ApplicationMember defaultCoordinator,
+            ApplicationMemberRegistry memberRegistry,
             @Nullable T event
     ) {
         if (event == null) {
-            return new DomainEventBuilder<>(identity, defaultCoordinator, new GenericDomainEvent());
+            return new DomainEventBuilder<>(memberRegistry.SELF, memberRegistry.DEFAULT_COORDINATOR, new GenericDomainEvent());
         }
-        return new DomainEventBuilder<>(identity, defaultCoordinator, event);
+        return new DomainEventBuilder<>(memberRegistry.SELF, memberRegistry.DEFAULT_COORDINATOR, event);
     }
 
     @Bean("BlankDomainEventBuilderBeanFactory")
@@ -69,10 +67,9 @@ public class EventsConfiguration {
     public DomainEventBuilderFactory DomainEventBuilderBeanFactory(
             @Qualifier("BlankDomainEventBuilderBeanFactory") CommonsBeanFactory<DomainEventBuilder<?>> blankBeanFactory,
             @Qualifier("WrapperDomainEventBuilderBeanFactory") CommonsBeanFactory<DomainEventBuilder<?>> wrapperBeanFactory,
-            @Qualifier("identity") ApplicationMember identity,
-            @Qualifier("defaultCoordinator") ApplicationMember defaultCoordinator
+            ApplicationMemberRegistry memberRegistry
     ) {
-        return new DomainEventBuilderFactory(blankBeanFactory,wrapperBeanFactory,identity,defaultCoordinator);
+        return new DomainEventBuilderFactory(blankBeanFactory,wrapperBeanFactory,memberRegistry);
     }
 
     @Bean
