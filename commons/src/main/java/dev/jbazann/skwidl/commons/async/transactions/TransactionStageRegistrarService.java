@@ -67,8 +67,9 @@ public class TransactionStageRegistrarService {
     }
 
     private static TransactionStageBean getAnnotation(TransactionStage stage) {
-        if (stage.getClass().isAnnotationPresent(TransactionStageBean.class)) { // TODO yap about defensive programming
-            return stage.getClass().getAnnotation(TransactionStageBean.class);
+        Class<?> actual = AopProxyUtils.ultimateTargetClass(stage);
+        if (actual.isAnnotationPresent(TransactionStageBean.class)) {
+            return actual.getAnnotation(TransactionStageBean.class);
         }
         throw new IllegalStateException("A TransactionStage bean was somehow found without @TransactionStageBean.");
     }
