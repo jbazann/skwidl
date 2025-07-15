@@ -7,6 +7,7 @@ import org.springframework.amqp.rabbit.core.RabbitMessagingTemplate;
 import org.springframework.amqp.support.converter.Jackson2JsonMessageConverter;
 import org.springframework.amqp.support.converter.MessageConverter;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.amqp.RabbitTemplateCustomizer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -31,13 +32,16 @@ public class RabbitConfiguration {
     @Bean
     public RabbitPublisher rabbitPublisher(
             DomainEventBuilderFactory factory,
-            RabbitMessagingTemplate rabbitMessagingTemplate
+            RabbitMessagingTemplate rabbitMessagingTemplate,
+            @Value("${jbazann.rabbit.exchanges.event}") String eventExchange
     ) {
+        RabbitPublisher publisher = new RabbitPublisher(factory,rabbitMessagingTemplate,eventExchange);
         LoggerFactory.get(getClass()).debug(
-                "CREATING RabbitPublisher with MessageConverter class: {}",
-                rabbitMessagingTemplate.getRabbitTemplate().getMessageConverter().getClass().getSimpleName()
+                "CREATING RabbitPublisher with MessageConverter class: {} — {}.",
+                rabbitMessagingTemplate.getRabbitTemplate().getMessageConverter().getClass().getSimpleName(),
+                publisher
         );
-        return new RabbitPublisher(factory,rabbitMessagingTemplate);
+        return publisher;
     }
 
 }

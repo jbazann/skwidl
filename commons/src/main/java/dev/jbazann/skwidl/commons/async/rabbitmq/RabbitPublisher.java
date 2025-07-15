@@ -4,30 +4,33 @@ import dev.jbazann.skwidl.commons.async.events.DomainEvent;
 import dev.jbazann.skwidl.commons.async.events.DomainEventBuilderFactory;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
+import lombok.ToString;
 import org.springframework.amqp.rabbit.core.RabbitMessagingTemplate;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.messaging.support.GenericMessage;
 import org.springframework.validation.annotation.Validated;
 
 @Validated
+@ToString
 public class RabbitPublisher {
 
-    @Value("${jbazann.rabbit.exchanges.event}")
-    public final String EVENT_XCHNG = "";
-    @Value("${jbazann.rabbit.queues.event}")
-    public final String EVENT_Q = "";
+    private final String EVENT_EXCHANGE;
 
     private final DomainEventBuilderFactory events;
     private final RabbitMessagingTemplate rabbitMessagingTemplate;
 
-    public RabbitPublisher(DomainEventBuilderFactory events, RabbitMessagingTemplate rabbitMessagingTemplate) {
+    public RabbitPublisher(
+            DomainEventBuilderFactory events,
+            RabbitMessagingTemplate rabbitMessagingTemplate,
+            String eventExchange
+    ) {
         this.events = events;
         this.rabbitMessagingTemplate = rabbitMessagingTemplate;
+        this.EVENT_EXCHANGE = eventExchange;
     }
 
     public void publish(@NotNull @Valid DomainEvent event) {
         rabbitMessagingTemplate.send(
-                EVENT_XCHNG,
+                EVENT_EXCHANGE,
                 event.type().routingKey(),
                 new GenericMessage<>(event)
         );
@@ -37,7 +40,7 @@ public class RabbitPublisher {
                         DomainEvent.Type type,
                         String context) {
         rabbitMessagingTemplate.send(
-                EVENT_XCHNG,
+                EVENT_EXCHANGE,
                 type.routingKey(),
                 new GenericMessage<>(events
                         .wrap(event)
