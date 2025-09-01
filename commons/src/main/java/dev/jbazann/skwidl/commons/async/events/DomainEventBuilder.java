@@ -195,14 +195,23 @@ public class DomainEventBuilder<Type extends DomainEvent> {
      * Wrapper for consistency. See {@link DiscardedEvent#discard(DomainEvent)}
      */
     public @NotNull @Valid DiscardedEvent discard(@NotNull @Valid DomainEvent event) {
-        return log.result(DiscardedEvent.discard(event));
+        return log.result(discard(event, "No action required."));
     }
 
     public @NotNull @Valid DomainEvent discard() {
-        return log.result(DiscardedEvent.discard(event));
+        return log.result(discard(event, "No action required."));
     }
 
     public @NotNull @Valid DomainEvent discard(@NotNull String context) {
-        return log.result(DiscardedEvent.discard(event, context));
+        return log.result(discard(event, context));
+    }
+
+    private DiscardedEvent discard(DomainEvent event, String context) {
+        DomainEvent e = DomainEvent.init(new DiscardedEvent())
+            .transaction(event.transaction())
+            .sentBy(thisApplication)
+            .context(context)
+            .type(DomainEvent.Type.DISCARD);
+        return log.result(((DiscardedEvent) e).discarded(event));
     }
 }

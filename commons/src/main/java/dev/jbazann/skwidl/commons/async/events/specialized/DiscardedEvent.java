@@ -19,24 +19,10 @@ public class DiscardedEvent extends DomainEvent {
     @NotNull @Valid
     private DomainEvent discarded;
 
-    public static @NotNull @Valid DiscardedEvent discard(@NotNull @Valid DomainEvent event,
-                                         @NotNull String context) {
-        // Using copyOf() to avoid default init values, even if irrelevant.
-        // The copied ones are at least related to the discarded event.
-        final DiscardedEvent result = (DiscardedEvent) DomainEvent.copyOf(event)
-                .context(context)
-                .type(Type.DISCARD);
-        return result.discarded(event);
-
-    }
-
-    public static DiscardedEvent discard(@NotNull @Valid DomainEvent event) {
-        return DiscardedEvent.discard(event, "No action required.");
-    }
-
-        @Override
+    @Override
     protected DomainEvent copy() {
         return new DiscardedEvent()
                 .discarded(discarded);
     }
+    
 }
