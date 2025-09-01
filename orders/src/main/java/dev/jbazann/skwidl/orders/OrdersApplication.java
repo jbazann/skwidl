@@ -11,8 +11,10 @@ import org.springframework.boot.actuate.web.exchanges.HttpExchangeRepository;
 import org.springframework.boot.actuate.web.exchanges.InMemoryHttpExchangeRepository;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
+// import org.springframework.data.mongodb.MongoDatabaseFactory;
+// import org.springframework.data.mongodb.MongoTransactionManager;
 import org.springframework.data.mongodb.repository.config.EnableMongoRepositories;
-import org.springframework.transaction.annotation.EnableTransactionManagement;
+// import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 @SpringBootApplication()
 @EnableMongoRepositories("dev.jbazann.skwidl.orders.order")

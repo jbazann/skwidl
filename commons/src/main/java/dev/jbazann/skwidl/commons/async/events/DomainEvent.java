@@ -54,7 +54,7 @@ public abstract class DomainEvent {
     }
 
     /**
-     * Constructs a shallow copy of an event, preserving subclass data.
+     * Initializes a shallow copy of an event, preserving subclass data.
      * @param event the event to copy.
      * @return a new event with a different identity, but the same data as the argument.
      */

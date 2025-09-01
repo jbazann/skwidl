@@ -40,10 +40,11 @@ public class Transaction {
         ERROR,
     }
 
-    public static Transaction from(@NotNull @Valid DomainEvent event) {
-        return new Transaction() // TODO quorum? return validation=?
+    public static @NotNull @Valid Transaction from(@NotNull @Valid DomainEvent event) {
+        return new Transaction()
                 .id(event.transaction().id())
                 .expires(event.transaction().expires())
+                .quorum(event.transaction().quorum())
                 .status(event.transaction().status());
     }
 
