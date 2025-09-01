@@ -18,7 +18,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 @EnableMongoRepositories("dev.jbazann.skwidl.orders.order")
 @EnableLogging // should appear before any other project annotation to configure logging as early as possible
 @EnableExceptionMasking
-@EnableTransactionManagement
+// @EnableTransactionManagement
 @DistributedTransactionCoordinator
 @DistributedTransactionMember
 @DistributedTransactionStarter
@@ -34,5 +34,10 @@ public class OrdersApplication {
 	public HttpExchangeRepository httpExchangeRepository() {
 		return new InMemoryHttpExchangeRepository();
 	}
+
+	// @Bean
+    // public MongoTransactionManager transactionManager(MongoDatabaseFactory dbFactory) {
+    //     return new MongoTransactionManager(dbFactory);
+    // }
 
 }

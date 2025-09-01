@@ -36,7 +36,7 @@ public class Rollback implements TransactionStage {
 
     @SuppressWarnings("DuplicatedCode")
     @Override
-    @Transactional
+    // @Transactional
     public TransactionResult runStage(DomainEvent domainEvent,
                                       Transaction transaction) {
         if (!(domainEvent instanceof CancelAcceptedOrderEvent event))

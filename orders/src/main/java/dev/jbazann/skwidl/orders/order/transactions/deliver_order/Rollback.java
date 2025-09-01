@@ -35,7 +35,7 @@ public class Rollback implements TransactionStage {
     }
 
     @Override
-    @Transactional
+    // @Transactional
     public TransactionResult runStage(DomainEvent domainEvent,
                                       Transaction transaction) {
         if (!(domainEvent instanceof DeliverOrderEvent event))

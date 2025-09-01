@@ -36,7 +36,7 @@ public class Reserve implements TransactionStage {
 
     @SuppressWarnings("DuplicatedCode")
     @Override
-    @Transactional
+    // @Transactional
     public TransactionResult runStage(DomainEvent domainEvent,
                                       Transaction transaction) {
         if (!(domainEvent instanceof DeliverOrderEvent event))
