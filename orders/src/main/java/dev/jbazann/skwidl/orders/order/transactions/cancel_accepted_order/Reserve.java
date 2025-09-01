@@ -7,7 +7,6 @@ import dev.jbazann.skwidl.commons.async.transactions.api.TransactionLifecycleAct
 import dev.jbazann.skwidl.commons.async.transactions.TransactionResult;
 import dev.jbazann.skwidl.commons.async.transactions.api.TransactionStage;
 import dev.jbazann.skwidl.commons.async.transactions.api.TransactionStageBean;
-import dev.jbazann.skwidl.commons.async.transactions.api.locking.EntityLock;
 import dev.jbazann.skwidl.commons.async.transactions.entities.Transaction;
 import dev.jbazann.skwidl.orders.order.entities.Order;
 import dev.jbazann.skwidl.orders.order.entities.StatusHistory;
@@ -15,7 +14,6 @@ import dev.jbazann.skwidl.orders.order.services.OrderLifecycleActions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
 import java.util.Optional;
 
 @TransactionStageBean(

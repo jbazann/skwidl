@@ -2,9 +2,6 @@ package dev.jbazann.skwidl.commons.async.rabbitmq;
 
 import dev.jbazann.skwidl.commons.async.events.DomainEvent;
 import dev.jbazann.skwidl.commons.async.transactions.TransactionCoordinatorService;
-import dev.jbazann.skwidl.commons.async.transactions.entities.CoordinatedTransaction;
-import dev.jbazann.skwidl.commons.async.transactions.entities.CoordinatedTransactionRepository;
-import dev.jbazann.skwidl.commons.identity.ApplicationMember;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
