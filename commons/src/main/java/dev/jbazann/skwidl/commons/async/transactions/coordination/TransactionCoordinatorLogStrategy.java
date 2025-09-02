@@ -25,7 +25,7 @@ public class TransactionCoordinatorLogStrategy implements TransactionCoordinator
 
     @Override
     public TransactionCoordinatorStrategyResult getResult() {
-        log.debug("LogStrategy selected for TRANSACTION %s – EVENT %s", transaction, event);
+        log.debug("LogStrategy selected for TRANSACTION {} – EVENT {}", transaction, event);
         DomainEvent response = events.create(event.getClass())
                 .answer(event)
                 .setType(DomainEvent.Type.ERROR)

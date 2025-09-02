@@ -7,6 +7,8 @@ import dev.jbazann.skwidl.commons.async.transactions.coordination.TransactionCoo
 import dev.jbazann.skwidl.commons.async.transactions.entities.CoordinatedTransaction;
 import dev.jbazann.skwidl.commons.async.transactions.entities.CoordinatedTransactionRepository;
 import dev.jbazann.skwidl.commons.identity.ApplicationMember;
+import dev.jbazann.skwidl.commons.logging.Logger;
+import dev.jbazann.skwidl.commons.logging.LoggerFactory;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import org.springframework.validation.annotation.Validated;
@@ -18,6 +20,7 @@ public class TransactionCoordinatorService {
     private final CoordinatedTransactionRepository repository;
     private final TransactionCoordinatorStrategySelector strategies;
     private final RabbitPublisher publisher;
+    private final Logger log = LoggerFactory.get(TransactionCoordinatorService.class);
 
     public TransactionCoordinatorService(ApplicationMember member, CoordinatedTransactionRepository repository, TransactionCoordinatorStrategySelector strategies, RabbitPublisher publisher) {
         this.member = member;
@@ -28,12 +31,15 @@ public class TransactionCoordinatorService {
 
     public void handle(@NotNull @Valid DomainEvent event) {
         CoordinatedTransaction transaction = repository.findById(event.transaction().id())
-                .orElse(repository.save(CoordinatedTransaction.from(event)));
-
+                .orElseGet(() -> {
+                    log.debug("Transaction {} not found, initializing and saving...", event.transaction().id());
+                    return repository.save(CoordinatedTransaction.from(event));
+                });
         TransactionCoordinatorStrategy strategy = strategies.getStrategy(event, transaction);
 
+        log.debug("Using coordinator strategy {}.", strategy.getClass().getSimpleName());
         TransactionCoordinatorStrategyResult result = strategy.getResult();
-
+        log.debug("Strategy result: {}", result);
         if (result.response().isPresent()) {
             publisher.publish(result.response().get());
         }

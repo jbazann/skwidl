@@ -16,7 +16,6 @@ import dev.jbazann.skwidl.orders.order.entities.Order;
 import dev.jbazann.skwidl.orders.order.entities.StatusHistory;
 import dev.jbazann.skwidl.commons.exceptions.MalformedArgumentException;
 import dev.jbazann.skwidl.commons.identity.ApplicationMemberRegistry;
-import dev.jbazann.skwidl.commons.identity.KnownMembers;
 import dev.jbazann.skwidl.orders.order.exceptions.ReserveFailureException;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;

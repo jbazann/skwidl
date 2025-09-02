@@ -15,6 +15,9 @@ public class InternalPointcuts {
             DomainEvent event
     ) {}
 
+    @Pointcut("execution(* dev.jbazann.skwidl.commons.async.rabbitmq.RabbitPublisher.publish(..))")
+    public void rabbitPublishMethod() {}
+
     @Pointcut("@annotation(bean) && execution(* dev.jbazann.skwidl..*.*(..))")
     private void beanAnnotatedMethod(org.springframework.context.annotation.Bean bean) {}
 

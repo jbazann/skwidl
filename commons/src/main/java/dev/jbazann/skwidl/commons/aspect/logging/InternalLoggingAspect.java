@@ -55,4 +55,15 @@ public class InternalLoggingAspect {
         ));
     }
 
+    @Before("dev.jbazann.skwidl.commons.aspect.InternalPointcuts.rabbitPublishMethod()")
+    public void logRabbitPublishExecutions(
+        JoinPoint joinPoint
+    ) {
+        logger.info(String.format(
+                "Calling RabbitPublisher#%s with args %s.",
+                joinPoint.getSignature().getName(),
+                Arrays.toString(joinPoint.getArgs())
+        ));
+    }
+
 }
