@@ -1,10 +1,12 @@
 package dev.jbazann.skwidl.commons.aspect.logging;
 
+import dev.jbazann.skwidl.commons.async.events.DomainEvent;
 import jakarta.annotation.PostConstruct;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
 import org.aspectj.lang.reflect.MethodSignature;
+import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.context.annotation.Bean;
 
 import java.util.Arrays;
@@ -35,6 +37,21 @@ public class InternalLoggingAspect {
                 ((MethodSignature) joinPoint.getSignature()).getReturnType().getSimpleName(),
                 joinPoint.getSignature().getName(),
                 Arrays.toString(bean.name()) // 🤮
+        ));
+    }
+
+    @Before(value = "dev.jbazann.skwidl.commons.aspect.InternalPointcuts.rabbitDomainEventListenerMethod(listener,event)",
+            argNames = "joinPoint,listener,event") // joinPoint included due to IntelliJ's linting. May be omitted.
+    public void logRabbitListenerExecutions(
+            JoinPoint joinPoint,
+            RabbitListener listener,
+            DomainEvent event
+    ) {
+        logger.info(String.format(
+                "Calling RabbitListener \"%s\" in \"%s\" with event: %s.",
+                joinPoint.getSignature().getName(),
+                joinPoint.getSignature().getDeclaringTypeName(),
+                event.toString()
         ));
     }
 

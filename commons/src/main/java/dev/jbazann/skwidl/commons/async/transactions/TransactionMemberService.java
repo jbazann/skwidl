@@ -4,6 +4,8 @@ import dev.jbazann.skwidl.commons.async.events.DomainEvent;
 import dev.jbazann.skwidl.commons.async.events.DomainEventBuilderFactory;
 import dev.jbazann.skwidl.commons.async.rabbitmq.RabbitPublisher;
 import dev.jbazann.skwidl.commons.identity.ApplicationMember;
+import dev.jbazann.skwidl.commons.logging.Logger;
+import dev.jbazann.skwidl.commons.logging.LoggerFactory;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import org.springframework.validation.annotation.Validated;
@@ -21,6 +23,7 @@ public class TransactionMemberService {
     private final RabbitPublisher publisher;
     private final DomainEventBuilderFactory events;
     private final List<DomainEvent.Type> ACTION_EVENTS = List.of(REQUEST, COMMIT, ROLLBACK);
+    private final Logger log = LoggerFactory.get(TransactionMemberService.class);
 
     public TransactionMemberService(TransactionStageExecutorService executor, ApplicationMember member, TransactionResponseService response, RabbitPublisher publisher, DomainEventBuilderFactory events) {
         this.member = member;
@@ -31,9 +34,17 @@ public class TransactionMemberService {
     }
 
     public void handleEvent(@NotNull @Valid DomainEvent event) {
-        if (handleNotAMember(event)) return;
-        if (handleNotRelevantEventType(event)) return;
+        log.method(event);
+        if (handleNotAMember(event)) {
+            log.debug("Not a quorum member.");
+            return;
+        }
+        if (handleNotRelevantEventType(event)) {
+            log.debug("Not a relevant event type.");
+            return;
+        }
 
+        log.debug("Action events: {} — Event type: {}", ACTION_EVENTS, event.type());
         if (ACTION_EVENTS.contains(event.type())) {
             final TransactionResult result = executor.runStageFor(event);
             response.sendResponse(event, result);

@@ -2,6 +2,9 @@ package dev.jbazann.skwidl.commons.async.transactions;
 
 import dev.jbazann.skwidl.commons.async.events.DomainEvent;
 import dev.jbazann.skwidl.commons.async.transactions.api.*;
+import dev.jbazann.skwidl.commons.logging.Logger;
+import dev.jbazann.skwidl.commons.logging.LoggerFactory;
+import jakarta.annotation.PostConstruct;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import org.springframework.aop.framework.AopProxyUtils;
@@ -18,6 +21,15 @@ public class TransactionStageRegistrarService {
     public record StageKey(Class<? extends DomainEvent> eventClass, DomainEvent.Type eventType) {}
 
     private final Map<StageKey, TransactionStage> stages;
+    private final Logger logger = LoggerFactory.get(TransactionStageRegistrarService.class);
+
+    @PostConstruct
+    public void init() {
+        logger.info(String.format(
+                "Created TransactionStage registry: %s.",
+                stages.toString()
+        ));
+    }
 
     //TODO check instantiation timing (must occur when stages exist)
     //TODO static factory method

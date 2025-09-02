@@ -146,8 +146,24 @@ public class Logger {
         return val;
     }
 
+    public final void debug(String message) {
+        logger.debug(message);
+    }
+
     public final void debug(String format, Object... params) {
         logger.debug(format, params);
+    }
+
+    /**
+     * Convenience exposing {@link org.slf4j.Logger#info}
+     * for one-off use cases that aren't better solved
+     * by aspect-based logging. This method should only
+     * be used when avoiding it is unviable.
+     * @param format the format string.
+     * @param params a list of arguments.
+     */
+    public final void info(String format, Object... params) {
+        logger.info(format, params);
     }
 
     private String paramsString(Object... params) {
