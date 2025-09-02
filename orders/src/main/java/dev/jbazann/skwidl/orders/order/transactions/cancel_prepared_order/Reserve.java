@@ -59,12 +59,12 @@ public class Reserve implements TransactionStage {
                     .context("Order was already canceled.");
         }
 
-        if(STATUS != StatusHistory.Status.ACCEPTED) {
+        if(STATUS != StatusHistory.Status.IN_PREPARATION) {
             transaction = transactionActions.reject(transaction);
             return new TransactionResult()
                     .data(transaction)
                     .simpleResult(TransactionResult.SimpleResult.FAILURE)
-                    .context("Order status was expected to be 'accepted', but is instead " + STATUS + '.');
+                    .context("Order status was expected to be 'IN_PREPARATION', but is instead " + STATUS + '.');
         }
 
         // TODO transaction.
