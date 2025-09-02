@@ -33,4 +33,13 @@ public class DeliverOrderEvent extends DomainEvent {
                 .customerId(customerId)
                 .returnedFunds(returnedFunds);
     }
+
+    @Override
+    protected DomainEvent _answer(DomainEvent event) {
+        DeliverOrderEvent casted = (DeliverOrderEvent) event;
+        return this.orderId(casted.orderId())
+                .customerId(casted.customerId())
+                .returnedFunds(casted.returnedFunds());
+    }
+
 }

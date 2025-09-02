@@ -24,5 +24,11 @@ public class DiscardedEvent extends DomainEvent {
         return new DiscardedEvent()
                 .discarded(discarded);
     }
+
+    @Override
+    protected DomainEvent _answer(DomainEvent event) {
+        return discarded(((DiscardedEvent) event).discarded());
+    }
+
     
 }

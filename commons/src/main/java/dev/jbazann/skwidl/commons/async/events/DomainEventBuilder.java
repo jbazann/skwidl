@@ -65,8 +65,7 @@ public class DomainEventBuilder<Type extends DomainEvent> {
             DomainEvent event
     ) {
         log.method(event);
-        this.event.context("Answer to " + event.id())
-                .transaction(event.transaction());
+        this.event.answer(event);
         log.result(this);
         return this;
     }

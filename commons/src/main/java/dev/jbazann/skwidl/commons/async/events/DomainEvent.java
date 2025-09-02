@@ -78,6 +78,30 @@ public abstract class DomainEvent {
      */
     protected abstract DomainEvent copy();
 
+    /**
+     * Sets the carried-over and subclass fields as sensible
+     * to respond to event.
+     * @param event the event to respond to.
+     * @return the event this method is called on, with its fields 
+     * initialized to respond to event.
+     */
+    public DomainEvent answer(DomainEvent event) {
+        transaction(event.transaction());
+        context("Reply to " + event.id());
+        return _answer(event);
+    }
+
+    /**
+     * Internal method for use within {@link DomainEvent#answer(DomainEvent)}.
+     * Implementations should initialize all their fields to valid values 
+     * that are sensible for a reply to event. <br>
+     * Overriding implementations don't need to set the values of inherited attributes.
+     * @param event the event to respond to.
+     * @return the event this method is called on, with its fields 
+     * initialized to respond to event.
+     */
+    protected abstract DomainEvent _answer(DomainEvent event);
+
     @Getter
     @Accessors(fluent = true)
     public enum Type{

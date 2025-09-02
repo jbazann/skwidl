@@ -39,4 +39,13 @@ public class CancelPreparedOrderEvent extends DomainEvent {
                 .returnedStock(returnedStock);
     }
 
+    @Override
+    protected DomainEvent _answer(DomainEvent event) {
+        CancelPreparedOrderEvent casted = (CancelPreparedOrderEvent) event;
+        return this.orderId(casted.orderId())
+                .customerId(casted.customerId())
+                .returnedFunds(casted.returnedFunds())
+                .returnedStock(casted.returnedStock());
+    }
+
 }
