@@ -15,6 +15,7 @@ import dev.jbazann.skwidl.orders.order.entities.Detail;
 import dev.jbazann.skwidl.orders.order.entities.Order;
 import dev.jbazann.skwidl.orders.order.entities.StatusHistory;
 import dev.jbazann.skwidl.commons.exceptions.MalformedArgumentException;
+import dev.jbazann.skwidl.commons.identity.ApplicationMemberRegistry;
 import dev.jbazann.skwidl.commons.identity.KnownMembers;
 import dev.jbazann.skwidl.orders.order.exceptions.ReserveFailureException;
 import jakarta.validation.Valid;
@@ -28,6 +29,10 @@ import java.math.BigDecimal;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
+
+import static dev.jbazann.skwidl.commons.identity.ApplicationMemberRegistry.Members.CUSTOMERS;
+import static dev.jbazann.skwidl.commons.identity.ApplicationMemberRegistry.Members.ORDERS;
+import static dev.jbazann.skwidl.commons.identity.ApplicationMemberRegistry.Members.PRODUCTS;;
 
 @Service
 @Validated
@@ -77,7 +82,7 @@ public class OrderService {
         switch (order.getStatus().status()) {
             case IN_PREPARATION -> publisher.request(
                     events.create(DeliverOrderEvent.class)
-                            .setQuorumMembers(KnownMembers.memberList(KnownMembers.ORDERS, KnownMembers.CUSTOMERS))//TODO maybe products too
+                            .setQuorumMembers(ApplicationMemberRegistry.Members.list(ORDERS, CUSTOMERS))//TODO maybe products too
                             .asDeliverOrderEvent(order.id(),order.customer(),order.totalCost()),
                     "Deliver order with id: " + order.id()
             );
@@ -94,7 +99,7 @@ public class OrderService {
         switch (order.getStatus().status()) {
             case IN_PREPARATION -> publisher.request(
                     events.create(CancelPreparedOrderEvent.class)
-                            .setQuorumMembers(KnownMembers.memberList(KnownMembers.ORDERS, KnownMembers.CUSTOMERS, KnownMembers.PRODUCTS))
+                            .setQuorumMembers(ApplicationMemberRegistry.Members.list(ORDERS, CUSTOMERS, PRODUCTS))
                             .asCancelPreparedOrderEvent(
                                     order.id(),
                                     order.customer(),
@@ -105,7 +110,7 @@ public class OrderService {
             );
             case ACCEPTED -> publisher.request(
                     events.create(CancelAcceptedOrderEvent.class)
-                            .setQuorumMembers(KnownMembers.memberList(KnownMembers.ORDERS, KnownMembers.CUSTOMERS))
+                            .setQuorumMembers(ApplicationMemberRegistry.Members.list(ORDERS, CUSTOMERS))
                             .asCancelAcceptedOrderEvent(
                                     order.id(),
                                     order.customer(),
