@@ -22,7 +22,9 @@ public class TransactionResponseService {
 
     public void sendResponse(@NotNull @Valid DomainEvent event,
                              @NotNull @Valid TransactionResult result) {
-        DomainEventBuilder<DomainEvent> response = events.wrap(event).setContext(result.context());
+        DomainEventBuilder<? extends DomainEvent> response = events.create(event.getClass())
+                .answer(event)
+                .setContext(result.context());
         switch (event.type()) {
             case ROLLBACK -> responseForRollback(response, result);
             case COMMIT -> responseForCommit(response, result);
@@ -32,7 +34,7 @@ public class TransactionResponseService {
         }
     }
 
-    private void responseForRequest(DomainEventBuilder<DomainEvent> response, TransactionResult result) {
+    private void responseForRequest(DomainEventBuilder<? extends DomainEvent> response, TransactionResult result) {
         switch (result.simpleResult()) {
             case SUCCESS -> publisher.publish(response.setType(DomainEvent.Type.ACCEPT).build());
             case FAILURE, REGISTRY_FAILURE -> publisher.publish(response.setType(DomainEvent.Type.REJECT).build());
@@ -43,7 +45,7 @@ public class TransactionResponseService {
         }
     }
 
-    private void responseForCommit(DomainEventBuilder<DomainEvent> response, TransactionResult result) {
+    private void responseForCommit(DomainEventBuilder<? extends DomainEvent> response, TransactionResult result) {
         /*
          * Ack regardless of result because at this point rolling back is not
          * possible.
@@ -52,7 +54,7 @@ public class TransactionResponseService {
         publisher.publish(response.setType(DomainEvent.Type.ACK).build());
     }
 
-    private void responseForRollback(DomainEventBuilder<DomainEvent> response, TransactionResult result) {
+    private void responseForRollback(DomainEventBuilder<? extends DomainEvent> response, TransactionResult result) {
         switch (result.simpleResult()) {
             case SUCCESS -> publisher.publish(response.setType(DomainEvent.Type.ACK).build());
             case FAILURE,  CRITICAL_FAILURE, REGISTRY_FAILURE  ->

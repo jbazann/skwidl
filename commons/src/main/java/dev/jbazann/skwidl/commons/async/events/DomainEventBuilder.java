@@ -58,6 +58,7 @@ public class DomainEventBuilder<Type extends DomainEvent> {
         this.thisApplication = identity;
         this.defaultCoordinator = defaultCoordinator;
         this.event = event;
+        this.event.sentBy(thisApplication);
         log.result(this);
     }
 
