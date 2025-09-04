@@ -1,7 +1,6 @@
 package dev.jbazann.skwidl.commons.async.transactions.coordination;
 
 import dev.jbazann.skwidl.commons.async.events.DomainEvent;
-import dev.jbazann.skwidl.commons.async.events.DomainEventBuilder;
 import dev.jbazann.skwidl.commons.async.events.DomainEventBuilderFactory;
 import dev.jbazann.skwidl.commons.async.transactions.entities.CoordinatedTransaction;
 import dev.jbazann.skwidl.commons.logging.Logger;
@@ -28,7 +27,7 @@ public class TransactionCoordinatorLogStrategy implements TransactionCoordinator
         log.debug("LogStrategy selected for TRANSACTION {} – EVENT {}", transaction, event);
         DomainEvent response = events.create(event.getClass())
                 .answer(event)
-                .setType(DomainEvent.Type.ERROR)
+                .setType(DomainEvent.Type.TRACE)
                 .setContext("LogStrategy selected for TRANSACTION %s – EVENT %s", transaction, event)
                 .build();
 

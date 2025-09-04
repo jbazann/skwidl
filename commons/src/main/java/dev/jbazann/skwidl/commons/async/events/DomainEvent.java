@@ -117,6 +117,11 @@ public abstract class DomainEvent {
          */
         ACK("ack.event"),
         /**
+         * For logging purposes. To be emitted by transaction coordinators
+         * to summarize operations.
+         */
+        TRACE("log.trace.event"),
+        /**
          * For logging purposes only, signals an unrecoverable state that
          * should never have been possible.
          */

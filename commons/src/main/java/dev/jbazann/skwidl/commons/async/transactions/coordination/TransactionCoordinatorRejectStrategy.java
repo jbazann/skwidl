@@ -1,7 +1,6 @@
 package dev.jbazann.skwidl.commons.async.transactions.coordination;
 
 import dev.jbazann.skwidl.commons.async.events.DomainEvent;
-import dev.jbazann.skwidl.commons.async.events.DomainEventBuilder;
 import dev.jbazann.skwidl.commons.async.events.DomainEventBuilderFactory;
 import dev.jbazann.skwidl.commons.async.transactions.entities.CoordinatedTransaction;
 
@@ -32,7 +31,7 @@ public class TransactionCoordinatorRejectStrategy implements TransactionCoordina
         if (isFirstRejection) {
             response = events.create(event.getClass())
                     .answer(event)
-                    .setType(DomainEvent.Type.REJECT)
+                    .setType(DomainEvent.Type.ROLLBACK)
                     .setContext("Transaction rejected by %s.", event.sentBy())
                     .build();
         } else if (transaction.isFullyRejected()) {
