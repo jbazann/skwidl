@@ -93,6 +93,14 @@
 				</includes>
 			</resource>
 			<resource>
+				<filtering>true</filtering>
+				<targetPath>META-INF/</targetPath>
+				<directory>${project.basedir}/src/main/resources/META-INF/</directory>
+				<includes>
+					<include>**.xml</include>
+				</includes>
+			</resource>
+			<resource>
 				<directory>${project.basedir}/src/main/resources/</directory>
 				<includes>
 					<include>**.yml</include>
@@ -140,6 +148,11 @@
 															<outputDirectory>${project.build.directory}/docker/skwidl/productsdb/latest/build/postgresql/docker-entrypoint-initdb.d/ddl/</outputDirectory>
 															<destName>category.sql</destName>
 														</file>
+														<file>
+															<source>${project.basedir}/src/main/resources/postgresql/transaction/ddl.sql</source>
+															<outputDirectory>${project.build.directory}/docker/skwidl/productsdb/latest/build/postgresql/docker-entrypoint-initdb.d/ddl/</outputDirectory>
+															<destName>transaction.sql</destName>
+														</file>
 													</files>
 												</layer>
 											</layers>
@@ -180,6 +193,18 @@
 							<jpaUnit>category</jpaUnit>
 							<outputFile>${project.basedir}/src/main/resources/postgresql/category/ddl.sql</outputFile>
 							<verifyFile>${project.basedir}/src/main/resources/postgresql/category/ddl.sql</verifyFile>
+						</configuration>
+						<goals>
+							<goal>export-jpa-schema</goal>
+						</goals>
+					</execution>
+					<execution>
+						<id>generate-ddl-transaction</id>
+						<phase>process-classes</phase>
+						<configuration>
+							<jpaUnit>transaction</jpaUnit>
+							<outputFile>${project.basedir}/src/main/resources/postgresql/transaction/ddl.sql</outputFile>
+							<verifyFile>${project.basedir}/src/main/resources/postgresql/transaction/ddl.sql</verifyFile>
 						</configuration>
 						<goals>
 							<goal>export-jpa-schema</goal>

@@ -28,4 +28,14 @@
             <property name="hibernate.dialect" value="org.hibernate.dialect.MySQLDialect"/>
         </properties>
     </persistence-unit>
+    <persistence-unit name="transaction">
+        <mapping-file>META-INF/transactions-orm.xml</mapping-file>
+        <class>dev.jbazann.skwidl.customers.transaction.TransactionEntity</class>
+        <class>dev.jbazann.skwidl.commons.async.transactions.entities.TransactionQuorum</class>
+        <class>dev.jbazann.skwidl.commons.identity.ApplicationMember</class>
+        <exclude-unlisted-classes>true</exclude-unlisted-classes>
+        <properties>
+            <property name="hibernate.dialect" value="org.hibernate.dialect.MySQLDialect"/>
+        </properties>
+    </persistence-unit>
 </persistence>

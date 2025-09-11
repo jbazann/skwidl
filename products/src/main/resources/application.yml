@@ -23,6 +23,11 @@ spring:
       username: category
       password: category
       driver-class-name: org.postgresql.Driver
+    transaction:
+      jdbc-url: jdbc:postgresql://postgresql:12012/transaction
+      username: transaction
+      password: transaction
+      driver-class-name: org.postgresql.Driver
 
 server:
   port: @jbazann.kube.main-port@

@@ -30,6 +30,12 @@ spring:
       username: customers
       password: customers
       driver-class-name: com.mysql.cj.jdbc.Driver
+    transaction:
+      jdbc-url: jdbc:mysql://mysql:12012/transaction
+      username: customers
+      password: customers
+      driver-class-name: com.mysql.cj.jdbc.Driver
+
 
 server:
   port: @jbazann.kube.main-port@

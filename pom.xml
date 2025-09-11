@@ -342,24 +342,24 @@
                                 </filesets>
                             </configuration>
                         </execution>
-                        <execution>
-                            <id>delete persistence.xml</id>
-                            <phase>process-classes</phase>
-                            <goals>
-                                <goal>clean</goal>
-                            </goals>
-                            <configuration>
-                                <excludeDefaultDirectories>true</excludeDefaultDirectories>
-                                <filesets>
-                                    <fileset>
-                                        <directory>${project.build.directory}/classes/META-INF</directory>
-                                        <includes>
-                                            <include>persistence.xml</include>
-                                        </includes>
-                                    </fileset>
-                                </filesets>
-                            </configuration>
-                        </execution>
+<!--                        <execution>-->
+<!--                            <id>delete persistence.xml</id>-->
+<!--                            <phase>process-classes</phase>-->
+<!--                            <goals>-->
+<!--                                <goal>clean</goal>-->
+<!--                            </goals>-->
+<!--                            <configuration>-->
+<!--                                <excludeDefaultDirectories>true</excludeDefaultDirectories>-->
+<!--                                <filesets>-->
+<!--                                    <fileset>-->
+<!--                                        <directory>${project.build.directory}/classes/META-INF</directory>-->
+<!--                                        <includes>-->
+<!--                                            <include>persistence.xml</include>-->
+<!--                                        </includes>-->
+<!--                                    </fileset>-->
+<!--                                </filesets>-->
+<!--                            </configuration>-->
+<!--                        </execution>-->
                     </executions>
                 </plugin>
             </plugins>

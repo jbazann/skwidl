@@ -97,6 +97,14 @@
 				</includes>
 			</resource>
 			<resource>
+				<filtering>true</filtering>
+				<targetPath>META-INF/</targetPath>
+				<directory>${project.basedir}/src/main/resources/META-INF/</directory>
+				<includes>
+					<include>**.xml</include>
+				</includes>
+			</resource>
+			<resource>
 				<directory>${project.basedir}/src/main/resources/</directory>
 				<includes>
 					<include>**.yml</include>
@@ -170,6 +178,18 @@
 							<goal>export-jpa-schema</goal>
 						</goals>
 					</execution>
+					<execution>
+						<id>generate-ddl-transaction</id>
+						<phase>process-classes</phase>
+						<configuration>
+							<jpaUnit>transaction</jpaUnit>
+							<outputFile>${project.basedir}/src/main/resources/mysql/transaction/ddl.sql</outputFile>
+							<verifyFile>${project.basedir}/src/main/resources/mysql/transaction/ddl.sql</verifyFile>
+						</configuration>
+						<goals>
+							<goal>export-jpa-schema</goal>
+						</goals>
+					</execution>
 				</executions>
 			</plugin>
 
@@ -217,6 +237,11 @@
 															<source>${project.basedir}/src/main/resources/mysql/user/ddl.sql</source>
 															<outputDirectory>${project.build.directory}/docker/skwidl/customersdb/latest/build/mysql/docker-entrypoint-initdb.d/ddl/</outputDirectory>
 															<destName>user.sql</destName>
+														</file>
+														<file>
+															<source>${project.basedir}/src/main/resources/mysql/transaction/ddl.sql</source>
+															<outputDirectory>${project.build.directory}/docker/skwidl/customersdb/latest/build/mysql/docker-entrypoint-initdb.d/ddl/</outputDirectory>
+															<destName>transaction.sql</destName>
 														</file>
 													</files>
 												</layer>

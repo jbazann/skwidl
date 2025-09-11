@@ -15,3 +15,12 @@ CREATE SCHEMA category;
 CREATE USER category PASSWORD 'category';
 GRANT SELECT, INSERT, UPDATE, DELETE ON ALL TABLES IN SCHEMA category TO category;
 GRANT USAGE ON SCHEMA category TO category;
+
+CREATE DATABASE transaction;
+\c transaction;
+CREATE SCHEMA transaction;
+\i /docker-entrypoint-initdb.d/ddl/transaction.sql;
+
+CREATE USER transaction PASSWORD 'transaction';
+GRANT SELECT, INSERT, UPDATE, DELETE ON ALL TABLES IN SCHEMA transaction TO transaction;
+GRANT USAGE ON SCHEMA transaction TO transaction;
