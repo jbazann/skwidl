@@ -1,4 +1,4 @@
-package dev.jbazann.skwidl.orders.order.transactions.deliver_order;
+package dev.jbazann.skwidl.orders.transactions.deliver_order;
 
 import dev.jbazann.skwidl.commons.async.events.DomainEvent;
 import dev.jbazann.skwidl.commons.async.events.specialized.DeliverOrderEvent;
@@ -7,32 +7,30 @@ import dev.jbazann.skwidl.commons.async.transactions.api.Stage;
 import dev.jbazann.skwidl.commons.async.transactions.api.TransactionLifecycleActions;
 import dev.jbazann.skwidl.commons.async.transactions.api.TransactionStage;
 import dev.jbazann.skwidl.commons.async.transactions.api.TransactionStageBean;
-import dev.jbazann.skwidl.commons.async.transactions.entities.Transaction;
+import dev.jbazann.skwidl.commons.async.transactions.api.Transaction;
 import dev.jbazann.skwidl.orders.order.entities.Order;
 import dev.jbazann.skwidl.orders.order.entities.StatusHistory;
 import dev.jbazann.skwidl.orders.order.services.OrderLifecycleActions;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 
 @TransactionStageBean(
-        value = "DeliverOrderReserve",
+        value = "DeliverOrderRollback",
         eventClass = DeliverOrderEvent.class,
-        stage = Stage.RESERVE
+        stage = Stage.ROLLBACK
 )
-public class Reserve implements TransactionStage {
+public class Rollback implements TransactionStage {
 
     private final OrderLifecycleActions orderActions;
     private final TransactionLifecycleActions transactionActions;
 
     @Autowired
-    public Reserve(OrderLifecycleActions orderActions, TransactionLifecycleActions transactionActions) {
+    public Rollback(OrderLifecycleActions orderActions, TransactionLifecycleActions transactionActions) {
         this.orderActions = orderActions;
         this.transactionActions = transactionActions;
     }
 
-    @SuppressWarnings("DuplicatedCode")
     @Override
     // @Transactional
     public TransactionResult runStage(DomainEvent domainEvent,
@@ -42,34 +40,26 @@ public class Reserve implements TransactionStage {
 
         final Optional<Order> OPT = orderActions.fetch(event.orderId());
         if (OPT.isEmpty()) {
-            transaction = transactionActions.reject(transaction);
+            transaction = transactionActions.error(transaction);
             return new TransactionResult()
                     .data(transaction)
-                    .simpleResult(TransactionResult.SimpleResult.FAILURE)
+                    .simpleResult(TransactionResult.SimpleResult.CRITICAL_FAILURE)
                     .context("Order not found.");
         }
         final Order order = OPT.get();
 
         final StatusHistory.Status STATUS = order.statusHistory().getLast().status();
-        if (STATUS == StatusHistory.Status.DELIVERED) {
-            transaction = transactionActions.accept(transaction);
+        if (STATUS != StatusHistory.Status.DELIVERED) {
+            transaction = transactionActions.error(transaction);
             // TODO single stage transactions are never committed
             return new TransactionResult()
                     .data(transaction)
-                    .simpleResult(TransactionResult.SimpleResult.WARNED_SUCCESS)
-                    .context("Order was already delivered.");
+                    .simpleResult(TransactionResult.SimpleResult.CRITICAL_FAILURE)
+                    .context("Order status was expected to be 'delivered', but is instead " + STATUS + '.');
         }
 
-        if(STATUS != StatusHistory.Status.IN_PREPARATION) {
-            transaction = transactionActions.reject(transaction);
-            return new TransactionResult()
-                    .data(transaction)
-                    .simpleResult(TransactionResult.SimpleResult.FAILURE)
-                    .context("Order not prepared.");
-        }
-
-        orderActions.deliver(order, "Delivered by transaction id: " + event.transaction().id());
-        transactionActions.accept(transaction);
+        orderActions.rollbackToPreparation(order, "Failed to deliver with context " + event.context());
+        transactionActions.rollback(transaction);
         return new TransactionResult()
                 .data(transaction)
                 .simpleResult(TransactionResult.SimpleResult.SUCCESS)

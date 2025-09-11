@@ -1,4 +1,4 @@
-package dev.jbazann.skwidl.customers.transactions.cancel_prepared_order;
+package dev.jbazann.skwidl.customers.transaction.cancel_prepared_order;
 
 import dev.jbazann.skwidl.commons.async.events.DomainEvent;
 import dev.jbazann.skwidl.commons.async.events.specialized.CancelPreparedOrderEvent;
@@ -7,20 +7,20 @@ import dev.jbazann.skwidl.commons.async.transactions.api.Stage;
 import dev.jbazann.skwidl.commons.async.transactions.api.TransactionLifecycleActions;
 import dev.jbazann.skwidl.commons.async.transactions.api.TransactionStage;
 import dev.jbazann.skwidl.commons.async.transactions.api.TransactionStageBean;
-import dev.jbazann.skwidl.commons.async.transactions.entities.Transaction;
+import dev.jbazann.skwidl.commons.async.transactions.api.Transaction;
 import org.springframework.beans.factory.annotation.Autowired;
 
 @TransactionStageBean(
-        value = "CancelPreparedOrderReserve",
+        value = "CancelPreparedOrderRollback",
         eventClass = CancelPreparedOrderEvent.class,
-        stage = Stage.RESERVE
+        stage = Stage.ROLLBACK
 )
-public class Reserve implements TransactionStage {
+public class Rollback implements TransactionStage {
 
     private final TransactionLifecycleActions transactionActions;
 
     @Autowired
-    public Reserve(TransactionLifecycleActions transactionActions) {
+    public Rollback(TransactionLifecycleActions transactionActions) {
         this.transactionActions = transactionActions;
     }
 
@@ -32,11 +32,12 @@ public class Reserve implements TransactionStage {
         if (!(domainEvent instanceof CancelPreparedOrderEvent event))
             throw new IllegalArgumentException("Wrong DomainEvent type.");
 
-        transaction = transactionActions.reject(transaction);
+        transactionActions.rollback(transaction);
         return new TransactionResult()
                 .data(transaction)
-                .simpleResult(TransactionResult.SimpleResult.FAILURE)
-                .context("Some failure context.");
+                .simpleResult(TransactionResult.SimpleResult.SUCCESS)
+                .context("Transaction gracefully rolled back.");
+
     }
 }
 

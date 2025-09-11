@@ -1,4 +1,5 @@
-package dev.jbazann.skwidl.products.distributed;
+package dev.jbazann.skwidl.products.transaction;
+
 
 import dev.jbazann.skwidl.commons.async.events.DomainEvent;
 import dev.jbazann.skwidl.commons.async.events.specialized.CancelPreparedOrderEvent;
@@ -8,25 +9,28 @@ import dev.jbazann.skwidl.commons.async.transactions.api.TransactionLifecycleAct
 import dev.jbazann.skwidl.commons.async.transactions.api.TransactionStage;
 import dev.jbazann.skwidl.commons.async.transactions.api.TransactionStageBean;
 import dev.jbazann.skwidl.commons.async.transactions.api.locking.EntityLock;
-import dev.jbazann.skwidl.commons.async.transactions.entities.Transaction;
+import dev.jbazann.skwidl.commons.async.transactions.api.Transaction;
 import dev.jbazann.skwidl.products.product.Product;
 import dev.jbazann.skwidl.products.product.ProductLifecycleActions;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 
 @TransactionStageBean(
-        value = "CancelPreparedOrderReserve",
+        value = "CancelPreparedOrderRollback",
         eventClass = CancelPreparedOrderEvent.class,
-        stage = Stage.RESERVE
+        stage = Stage.ROLLBACK
 )
-public class CancelPreparedOrderReserve implements TransactionStage {
+public class CancelPreparedOrderRollback implements TransactionStage {
 
     private final ProductLifecycleActions actions;
     private final TransactionLifecycleActions transactions;
 
-    public CancelPreparedOrderReserve(ProductLifecycleActions actions, TransactionLifecycleActions transactions) {
+    public CancelPreparedOrderRollback(ProductLifecycleActions actions, TransactionLifecycleActions transactions) {
         this.actions = actions;
         this.transactions = transactions;
     }
@@ -58,16 +62,16 @@ public class CancelPreparedOrderReserve implements TransactionStage {
             transaction = transactions.reject(transaction);
             return new TransactionResult()
                     .data(transaction)
-                    .simpleResult(TransactionResult.SimpleResult.FAILURE)
+                    .simpleResult(TransactionResult.SimpleResult.CRITICAL_FAILURE)
                     .context(message.toString());
         }
 
-        products.forEach(p -> p.currentStock(p.currentStock() + stock.get(p.id())));
+        products.forEach(p -> p.currentStock(p.currentStock() - stock.get(p.id())));
         actions.saveAll(products);
         transaction = transactions.accept(transaction);
         return new TransactionResult()
                 .data(transaction)
                 .simpleResult(TransactionResult.SimpleResult.SUCCESS)
-                .context("Stock returned.");
+                .context("Rollback applied.");
     }
 }

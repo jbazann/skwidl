@@ -1,4 +1,4 @@
-package dev.jbazann.skwidl.orders.order.transactions.cancel_prepared_order;
+package dev.jbazann.skwidl.orders.transactions.cancel_prepared_order;
 
 import dev.jbazann.skwidl.commons.async.events.DomainEvent;
 import dev.jbazann.skwidl.commons.async.events.specialized.CancelPreparedOrderEvent;
@@ -7,12 +7,11 @@ import dev.jbazann.skwidl.commons.async.transactions.api.Stage;
 import dev.jbazann.skwidl.commons.async.transactions.api.TransactionLifecycleActions;
 import dev.jbazann.skwidl.commons.async.transactions.api.TransactionStage;
 import dev.jbazann.skwidl.commons.async.transactions.api.TransactionStageBean;
-import dev.jbazann.skwidl.commons.async.transactions.entities.Transaction;
+import dev.jbazann.skwidl.commons.async.transactions.api.Transaction;
 import dev.jbazann.skwidl.orders.order.entities.Order;
 import dev.jbazann.skwidl.orders.order.entities.StatusHistory;
 import dev.jbazann.skwidl.orders.order.services.OrderLifecycleActions;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 
@@ -58,12 +57,12 @@ public class Rollback implements TransactionStage {
                     .context("Order status was expected to be 'canceled', but is instead " + STATUS + '.');
         }
 
-        orderActions.rollbackToAccepted(order, "Failed to cancel with event context: " + event.context());
+        orderActions.rollbackToPreparation(order, "Failed to cancel with event context: " + event.context());
         transactionActions.rollback(transaction);
         return new TransactionResult()
                 .data(transaction)
                 .simpleResult(TransactionResult.SimpleResult.SUCCESS)
-                .context("Transaction gracefully rolled back.");
+                .context("TransactionEntity gracefully rolled back.");
 
     }
 }

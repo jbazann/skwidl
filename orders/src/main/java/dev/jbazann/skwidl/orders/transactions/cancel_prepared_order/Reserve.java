@@ -1,4 +1,4 @@
-package dev.jbazann.skwidl.orders.order.transactions.cancel_prepared_order;
+package dev.jbazann.skwidl.orders.transactions.cancel_prepared_order;
 
 import dev.jbazann.skwidl.commons.async.events.DomainEvent;
 import dev.jbazann.skwidl.commons.async.events.specialized.CancelPreparedOrderEvent;
@@ -7,13 +7,18 @@ import dev.jbazann.skwidl.commons.async.transactions.api.Stage;
 import dev.jbazann.skwidl.commons.async.transactions.api.TransactionLifecycleActions;
 import dev.jbazann.skwidl.commons.async.transactions.api.TransactionStage;
 import dev.jbazann.skwidl.commons.async.transactions.api.TransactionStageBean;
-import dev.jbazann.skwidl.commons.async.transactions.entities.Transaction;
+import dev.jbazann.skwidl.commons.async.transactions.api.Transaction;
+import dev.jbazann.skwidl.commons.async.transactions.api.locking.EntityLock;
+import dev.jbazann.skwidl.commons.async.transactions.api.locking.Locking;
+import dev.jbazann.skwidl.commons.async.transactions.api.locking.LockingStrategies;
 import dev.jbazann.skwidl.orders.order.entities.Order;
 import dev.jbazann.skwidl.orders.order.entities.StatusHistory;
 import dev.jbazann.skwidl.orders.order.services.OrderLifecycleActions;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Optional;
 
 @TransactionStageBean(
@@ -21,6 +26,7 @@ import java.util.Optional;
         eventClass = CancelPreparedOrderEvent.class,
         stage = Stage.RESERVE
 )
+@Locking(strategy = LockingStrategies.EPHEMERAL, action = Locking.LockingActions.GET)
 public class Reserve implements TransactionStage {
 
     private final OrderLifecycleActions orderActions;
@@ -30,6 +36,14 @@ public class Reserve implements TransactionStage {
     public Reserve(OrderLifecycleActions orderActions, TransactionLifecycleActions transactionActions) {
         this.orderActions = orderActions;
         this.transactionActions = transactionActions;
+    }
+
+    @Override
+    public List<@NotNull @Valid EntityLock> getRequiredLocks(DomainEvent domainEvent) {
+        if (!(domainEvent instanceof CancelPreparedOrderEvent event))
+            throw new IllegalArgumentException("Wrong DomainEvent type.");
+
+        return List.of(new EntityLock(event.orderId().toString(), Order.class));
     }
 
     @SuppressWarnings("DuplicatedCode")

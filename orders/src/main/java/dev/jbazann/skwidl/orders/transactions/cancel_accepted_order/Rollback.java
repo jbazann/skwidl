@@ -1,4 +1,4 @@
-package dev.jbazann.skwidl.orders.order.transactions.cancel_accepted_order;
+package dev.jbazann.skwidl.orders.transactions.cancel_accepted_order;
 
 import dev.jbazann.skwidl.commons.async.events.specialized.CancelAcceptedOrderEvent;
 import dev.jbazann.skwidl.commons.async.events.DomainEvent;
@@ -7,12 +7,11 @@ import dev.jbazann.skwidl.commons.async.transactions.api.TransactionLifecycleAct
 import dev.jbazann.skwidl.commons.async.transactions.TransactionResult;
 import dev.jbazann.skwidl.commons.async.transactions.api.TransactionStage;
 import dev.jbazann.skwidl.commons.async.transactions.api.TransactionStageBean;
-import dev.jbazann.skwidl.commons.async.transactions.entities.Transaction;
+import dev.jbazann.skwidl.commons.async.transactions.api.Transaction;
 import dev.jbazann.skwidl.orders.order.entities.Order;
 import dev.jbazann.skwidl.orders.order.entities.StatusHistory;
 import dev.jbazann.skwidl.orders.order.services.OrderLifecycleActions;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 
@@ -63,7 +62,7 @@ public class Rollback implements TransactionStage {
         return new TransactionResult()
                 .data(transaction)
                 .simpleResult(TransactionResult.SimpleResult.SUCCESS)
-                .context("Transaction gracefully rolled back.");
+                .context("TransactionEntity gracefully rolled back.");
     }
 }
 
