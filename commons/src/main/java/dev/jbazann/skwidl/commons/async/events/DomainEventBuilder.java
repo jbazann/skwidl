@@ -4,12 +4,13 @@ import dev.jbazann.skwidl.commons.async.events.specialized.CancelAcceptedOrderEv
 import dev.jbazann.skwidl.commons.async.events.specialized.CancelPreparedOrderEvent;
 import dev.jbazann.skwidl.commons.async.events.specialized.DeliverOrderEvent;
 import dev.jbazann.skwidl.commons.async.events.specialized.DiscardedEvent;
+import dev.jbazann.skwidl.commons.async.transactions.api.Transaction;
 import dev.jbazann.skwidl.commons.async.transactions.entities.TransactionQuorum;
-import dev.jbazann.skwidl.commons.async.transactions.entities.Transaction;
 import dev.jbazann.skwidl.commons.exceptions.CommonsInternalException;
 import dev.jbazann.skwidl.commons.identity.ApplicationMember;
 import dev.jbazann.skwidl.commons.logging.Logger;
 import dev.jbazann.skwidl.commons.logging.LoggerFactory;
+import dev.jbazann.skwidl.commons.utils.TimeProvider;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotEmpty;
@@ -23,6 +24,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.function.Supplier;
 
 @ToString
 @Validated
@@ -31,14 +33,21 @@ public class DomainEventBuilder<Type extends DomainEvent> {
     private final Type event;
     private final @NotNull @Valid ApplicationMember thisApplication;
     private final @NotNull @Valid ApplicationMember defaultCoordinator;
+    private final @NotNull Supplier<Transaction> transactions;
     private final Logger log = LoggerFactory.get(getClass());
 
-    public DomainEventBuilder(ApplicationMember identity, ApplicationMember defaultCoordinator, Class<Type> eventClass) {
+    public DomainEventBuilder(
+            ApplicationMember identity,
+            ApplicationMember defaultCoordinator,
+            Class<Type> eventClass,
+            Supplier<Transaction> transactions
+    ) {
         log.method(identity,defaultCoordinator,eventClass);
         this.thisApplication = identity;
         this.defaultCoordinator = defaultCoordinator;
+        this.transactions = transactions;
         try {
-            event = eventClass.cast(DomainEvent.init(eventClass.getConstructor().newInstance()));
+            event = eventClass.cast(init(eventClass.getConstructor().newInstance()));
         } catch (ClassCastException |
                  NoSuchMethodException |
                  IllegalAccessException |
@@ -53,10 +62,11 @@ public class DomainEventBuilder<Type extends DomainEvent> {
         log.result(this);
     }
 
-    public DomainEventBuilder(ApplicationMember identity, ApplicationMember defaultCoordinator, Type event) {
+    public DomainEventBuilder(ApplicationMember identity, ApplicationMember defaultCoordinator, Type event, Supplier<Transaction> transactions) {
         log.method(identity,defaultCoordinator,event);
         this.thisApplication = identity;
         this.defaultCoordinator = defaultCoordinator;
+        this.transactions = transactions;
         this.event = event;
         log.result(this);
     }
@@ -126,7 +136,7 @@ public class DomainEventBuilder<Type extends DomainEvent> {
             @NotNull LocalDateTime expires
     ) {
         log.method(id,quorum,status,expires);
-        event.transaction(new Transaction()
+        event.transaction(transactions.get()
                 .id(id)
                 .quorum(quorum)
                 .status(status)
@@ -190,13 +200,6 @@ public class DomainEventBuilder<Type extends DomainEvent> {
         return this;
     }
 
-    /**
-     * Wrapper for consistency. See {@link DiscardedEvent#discard(DomainEvent)}
-     */
-    public @NotNull @Valid DiscardedEvent discard(@NotNull @Valid DomainEvent event) {
-        return log.result(discard(event, "No action required."));
-    }
-
     public @NotNull @Valid DomainEvent discard() {
         return log.result(discard(event, "No action required."));
     }
@@ -206,11 +209,29 @@ public class DomainEventBuilder<Type extends DomainEvent> {
     }
 
     private DiscardedEvent discard(DomainEvent event, String context) {
-        DomainEvent e = DomainEvent.init(new DiscardedEvent())
+        DomainEvent e = init(new DiscardedEvent())
             .transaction(event.transaction())
             .sentBy(thisApplication)
             .context(context)
             .type(DomainEvent.Type.DISCARD);
         return log.result(((DiscardedEvent) e).discarded(event));
     }
+
+
+    private DomainEvent init(final DomainEvent event) {
+        final TransactionQuorum emptyQuorum = new TransactionQuorum()
+                .members(List.of())
+                .coordinator(new ApplicationMember(""));
+        final Transaction transaction = transactions.get()
+                .id(UUID.randomUUID()) // TODO replace with safe alternative
+                .quorum(emptyQuorum)
+                .status(Transaction.TransactionStatus.UNKNOWN)
+                .expires(TimeProvider.localDateTimeNow().plusHours(1L)); // TODO configure expiring time
+        return event.id(UUID.randomUUID()) // TODO replace with safe alternative
+                .transaction(transaction)
+                .timestamp(TimeProvider.localDateTimeNow())
+                .type(DomainEvent.Type.UNKNOWN)
+                .context("Initialized by .commons.async.events.DomainEvent.init");
+    }
+
 }

@@ -1,7 +1,13 @@
 package dev.jbazann.skwidl.commons.identity;
 
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import dev.jbazann.skwidl.commons.async.transactions.entities.TransactionQuorum;
 import jakarta.validation.constraints.NotBlank;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.ToString;
+import lombok.experimental.Accessors;
 
 /**
  * Represents the role a given artifact has in the distributed application.
@@ -15,4 +21,15 @@ import jakarta.validation.constraints.NotBlank;
  * @param id A unique ID for each different service. The same for
  *           replicas of the same service.
  */
-public record ApplicationMember(@NotBlank String id) {}
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+@JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
+@Accessors(chain = true, fluent = true)
+@ToString
+public class ApplicationMember {
+
+    @NotBlank
+    String id;
+
+}

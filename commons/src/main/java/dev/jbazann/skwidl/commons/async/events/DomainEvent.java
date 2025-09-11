@@ -1,8 +1,7 @@
 package dev.jbazann.skwidl.commons.async.events;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
-import dev.jbazann.skwidl.commons.async.transactions.entities.TransactionQuorum;
-import dev.jbazann.skwidl.commons.async.transactions.entities.Transaction;
+import dev.jbazann.skwidl.commons.async.transactions.api.Transaction;
 import dev.jbazann.skwidl.commons.identity.ApplicationMember;
 import dev.jbazann.skwidl.commons.utils.TimeProvider;
 import jakarta.validation.Valid;
@@ -14,7 +13,6 @@ import lombok.ToString;
 import lombok.experimental.Accessors;
 
 import java.time.LocalDateTime;
-import java.util.List;
 import java.util.UUID;
 
 @Data
@@ -36,22 +34,6 @@ public abstract class DomainEvent {
     private Type type;
     @NotNull
     private String context;
-
-    public static DomainEvent init(final DomainEvent event) {
-        final TransactionQuorum emptyQuorum = new TransactionQuorum()
-                .members(List.of())
-                .coordinator(new ApplicationMember(""));
-        final Transaction transaction = new Transaction()
-                .id(UUID.randomUUID()) // TODO replace with safe alternative
-                .quorum(emptyQuorum)
-                .status(Transaction.TransactionStatus.UNKNOWN)
-                .expires(TimeProvider.localDateTimeNow().plusHours(1L)); // TODO configure expiring time
-        return event.id(UUID.randomUUID()) // TODO replace with safe alternative
-                .transaction(transaction)
-                .timestamp(TimeProvider.localDateTimeNow())
-                .type(Type.UNKNOWN)
-                .context("Initialized by .commons.async.events.DomainEvent.init");
-    }
 
     /**
      * Initializes a shallow copy of an event, preserving subclass data.

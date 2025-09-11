@@ -28,7 +28,8 @@ public class CoordinatedTransaction {
     @NotNull @NotEmpty
     private Map<ApplicationMember, CoordinatedTransaction.QuorumStatus> quorumStatus;
     @NotNull
-    private List<ApplicationMember> rollback;
+    private List<ApplicationMember> rollback =
+            new ArrayList<>(); // because Redis turns empty lists into null.
     @NotNull
     private CoordinatedTransaction.TransactionStatus status;
     @NotNull

@@ -3,7 +3,6 @@ package dev.jbazann.skwidl.commons.async.transactions.api;
 import dev.jbazann.skwidl.commons.async.events.DomainEvent;
 import dev.jbazann.skwidl.commons.async.transactions.TransactionResult;
 import dev.jbazann.skwidl.commons.async.transactions.api.locking.EntityLock;
-import dev.jbazann.skwidl.commons.async.transactions.entities.Transaction;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import org.springframework.validation.annotation.Validated;

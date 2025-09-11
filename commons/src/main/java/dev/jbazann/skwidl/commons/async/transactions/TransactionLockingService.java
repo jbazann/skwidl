@@ -4,6 +4,7 @@ import dev.jbazann.skwidl.commons.async.events.DomainEvent;
 import dev.jbazann.skwidl.commons.async.transactions.api.locking.EntityLock;
 import dev.jbazann.skwidl.commons.async.transactions.api.locking.Locking;
 import dev.jbazann.skwidl.commons.async.transactions.api.TransactionStage;
+import dev.jbazann.skwidl.commons.async.transactions.api.locking.LockingStrategies;
 import dev.jbazann.skwidl.commons.exceptions.LockAcquisitionException;
 import dev.jbazann.skwidl.commons.logging.Logger;
 import dev.jbazann.skwidl.commons.logging.LoggerFactory;
@@ -56,10 +57,11 @@ public class TransactionLockingService {
             return;
         }
         Locking annotation = optional.get();
-        if (annotation.action().equals(Locking.LockingActions.RELEASE)) {
+        if (Locking.LockingActions.RELEASE.equals(annotation.action())
+                || LockingStrategies.EPHEMERAL.equals(annotation.strategy())) {
             _releaseLocks(event.transaction().id());
         } else {
-            log.debug("releaseLocks called for action %s", annotation.action());
+            log.debug("releaseLocks called for action %s and strategy is not EPHEMERAL.", annotation.action());
         }
     }
 
@@ -77,6 +79,7 @@ public class TransactionLockingService {
         TransactionLockingServiceData data = currentLocks.get(transactionId);
         data.acquiredLocks().forEach(RLock::unlock);
         currentLocks.remove(transactionId);
+        log.info("Released locks: {}", data);
     }
 
     @Retryable(
@@ -97,8 +100,7 @@ public class TransactionLockingService {
                     .map(EntityLock::toString)
                     .map(redisson::getLock)
                     .toList());
-            currentLocks.put(event.transaction(
-            ).id(), data);
+            currentLocks.put(event.transaction().id(), data);
         }
 
         data.acquiredLocks(data.locks().stream().filter(RLock::tryLock).toList());
@@ -108,6 +110,8 @@ public class TransactionLockingService {
             data.acquiredLocks(List.of());
             throw new LockAcquisitionException(String.format(
                     "Failed attempt %d for transaction %s.", data.retryCount(), data.transactionId()));
+        } else {
+            log.info("Acquired EPHEMERAL locks: {}", data);
         }
     }
 

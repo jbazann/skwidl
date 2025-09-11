@@ -25,7 +25,7 @@ public class DomainEventBuilderFactory {
     }
 
     public <T extends DomainEvent> DomainEventBuilder<T> create() {
-        return blankBuilderFactory.create();
+        return blankBuilderFactory.create(null);
     }
 
     public <T extends DomainEvent> DomainEventBuilder<T> wrap(T event) {
