@@ -48,7 +48,7 @@ public class InternalLoggingAspect {
             DomainEvent event
     ) {
         logger.info(String.format(
-                "Calling RabbitListener \"%s\" in \"%s\" with event: %s.",
+                "Calling RabbitListener \"%s\" in \"%s\" with event:\n%s.",
                 joinPoint.getSignature().getName(),
                 joinPoint.getSignature().getDeclaringTypeName(),
                 event.toString()
@@ -60,7 +60,7 @@ public class InternalLoggingAspect {
         JoinPoint joinPoint
     ) {
         logger.info(String.format(
-                "Calling RabbitPublisher#%s with args %s.",
+                "Calling RabbitPublisher#%s with args:\n %s.",
                 joinPoint.getSignature().getName(),
                 Arrays.toString(joinPoint.getArgs())
         ));

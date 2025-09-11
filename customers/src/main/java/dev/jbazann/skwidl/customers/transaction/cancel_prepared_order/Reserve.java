@@ -4,8 +4,6 @@ import dev.jbazann.skwidl.commons.async.events.DomainEvent;
 import dev.jbazann.skwidl.commons.async.events.specialized.CancelPreparedOrderEvent;
 import dev.jbazann.skwidl.commons.async.transactions.TransactionResult;
 import dev.jbazann.skwidl.commons.async.transactions.api.*;
-import dev.jbazann.skwidl.commons.async.transactions.api.locking.Locking;
-import dev.jbazann.skwidl.commons.async.transactions.api.locking.LockingStrategies;
 import org.springframework.beans.factory.annotation.Autowired;
 
 @TransactionStageBean(
