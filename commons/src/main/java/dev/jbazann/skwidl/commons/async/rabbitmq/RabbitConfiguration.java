@@ -1,5 +1,6 @@
 package dev.jbazann.skwidl.commons.async.rabbitmq;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import dev.jbazann.skwidl.commons.async.events.DomainEventBuilderFactory;
 import dev.jbazann.skwidl.commons.logging.LoggerFactory;
 import org.springframework.amqp.rabbit.annotation.EnableRabbit;
@@ -17,8 +18,8 @@ import org.springframework.context.annotation.Configuration;
 public class RabbitConfiguration {
 
     @Bean
-    public MessageConverter plainJackson2JsonMessageConverter() {
-        return new Jackson2JsonMessageConverter();
+    public MessageConverter plainJackson2JsonMessageConverter(ObjectMapper mapper) {
+        return new Jackson2JsonMessageConverter(mapper);
     }
 
     @Bean("RabbitTemplateMessageConverterCustomizer")
